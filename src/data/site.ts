@@ -43,6 +43,8 @@ export type Formacao = {
   kind: string;
   /** Frase curta para o cartão da página inicial. */
   pitch: string;
+  /** Logo oficial (em public/), com largura e altura reais do arquivo. */
+  logo: { src: string; w: number; h: number; alt: string };
   /** Selo de destaque no cartão (ex.: "Bolsas de até 80%"). */
   badge: string | null;
   title: string;
@@ -252,6 +254,7 @@ export const formacoes: Formacao[] = [
     slug: 'unopar',
     name: 'Unopar Anhanguera',
     kind: 'Faculdade',
+    logo: { src: '/img/parceiros/unopar-anhanguera.webp', w: 520, h: 441, alt: 'Unopar Anhanguera, Polo Novo Gama' },
     pitch: 'Graduação presencial, semipresencial ou 100% EAD em Novo Gama, com diploma reconhecido pelo MEC.',
     badge: 'Bolsas de até 80%',
     title: 'A faculdade continua aqui, perto de casa.',
@@ -297,6 +300,7 @@ export const formacoes: Formacao[] = [
     slug: 'tec-mais',
     name: 'TEC Mais',
     kind: 'Cursos técnicos e livres',
+    logo: { src: '/img/parceiros/tec-mais.webp', w: 720, h: 203, alt: 'TEC Mais Cursos Técnicos' },
     pitch: 'Cursos de saúde e segurança em Valparaíso: aprenda o que ninguém te ensina, antes de precisar.',
     badge: null,
     title: 'Aprenda o que ninguém te ensina. Antes de precisar.',

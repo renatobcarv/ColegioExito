@@ -7,7 +7,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const home = `${base}/`;
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
-type Item = { label: string; href: string; desc?: string };
+type Item = { label: string; href: string; desc?: string; logo?: string };
 type Group = { label: string; id: string; items: Item[]; active?: boolean };
 
 const ensino: Item[] = [
@@ -17,7 +17,7 @@ const ensino: Item[] = [
   { label: 'Fundamental II', href: `${home}#seg-fundamental-ii`, desc: '6º ao 9º ano' },
   { label: 'Ensino Médio', href: `${home}#seg-ensino-medio`, desc: '1ª a 3ª série, foco em ENEM' },
 ];
-const formacao: Item[] = formacoes.map((f) => ({ label: f.name, href: `${base}/${f.slug}`, desc: f.kind }));
+const formacao: Item[] = formacoes.map((f) => ({ label: f.name, href: `${base}/${f.slug}`, desc: f.kind, logo: `${base}${f.logo.src}` }));
 
 const groups: Group[] = [
   { label: 'Ensino', id: 'dd-ensino', items: ensino },
@@ -68,9 +68,9 @@ const isCurrent = (href: string) => !href.includes('#') && path.endsWith(href.re
               <ul class="dd__panel" id={g.id}>
                 {g.items.map((it) => (
                   <li>
-                    <a href={it.href} class="dd__item" aria-current={isCurrent(it.href) ? 'page' : undefined}>
-                      <strong>{it.label}</strong>
-                      {it.desc && <span>{it.desc}</span>}
+                    <a href={it.href} class={`dd__item${it.logo ? ' dd__item--logo' : ''}`} aria-current={isCurrent(it.href) ? 'page' : undefined}>
+                      {it.logo && <img src={it.logo} alt="" width="64" height="40" loading="lazy" />}
+                      <span class="dd__txt"><strong>{it.label}</strong>{it.desc && <span>{it.desc}</span>}</span>
                     </a>
                   </li>
                 ))}
@@ -188,6 +188,9 @@ const isCurrent = (href: string) => !href.includes('#') && path.endsWith(href.re
   .dd__panel::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, var(--green) 33%, var(--red) 33% 66%, #1B30A3 66%); }
   .dd__btn[aria-expanded='true'] + .dd__panel { visibility: visible; opacity: 1; transform: none; transition: opacity .2s, transform .25s var(--ease); }
   .dd__item { display: grid; gap: 2px; padding: 12px 14px; border-radius: 12px; text-decoration: none; color: var(--cream); transition: background .15s, transform .2s var(--ease); }
+  .dd__item--logo { grid-template-columns: 72px 1fr; align-items: center; gap: 14px; }
+  .dd__item--logo img { width: 72px; height: 44px; object-fit: contain; padding: 4px 6px; border-radius: 10px; background: #FFFFFF; border: 1px solid var(--line); }
+  .dd__txt { display: grid; gap: 2px; }
   .dd__item strong { font-size: 15px; }
   .dd__item span { font-size: 13px; color: var(--muted); }
   .dd__item:hover { background: var(--ink2); color: var(--royal); transform: translateX(3px); }
