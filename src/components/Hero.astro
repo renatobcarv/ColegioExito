@@ -17,7 +17,7 @@ const d = (i: number) => `animation-delay:${(0.15 + i * 0.05).toFixed(2)}s`;
   <div class="wrap hero__grid">
     <div>
       <div class="eyebrow fade" style="animation-delay:.1s">
-        <span class="dot"></span>Matrículas {school.enrollmentYear} abertas · vagas limitadas por turma
+        <span class="dot"></span>Matrículas {school.enrollmentYear} abertas<span class="hero__eb-x"> · vagas limitadas por turma</span>
       </div>
 
       <h1 class="disp hero__title">
@@ -101,9 +101,10 @@ const d = (i: number) => `animation-delay:${(0.15 + i * 0.05).toFixed(2)}s`;
 
 <style>
   .hero { position: relative; overflow: clip; padding: 96px 0 72px; }
-  .hero__grid { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 48px; align-items: center; }
-  .hero__title { margin: 24px 0 0; font-size: clamp(40px, 6vw, 86px); font-weight: 760; line-height: .97; }
-  .hero__lead { margin: 24px 0 0; max-width: 540px; }
+  .hero__grid { position: relative; display: grid; grid-template-columns: 1fr; gap: 56px; align-items: center; }
+  @media (min-width: 1024px) { .hero__grid { grid-template-columns: 1.08fr 1fr; gap: 48px; } }
+  .hero__title { margin: 24px 0 0; font-size: clamp(38px, 8.6vw, 86px); text-wrap: balance; font-weight: 760; line-height: .97; }
+  .hero__lead { margin: 24px 0 0; max-width: 560px; }
   .hero__ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 34px; }
   .hero__segs { display: flex; flex-wrap: wrap; gap: 10px 22px; margin: 34px 0 0; padding: 0; list-style: none; font-size: 12px; color: var(--dim); letter-spacing: .06em; }
   .hero__stats { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 16px 32px; margin: 30px 0 0; padding-top: 26px; border-top: 1px solid var(--line); }
@@ -111,7 +112,7 @@ const d = (i: number) => `animation-delay:${(0.15 + i * 0.05).toFixed(2)}s`;
   .hero__stat { font-size: 34px; font-weight: 760; line-height: 1; }
   .hero__stat-l { font-size: 14px; color: var(--muted); margin-top: 4px !important; }
 
-  .hero__visual { position: relative; height: 600px; }
+  .hero__visual { position: relative; height: 600px; width: 100%; max-width: 620px; justify-self: center; }
   .hero__photo {
     position: absolute; left: 12%; right: 8%; top: 30px; bottom: 30px; border-radius: 32px; overflow: hidden;
     border: 1px solid var(--line2); box-shadow: 0 50px 100px -30px rgba(11, 31, 92, .6), 0 30px 80px -40px rgba(225, 37, 27, .4);
@@ -134,8 +135,12 @@ const d = (i: number) => `animation-delay:${(0.15 + i * 0.05).toFixed(2)}s`;
   .hero__card--msg { right: -14px; bottom: 80px; width: 290px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; }
   .hero__live { right: 30px; top: 18px; padding: 10px 14px; border-radius: 999px; font-size: 11.5px; display: flex; align-items: center; gap: 8px; }
 
+  @media (min-width: 1024px) and (max-width: 1199px) { .hero__title { font-size: 64px; } }
+  @media (max-width: 479px) { .hero__eb-x { display: none; } }
   @media (max-width: 759px) {
-    .hero { padding: 56px 0 48px; }
+    .hero { padding: 48px 0 40px; }
+    .hero__ctas > * { flex: 1 1 100%; justify-content: center; }
+    .hero__ctas .btn { justify-content: space-between; }
     .hero__stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
     .hero__stat { font-size: 26px; }
     .hero__stat-l { font-size: 12.5px; line-height: 1.35; }

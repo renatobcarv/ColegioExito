@@ -64,6 +64,8 @@ a:hover { color: var(--red-dark); }
 
 /* ---------- tipografia ---------- */
 .wrap { width: min(1200px, calc(100% - 32px)); margin-inline: auto; }
+@media (min-width: 640px) { .wrap { width: min(1200px, calc(100% - 64px)); } }
+@media (min-width: 1600px) { .wrap { width: 1320px; } }
 .disp { font-family: var(--f-disp); font-variation-settings: "opsz" 96; letter-spacing: -.04em; }
 .serif { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-spacing: -.01em; color: var(--red); }
 .mono { font-family: var(--f-mono); }

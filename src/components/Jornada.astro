@@ -75,4 +75,9 @@ const slug = (s: string) =>
   .seg p { margin: 0; font-size: 15.5px; line-height: 1.55; color: var(--muted); }
 
   @media (max-width: 899px) { .seg:nth-child(even) { margin-top: 0; } }
+  @media (max-width: 599px) {
+    .row-x { gap: 14px; }
+    .seg { flex-basis: 82%; }
+    .seg :global(.ph) { aspect-ratio: 4 / 3 !important; }
+  }
 </style>
