@@ -1,5 +1,6 @@
 ---
-import { school, units, formatPhone, telLink } from '../data/site';
+import { school, formatPhone, telLink } from '../data/site';
+import { units } from '../data/content';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -30,7 +31,7 @@ const nav = [
         units.map((u) => (
           <span>
             {u.tag} · {u.city.replace(' de Goiás', '')}{' '}
-            <a href={telLink(u.phones[0].number)}>{formatPhone(u.phones[0].number)}</a>
+            {u.phones[0] && <a href={telLink(u.phones[0].number)}>{formatPhone(u.phones[0].number)}</a>}
           </span>
         ))
       }

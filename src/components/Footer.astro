@@ -1,5 +1,6 @@
 ---
-import { school, units, formatPhone, telLink, waLink } from '../data/site';
+import { school, formatPhone, telLink, waLink } from '../data/site';
+import { units } from '../data/content';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const links = [
   { label: 'Instagram', href: school.social.instagram },
@@ -20,7 +21,7 @@ const links = [
         <div>
           <strong>{u.tag}</strong><br />
           {u.address.map((l) => <>{l}<br /></>)}
-          <a href={telLink(u.phones[0].number)}>{formatPhone(u.phones[0].number)}</a>
+          {u.phones[0] && <a href={telLink(u.phones[0].number)}>{formatPhone(u.phones[0].number)}</a>}
           {u.whatsapp && <><br /><a href={waLink(u.whatsapp)} target="_blank" rel="noopener">WhatsApp {formatPhone(u.whatsapp.slice(2))}</a></>}
         </div>
       ))

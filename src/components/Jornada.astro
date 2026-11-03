@@ -1,9 +1,9 @@
 ---
-import { segments } from '../data/site';
+import { segments } from '../data/content';
 import Photo from './Photo.astro';
 
 const slug = (s: string) =>
-  s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 ---
 
 <section id="jornada" class="jornada" aria-labelledby="jornada-t">
