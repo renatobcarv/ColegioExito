@@ -92,11 +92,58 @@ const jsonLd = {
     />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
   <body>
     <a class="skip" href="#conteudo">Pular para o conteúdo</a>
     <div class="grain" aria-hidden="true"></div>
     <div class="prog" aria-hidden="true"></div>
     <slot />
+    <script>
+      // Entrada ao rolar, com escalonamento dentro de .stagger
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.querySelectorAll<HTMLElement>('.stagger').forEach((g) =>
+        [...g.querySelectorAll<HTMLElement>(':scope > .rv')].forEach((el, i) => el.style.setProperty('--d', `${Math.min(i, 6) * 90}ms`)),
+      );
+      const els = document.querySelectorAll<HTMLElement>('.rv');
+      if (reduce || !('IntersectionObserver' in window)) {
+        els.forEach((el) => el.classList.add('in'));
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => entries.forEach((e) => {
+            if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+          }),
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+        );
+        els.forEach((el) => io.observe(el));
+      }
+
+      // Números que contam do zero quando aparecem (ex.: "37 anos", "7,8 mil")
+      const counters = document.querySelectorAll<HTMLElement>('[data-count]');
+      const run = (el: HTMLElement) => {
+        const node = [...el.childNodes].find((n) => n.nodeType === 3 && /\d/.test(n.textContent ?? ''));
+        if (!node) return;
+        const raw = node.textContent ?? '';
+        const m = raw.match(/(\d+(?:,\d+)?)/);
+        if (!m) return;
+        const target = parseFloat(m[1].replace(',', '.'));
+        const dec = m[1].includes(',') ? 1 : 0;
+        const t0 = performance.now();
+        const dur = 1400;
+        const tick = (t: number) => {
+          const p = Math.min(1, (t - t0) / dur);
+          const v = target * (1 - Math.pow(1 - p, 3));
+          node.textContent = raw.replace(m[1], v.toFixed(dec).replace('.', ','));
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      };
+      if (!reduce && 'IntersectionObserver' in window) {
+        const co = new IntersectionObserver((entries) => entries.forEach((e) => {
+          if (e.isIntersecting) { run(e.target as HTMLElement); co.unobserve(e.target); }
+        }), { threshold: 0.6 });
+        counters.forEach((c) => co.observe(c));
+      }
+    </script>
   </body>
 </html>

@@ -1,0 +1,233 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import Icon from './Icon.astro';
+import Arrow from './Arrow.astro';
+import { school, waLink, formatPhone, type Formacao } from '../data/site';
+
+interface Props { f: Formacao }
+const { f } = Astro.props;
+const wa = waLink(f.contact.whatsapp, f.whatsappMessage);
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const icon = f.slug === 'unopar' ? 'cap' : 'tool';
+---
+
+<Base title={`${f.name}: ${f.kind} | ${school.name}`} description={`${f.name} no ${school.name}. ${f.pitch}`}>
+  <Header />
+  <main id="conteudo">
+    <section class="fh">
+      <div class="glow" aria-hidden="true" style="width:760px;height:760px;right:-240px;top:-260px;background:radial-gradient(circle,rgba(30,139,58,.35),transparent 62%)"></div>
+      <div class="gridlines" aria-hidden="true"></div>
+      <div class="wrap fh__grid">
+        <div>
+          <nav aria-label="Você está em" class="mono fh__crumb fade">
+            <a href={`${base}/`}>Início</a> <span aria-hidden="true">/</span> Formação profissional <span aria-hidden="true">/</span> <span aria-current="page">{f.name}</span>
+          </nav>
+          <div class="eyebrow fade fh__eb" style="animation-delay:.1s"><span class="dot" style="background:var(--green);box-shadow:0 0 0 4px rgba(30,139,58,.2)"></span>{f.kind}{f.badge && <> · {f.badge}</>}</div>
+          <h1 class="disp fh__t fade" style="animation-delay:.2s">{f.title}</h1>
+          <p class="lead fade fh__lead" style="animation-delay:.35s">{f.lead}</p>
+          <div class="fh__ctas fade" style="animation-delay:.5s">
+            <a href={wa} target="_blank" rel="noopener" class="btn btn--green">Falar com um consultor<span class="arr"><Arrow /></span></a>
+            {f.externalUrl && <a href={f.externalUrl} target="_blank" rel="noopener" class="ghost">{f.externalLabel}<Icon name="external" size={16} /></a>}
+          </div>
+        </div>
+        <div class="fh__card fade" style="animation-delay:.4s">
+          <span class="fh__icon"><Icon name={icon} size={30} /></span>
+          <p class="mono fh__card-k">{f.name.toUpperCase()}</p>
+          <ul class="fh__checks">
+            {f.facts.map((x) => <li><Icon name="check" size={20} /><span><strong>{x.title}</strong>{x.text}</span></li>)}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    {
+      f.areas.length > 0 && (
+        <section class="fs" aria-labelledby="areas-t">
+          <div class="wrap">
+            <div class="rv fs__head">
+              <div class="kicker fs__k">Áreas de formação</div>
+              <h2 id="areas-t" class="disp h2">Encontre o curso <span class="serif fs__serif">do seu futuro.</span></h2>
+            </div>
+            <ul class="areas stagger">
+              {f.areas.map((a) => (
+                <li class="area rv">
+                  <span class="area__icon"><Icon name={a.icon} size={24} /></span>
+                  <h3 class="disp">{a.title}</h3>
+                  <p>{a.courses}</p>
+                  <a href={waLink(f.contact.whatsapp, `${f.whatsappMessage} Tenho interesse em ${a.title}.`)} target="_blank" rel="noopener" class="area__cta">
+                    Tenho interesse <Icon name="arrow" size={16} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )
+    }
+
+    {
+      f.modalities.length > 0 && (
+        <section class="fs fs--alt" aria-labelledby="mod-t">
+          <div class="wrap">
+            <div class="rv fs__head">
+              <div class="kicker fs__k">Como você prefere aprender?</div>
+              <h2 id="mod-t" class="disp h2">Modalidades</h2>
+            </div>
+            <ul class="mods stagger">
+              {f.modalities.map((m) => (
+                <li class={`mod rv${m.featured ? ' mod--hl' : ''}`}>
+                  {m.featured && <span class="mod__tag">Mais procurado</span>}
+                  <h3 class="disp">{m.title}</h3>
+                  <p>{m.text}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )
+    }
+
+    {
+      f.areas.length === 0 && (
+        <section class="fs" aria-labelledby="cursos-t">
+          <div class="wrap fs__empty rv">
+            <span class="area__icon"><Icon name={icon} size={26} /></span>
+            <div>
+              <h2 id="cursos-t" class="disp">Turmas e cursos abertos</h2>
+              <p>Fale com a nossa equipe para conhecer os cursos, horários e valores das próximas turmas.</p>
+            </div>
+            <a href={wa} target="_blank" rel="noopener" class="pill-sm pill-sm--wa"><Icon name="whatsapp" size={18} />Ver cursos pelo WhatsApp</a>
+          </div>
+        </section>
+      )
+    }
+
+    <section class="fs fs--dark dark" aria-labelledby="passos-t">
+      <div class="wrap">
+        <div class="rv fs__head">
+          <div class="kicker">Passo a passo</div>
+          <h2 id="passos-t" class="disp h2">Do interesse à <span class="serif">primeira aula.</span></h2>
+        </div>
+        <ol class="steps4 stagger">
+          {f.steps.map((s, i) => (
+            <li class="rv">
+              <span class="mono">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="disp">{s.title}</h3>
+              <p>{s.text}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="fs" aria-labelledby="contato-t">
+      <div class="wrap fc rv">
+        <div>
+          <div class="kicker fs__k">Atendimento</div>
+          <h2 id="contato-t" class="disp h2" style="font-size:clamp(32px,4vw,54px)">Seu próximo passo pode <span class="serif fs__serif">começar hoje.</span></h2>
+          <div class="fh__ctas">
+            <a href={wa} target="_blank" rel="noopener" class="btn btn--green">WhatsApp {formatPhone(f.contact.whatsapp.slice(2))}<span class="arr"><Arrow /></span></a>
+          </div>
+        </div>
+        <ul class="fc__info">
+          {f.contact.address && (
+            <li><span class="fc__i"><Icon name="map" /></span><div><strong>Endereço</strong>{f.contact.address.map((l) => <span>{l}</span>)}{f.contact.mapsUrl && <a href={f.contact.mapsUrl} target="_blank" rel="noopener">Como chegar</a>}</div></li>
+          )}
+          {f.contact.hours && (
+            <li><span class="fc__i"><Icon name="clock" /></span><div><strong>Horário de atendimento</strong>{f.contact.hours.map((l) => <span>{l}</span>)}</div></li>
+          )}
+          {f.contact.email && (
+            <li><span class="fc__i"><Icon name="mail" /></span><div><strong>E-mail</strong><a href={`mailto:${f.contact.email}`}>{f.contact.email}</a></div></li>
+          )}
+          {f.contact.instagram && (
+            <li><span class="fc__i"><Icon name="instagram" /></span><div><strong>Instagram</strong><a href={f.contact.instagram} target="_blank" rel="noopener">{f.contact.instagram.replace(/https:\/\/www\.instagram\.com\/|\/$/g, '@').replace(/@$/, '')}</a></div></li>
+          )}
+        </ul>
+      </div>
+    </section>
+  </main>
+  <Footer wa={wa} waLabel="Falar com consultor" />
+</Base>
+
+<style>
+  .fh { position: relative; overflow: clip; padding: 72px 0 88px; background: linear-gradient(180deg, #F2FAF4, #FFFFFF); }
+  .fh__grid { position: relative; display: grid; grid-template-columns: 1.2fr .9fr; gap: 56px; align-items: center; }
+  .fh__crumb { font-size: 12px; color: var(--dim); letter-spacing: .04em; margin-bottom: 22px; }
+  .fh__crumb a { color: var(--muted); }
+  .fh__eb { margin-bottom: 4px; }
+  .fh__t { margin: 22px 0 0; font-size: clamp(38px, 6vw, 76px); font-weight: 760; line-height: 1; text-wrap: balance; }
+  .fh__lead { margin: 22px 0 0; max-width: 580px; }
+  .fh__ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  .fh__ctas .ghost { gap: 8px; }
+  :global(.btn--green) { background: linear-gradient(180deg, #27A548, var(--green)) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 14px 34px -10px rgba(30,139,58,.7) !important; }
+
+  .fh__card { position: relative; padding: 30px; border-radius: 28px; background: #FFFFFF; border: 1px solid rgba(30, 139, 58, .2); box-shadow: 0 40px 80px -46px rgba(11, 31, 92, .55); }
+  .fh__icon { position: absolute; top: -22px; left: 26px; width: 60px; height: 60px; border-radius: 18px; display: grid; place-items: center; background: var(--green); color: #FFFFFF; box-shadow: 0 14px 30px -12px rgba(30, 139, 58, .8); }
+  .fh__card-k { margin: 26px 0 18px; font-size: 12px; letter-spacing: .14em; color: var(--green); }
+  .fh__checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+  .fh__checks li { display: grid; grid-template-columns: 22px 1fr; gap: 12px; color: var(--green); }
+  .fh__checks span { color: var(--muted); font-size: 15px; line-height: 1.5; }
+  .fh__checks strong { display: block; color: var(--cream); font-size: 16px; }
+
+  .fs { padding: clamp(72px, 9vw, 120px) 0; }
+  .fs--alt { background: var(--ink2); }
+  .fs--dark { background: var(--royal); }
+  .fs__head { margin-bottom: 44px; max-width: 760px; }
+  .fs__k { color: var(--green); }
+  .fs__serif { color: var(--green); }
+
+  .areas { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .area { display: flex; flex-direction: column; gap: 10px; padding: 28px; border-radius: 24px; background: #FFFFFF; border: 1px solid var(--line); transition: transform .45s var(--ease), box-shadow .45s var(--ease), border-color .3s; }
+  .area:hover { transform: translateY(-5px); border-color: rgba(30, 139, 58, .45); box-shadow: 0 30px 60px -40px rgba(11, 31, 92, .5); }
+  .area__icon { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: rgba(30, 139, 58, .1); color: var(--green); transition: background .3s, color .3s; flex: none; }
+  .area:hover .area__icon { background: var(--green); color: #FFFFFF; }
+  .area h3 { margin: 8px 0 0; font-size: 22px; font-weight: 720; letter-spacing: -.02em; }
+  .area p { margin: 0; color: var(--muted); line-height: 1.55; }
+  .area__cta { margin-top: auto; padding-top: 10px; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-weight: 700; color: var(--green); text-decoration: none; }
+  .area__cta :global(svg) { transition: transform .3s var(--ease); }
+  .area__cta:hover { color: var(--green); }
+  .area__cta:hover :global(svg) { transform: translateX(4px); }
+
+  .mods { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .mod { position: relative; padding: 34px 28px; border-radius: 24px; background: #FFFFFF; border: 1px solid var(--line); }
+  .mod--hl { border: 2px solid var(--green); box-shadow: 0 30px 60px -40px rgba(30, 139, 58, .7); }
+  .mod__tag { position: absolute; top: -13px; left: 24px; padding: 5px 12px; border-radius: 999px; background: var(--green); color: #FFFFFF; font-size: 12px; font-weight: 700; }
+  .mod h3 { margin: 0 0 10px; font-size: 24px; font-weight: 720; }
+  .mod p { margin: 0; color: var(--muted); line-height: 1.55; }
+
+  .fs__empty { display: grid; grid-template-columns: auto 1fr auto; gap: 24px; align-items: center; padding: 32px; border-radius: 26px; background: #F2FAF4; border: 1px solid rgba(30, 139, 58, .2); }
+  .fs__empty h2 { margin: 0; font-size: 26px; font-weight: 720; }
+  .fs__empty p { margin: 6px 0 0; color: var(--muted); }
+
+  .steps4 { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .steps4 li { padding: 26px 24px; border-radius: 22px; background: var(--ink3); border: 1px solid var(--line2); }
+  .steps4 .mono { display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--green); color: #FFFFFF; font-size: 13px; }
+  .steps4 h3 { margin: 18px 0 6px; font-size: 20px; font-weight: 680; }
+  .steps4 p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
+
+  .fc { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  .fc__info { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+  .fc__info li { display: grid; grid-template-columns: 52px 1fr; gap: 16px; align-items: start; }
+  .fc__i { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: var(--royal); color: #FFFFFF; }
+  .fc__info li:nth-child(odd) .fc__i { background: var(--green); }
+  .fc__info div { display: grid; gap: 2px; color: var(--muted); }
+  .fc__info strong { color: var(--cream); font-size: 17px; margin-bottom: 2px; }
+  .fc__info a { display: inline-flex; min-height: 32px; align-items: center; font-weight: 600; }
+
+  @media (max-width: 1023px) {
+    .fh__grid, .fc { grid-template-columns: 1fr; }
+    .areas, .mods { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .steps4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .fh__card { margin-top: 20px; }
+  }
+  @media (max-width: 639px) {
+    .fh { padding: 48px 0 64px; }
+    .areas, .mods, .steps4 { grid-template-columns: 1fr; }
+    .mods { gap: 26px; }
+    .fs__empty { grid-template-columns: 1fr; padding: 26px 22px; }
+    .fh__ctas > * { flex: 1 1 100%; justify-content: center; }
+    .fh__ctas .btn { justify-content: space-between; }
+  }
+</style>

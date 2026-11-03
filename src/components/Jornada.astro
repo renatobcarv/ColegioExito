@@ -1,5 +1,7 @@
 ---
 import { segments } from '../data/content';
+import { formacaoBySegment } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 import Photo from './Photo.astro';
 
 const slug = (s: string) =>
@@ -23,15 +25,18 @@ const slug = (s: string) =>
   </div>
 
   <div class="wrap">
-    <ul class="row-x" id="row-x" tabindex="0" aria-label="Segmentos de ensino">
+    <ul class="row-x stagger" id="row-x" tabindex="0" aria-label="Segmentos de ensino">
       {
         segments.map((s) => (
-          <li class={`seg card${s.highlight ? ' seg--hl' : ''}`} id={`seg-${slug(s.name)}`}>
+          <li class={`seg card rv${s.highlight ? ' seg--hl' : ''}`} id={`seg-${slug(s.name)}`}>
             <Photo src={s.photo} label={`Foto · ${s.name}`} alt={`Alunos do ${s.name} no Colégio Êxito`} ratio="4 / 5" dark={s.highlight} />
             <div class="seg__body">
               {s.age && <span class={`mono seg__tag seg__tag--${s.accent}`}>{s.age.toUpperCase()}</span>}
               <h3 class="disp">{s.name}</h3>
               <p>{s.text}</p>
+              {formacaoBySegment(s.name) && (
+                <a class="seg__link" href={`${base}/${formacaoBySegment(s.name)!.slug}`}>Conhecer o polo →</a>
+              )}
             </div>
           </li>
         ))
@@ -72,6 +77,8 @@ const slug = (s: string) =>
   .seg__tag--red { background: rgba(225, 37, 27, .12); color: var(--red-dark); }
   .seg__tag--gold { background: rgba(242, 194, 48, .22); color: #6B5200; }
   .seg h3 { margin: 12px 0 6px; font-size: 24px; font-weight: 700; letter-spacing: -.025em; }
+  .seg__link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 6px; font-weight: 700; color: var(--green); text-decoration: none; }
+  .seg__link:hover { color: var(--green); text-decoration: underline; }
   .seg p { margin: 0; font-size: 15.5px; line-height: 1.55; color: var(--muted); }
 
   @media (max-width: 899px) { .seg:nth-child(even) { margin-top: 0; } }

@@ -46,7 +46,7 @@ const d = (i: number) => `animation-delay:${(0.15 + i * 0.05).toFixed(2)}s`;
           school.stats.map((s) => (
             <div>
               <dt class="sr-only">{s.label}</dt>
-              <dd class="disp hero__stat">
+              <dd class="disp hero__stat" data-count>
                 {s.value}
                 {s.star && <span aria-label="estrelas" style="color:var(--gold)"> ★</span>}
               </dd>

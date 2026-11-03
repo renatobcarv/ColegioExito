@@ -1,0 +1,7 @@
+---
+import FormacaoPage from '../components/FormacaoPage.astro';
+import { formacoes } from '../data/site';
+const f = formacoes.find((x) => x.slug === 'tec-mais')!;
+---
+
+<FormacaoPage f={f} />

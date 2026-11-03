@@ -1,0 +1,95 @@
+---
+import { metodo, school } from '../data/site';
+import Icon from './Icon.astro';
+const anos = new Date().getFullYear() - school.foundedYear;
+---
+
+<section id="metodologia" class="met" aria-labelledby="met-t">
+  <div class="wrap">
+    <div class="met__intro">
+      <div class="rv">
+        <div class="kicker">Proposta pedagógica</div>
+        <h2 id="met-t" class="disp h2">Formação integral. <span class="serif">Não é slogan, é método.</span></h2>
+      </div>
+      <div class="rv met__story">
+        <p class="lead">
+          Há <strong>{anos} anos</strong> o Êxito forma alunos no Entorno do DF. Primeiro no Novo Gama, desde 1989, e
+          desde 1995 também em <strong>Valparaíso de Goiás</strong>, com o Colégio Êxito II. Da Educação Infantil ao
+          Novo Ensino Médio, o objetivo é um só:
+        </p>
+        <p class="met__quote disp">formar cidadãos críticos, conscientes e preparados para a vida, não só para a prova.</p>
+      </div>
+    </div>
+
+    <ul class="met__grid stagger">
+      {
+        metodo.pillars.map((p, i) => (
+          <li class="mcard rv">
+            <span class="mcard__n mono">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="disp">{p.title}</h3>
+            <p>{p.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="cmp rv" role="table" aria-label="Escola comum comparada ao Colégio Êxito">
+      <div class="cmp__row cmp__row--head" role="row">
+        <span role="columnheader">Na escola comum</span>
+        <span role="columnheader">No Colégio Êxito</span>
+      </div>
+      {
+        metodo.compare.map(([a, b]) => (
+          <div class="cmp__row" role="row">
+            <span role="cell" class="cmp__a"><span class="cmp__x" aria-hidden="true">×</span>{a}</span>
+            <span role="cell" class="cmp__b"><Icon name="check" size={20} />{b}</span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .met { padding: clamp(90px, 10vw, 140px) 0; position: relative; }
+  .met__intro { display: grid; grid-template-columns: 1fr 1fr; gap: 32px 64px; align-items: end; }
+  .met__story .lead { margin: 0; }
+  .met__quote { margin: 18px 0 0; padding-left: 18px; border-left: 3px solid var(--green); font-size: clamp(20px, 1.8vw, 24px); font-weight: 650; line-height: 1.3; letter-spacing: -.02em; }
+
+  .met__grid { list-style: none; margin: 64px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .mcard {
+    position: relative; padding: 28px 26px; border-radius: 22px; background: linear-gradient(180deg, var(--ink3), var(--ink2));
+    border: 1px solid var(--line); overflow: hidden; transition: transform .5s var(--ease), border-color .3s, box-shadow .5s var(--ease);
+  }
+  .mcard::before { content: ''; position: absolute; left: 0; top: 0; height: 3px; width: 0; background: linear-gradient(90deg, var(--green), var(--gold)); transition: width .6s var(--ease); }
+  .mcard:hover { transform: translateY(-5px); border-color: rgba(30, 139, 58, .4); box-shadow: 0 30px 60px -42px rgba(11, 31, 92, .55); }
+  .mcard:hover::before { width: 100%; }
+  .mcard__n { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; color: var(--green); font-size: 13px; border: 1px solid rgba(30, 139, 58, .25); }
+  .mcard h3 { margin: 18px 0 8px; font-size: 21px; font-weight: 700; letter-spacing: -.02em; }
+  .mcard p { margin: 0; color: var(--muted); line-height: 1.55; font-size: 15.5px; }
+
+  .cmp { margin-top: 64px; border-radius: 26px; overflow: hidden; border: 1px solid var(--line2); box-shadow: 0 40px 80px -60px rgba(11, 31, 92, .6); }
+  .cmp__row { display: grid; grid-template-columns: 1fr 1fr; }
+  .cmp__row > span { display: flex; align-items: center; gap: 12px; padding: 18px 24px; font-size: 16px; line-height: 1.4; }
+  .cmp__row + .cmp__row > span { border-top: 1px solid var(--line); }
+  .cmp__row--head > span { font-family: var(--f-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+  .cmp__row--head > span:first-child { background: var(--ink2); color: var(--muted); }
+  .cmp__row--head > span:last-child { background: var(--green); color: #FFFFFF; }
+  .cmp__a { background: #FFFFFF; color: var(--muted); }
+  .cmp__x { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: rgba(200, 16, 46, .1); color: var(--red-dark); font-weight: 700; }
+  .cmp__b { background: #F2FAF4; color: var(--cream); font-weight: 600; }
+  .cmp__b :global(svg) { flex: none; color: var(--green); }
+
+  @media (max-width: 1023px) {
+    .met__intro { grid-template-columns: 1fr; }
+    .met__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 639px) {
+    .met__grid { grid-template-columns: 1fr; }
+    .cmp__row { grid-template-columns: 1fr; }
+    .cmp__row--head { display: none; }
+    .cmp__row > span { padding: 14px 18px; font-size: 15px; }
+    .cmp__row + .cmp__row > span.cmp__a { border-top: 1px solid var(--line2); }
+    .cmp__row > span.cmp__b { border-top: 0; }
+  }
+</style>

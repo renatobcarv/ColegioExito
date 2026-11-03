@@ -8,7 +8,7 @@
  */
 import { createClient } from '@supabase/supabase-js';
 import * as local from './site';
-import type { Faq, Segment, Testimonial, Unit } from './site';
+import type { Faq, GalleryItem, Segment, Testimonial, Unit } from './site';
 
 const env = (k: string): string | undefined =>
   (import.meta.env as Record<string, string | undefined>)[k] ?? process.env[k];
@@ -36,7 +36,7 @@ const MISSING_TABLE = new Set(['PGRST205', '42P01']);
 async function load() {
   if (!url || !key) {
     console.warn('[conteúdo] Supabase não configurado — usando src/data/site.ts');
-    return { units: local.units, segments: local.segments, testimonials: local.testimonials, faqs: local.faqs, source: 'local' };
+    return { units: local.units, segments: local.segments, testimonials: local.testimonials, faqs: local.faqs, gallery: local.gallery, source: 'local' };
   }
 
   const db = createClient(url, key, { auth: { persistSession: false } });
@@ -53,8 +53,11 @@ async function load() {
 
   if (u === null || s === null || d === null || p === null) {
     console.warn('[conteúdo] Tabelas não encontradas — rode supabase/migrations/0001_conteudo.sql. Usando conteúdo local.');
-    return { units: local.units, segments: local.segments, testimonials: local.testimonials, faqs: local.faqs, source: 'local' };
+    return { units: local.units, segments: local.segments, testimonials: local.testimonials, faqs: local.faqs, gallery: local.gallery, source: 'local' };
   }
+
+  // A galeria é opcional: sem a tabela (0002 ainda não rodado), o carrossel só não aparece.
+  const g = (await get('galeria')) ?? [];
 
   const units: Unit[] = u.map((r) => ({
     id: r.id,
@@ -87,8 +90,12 @@ async function load() {
 
   const faqs: Faq[] = p.map((r) => ({ q: r.pergunta, a: r.resposta }));
 
-  console.info(`[conteúdo] Supabase: ${units.length} unidades, ${segments.length} segmentos, ${testimonials.length} depoimentos, ${faqs.length} perguntas`);
-  return { units, segments, testimonials, faqs, source: 'supabase' };
+  const gallery: GalleryItem[] = g
+    .map((r) => ({ title: r.titulo, caption: r.legenda || null, date: r.data || null, photo: photo(r.foto) ?? '' }))
+    .filter((it) => it.photo);
+
+  console.info(`[conteúdo] Supabase: ${units.length} unidades, ${segments.length} segmentos, ${testimonials.length} depoimentos, ${faqs.length} perguntas, ${gallery.length} fotos na galeria`);
+  return { units, segments, testimonials, faqs, gallery, source: 'supabase' };
 }
 
-export const { units, segments, testimonials, faqs, source } = await load();
+export const { units, segments, testimonials, faqs, gallery, source } = await load();

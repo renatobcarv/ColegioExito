@@ -4,8 +4,11 @@ import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
 import Bands from '../components/Bands.astro';
 import Manifesto from '../components/Manifesto.astro';
+import Metodologia from '../components/Metodologia.astro';
 import Jornada from '../components/Jornada.astro';
+import Formacoes from '../components/Formacoes.astro';
 import Acompanhamento from '../components/Acompanhamento.astro';
+import VidaNoExito from '../components/VidaNoExito.astro';
 import Depoimentos from '../components/Depoimentos.astro';
 import Unidades from '../components/Unidades.astro';
 import Faq from '../components/Faq.astro';
@@ -19,12 +22,15 @@ import Footer from '../components/Footer.astro';
     <Hero />
     <Bands />
     <Manifesto />
+    <Metodologia />
     <Jornada />
+    <Formacoes />
     <Acompanhamento />
+    <VidaNoExito />
     <Depoimentos />
     <Unidades />
     <Faq />
     <Visita />
   </main>
-  <Footer />
+  <Footer cta={false} />
 </Base>
