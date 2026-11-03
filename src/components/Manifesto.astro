@@ -1,0 +1,51 @@
+---
+import { pillars } from '../data/site';
+---
+
+<section class="manifesto" aria-labelledby="manifesto-t">
+  <div class="wrap">
+    <div class="kicker rv">A verdade que todo pai sente</div>
+    <h2 id="manifesto-t" class="disp rv manifesto__big">
+      Nota baixa quase nunca começa na prova. Começa numa <span class="serif" style="font-size:1.08em">dúvida que ninguém viu</span>, numa sala cheia demais para alguém perceber.
+    </h2>
+    <div class="rv lead manifesto__cols">
+      <p>A dificuldade vira atraso, o atraso vira desinteresse, e o boletim só chega para <strong>confirmar o que já tinha acontecido.</strong></p>
+      <p>No Êxito a ordem é inversa: acompanhar de perto, avisar cedo e <strong>corrigir a rota junto com a família</strong>, enquanto ainda dá tempo.</p>
+    </div>
+
+    <ol class="manifesto__pillars">
+      {
+        pillars.map((p, i) => (
+          <li class="card rv">
+            <span class="mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <p class="disp">{p}</p>
+          </li>
+        ))
+      }
+    </ol>
+
+    <p class="disp rv manifesto__punch">
+      Escola boa não é a que cobra mais.<br />É a que <span class="hand serif">percebe primeiro.<svg aria-hidden="true" viewBox="0 0 400 30" preserveAspectRatio="none"><path d="M5 20 C 90 6, 200 4, 395 16"></path></svg></span>
+    </p>
+  </div>
+</section>
+
+<style>
+  .manifesto { padding: clamp(90px, 11vw, 150px) 0; }
+  .manifesto__big { margin: 18px 0 0; font-weight: 620; text-wrap: pretty; font-size: clamp(30px, 4vw, 56px); line-height: 1.1; letter-spacing: -.03em; max-width: 1020px; }
+  .manifesto__cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 24px 56px; margin-top: 44px; max-width: 1020px; line-height: 1.65; }
+  .manifesto__cols p { margin: 0; }
+  .manifesto__pillars { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 72px 0 0; }
+  .manifesto__pillars li { padding: 24px 22px; min-height: 190px; display: flex; flex-direction: column; justify-content: space-between; gap: 28px; }
+  .manifesto__pillars .mono { font-size: 11px; color: var(--dim); }
+  .manifesto__pillars p { margin: 0; font-weight: 620; font-size: 20px; line-height: 1.22; letter-spacing: -.015em; }
+  .manifesto__punch { margin: clamp(90px, 10vw, 140px) 0 0; text-align: center; font-weight: 720; font-size: clamp(32px, 5vw, 72px); line-height: 1.08; }
+
+  .hand { position: relative; display: inline-block; }
+  .hand svg { position: absolute; left: 0; bottom: -.08em; width: 100%; height: .3em; overflow: visible; }
+  .hand path { fill: none; stroke: var(--red); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 420; stroke-dashoffset: 0; }
+  @supports (animation-timeline: view()) {
+    .hand path { animation: draw linear both; animation-timeline: view(); animation-range: entry 40% cover 50%; }
+  }
+  @keyframes draw { from { stroke-dashoffset: 420; } }
+</style>

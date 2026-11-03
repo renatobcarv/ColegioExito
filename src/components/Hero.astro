@@ -1,0 +1,147 @@
+---
+import { school, segments } from '../data/site';
+import Arrow from './Arrow.astro';
+import Photo from './Photo.astro';
+
+const line1 = 'Seu filho não precisa de mais uma escola.'.split(' ');
+const line2 = 'Precisa de uma que'.split(' ');
+const d = (i: number) => `animation-delay:${(0.15 + i * 0.05).toFixed(2)}s`;
+---
+
+<section id="topo" class="hero">
+  <div class="glow" aria-hidden="true" style="width:760px;height:760px;right:-200px;top:-120px;background:radial-gradient(circle,rgba(225,37,27,.38),transparent 62%)"></div>
+  <div class="glow" aria-hidden="true" style="width:620px;height:620px;left:-280px;bottom:-300px;background:radial-gradient(circle,rgba(242,194,48,.13),transparent 62%)"></div>
+  <div class="gridlines" aria-hidden="true"></div>
+
+  <div class="wrap hero__grid">
+    <div>
+      <div class="eyebrow fade" style="animation-delay:.1s">
+        <span class="dot"></span>Matrículas {school.enrollmentYear} abertas · vagas limitadas por turma
+      </div>
+
+      <h1 class="disp hero__title">
+        {line1.map((w, i) => <><span class="w"><span class="wi" style={d(i)}>{w}</span></span>{' '}</>)}
+        <br />
+        {line2.map((w, i) => <><span class="w"><span class="wi" style={d(i + 9)}>{w}</span></span>{' '}</>)}
+        <span class="w"><span class="wi serif" style="animation-delay:.85s;font-size:1.1em">acompanha.</span></span>
+      </h1>
+
+      <p class="lead fade hero__lead" style="animation-delay:1s">
+        Da Educação Infantil ao Ensino Médio, no Novo Gama e em Valparaíso. Turmas em que o professor sabe o nome do seu
+        filho, percebe a dúvida cedo e <strong>avisa você antes que vire nota baixa.</strong>
+      </p>
+
+      <div class="fade hero__ctas" style="animation-delay:1.15s">
+        <a href="#visita" class="btn">Agendar uma visita<span class="arr"><Arrow /></span></a>
+        <a href="#jornada" class="ghost">Conhecer o ensino</a>
+      </div>
+
+      <ul class="fade mono hero__segs" style="animation-delay:1.3s" aria-label="Segmentos">
+        {segments.map((s) => <li>{s.name.toUpperCase()}</li>)}
+      </ul>
+
+      <dl class="fade hero__stats" style="animation-delay:1.4s">
+        {
+          school.stats.map((s) => (
+            <div>
+              <dt class="sr-only">{s.label}</dt>
+              <dd class="disp hero__stat">
+                {s.value}
+                {s.star && <span aria-label="estrelas" style="color:var(--gold)"> ★</span>}
+              </dd>
+              <dd class="hero__stat-l" aria-hidden="true">{s.label}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+
+    <div class="fade hero__visual" style="animation-delay:.5s">
+      <div class="bob hero__photo">
+        <Photo src={null} label="Foto real · aluno em sala, luz natural" alt="Aluno do Colégio Êxito em sala de aula" />
+      </div>
+
+      <div class="float bob2 hero__card hero__card--grades" aria-hidden="true">
+        <div class="mono hero__card-head"><span>BOLETIM · 2º BIM</span><span style="color:#5FD38A">▲ evolução</span></div>
+        <div class="hero__bars">
+          {
+            [
+              ['Matemática', '8,7', 87, 'linear-gradient(90deg,var(--red),#F06A5E)', '0s'],
+              ['Português', '9,2', 92, 'linear-gradient(90deg,#C9A227,var(--gold))', '1.1s'],
+              ['Ciências', '8,1', 81, 'linear-gradient(90deg,#3E6FD8,#7DA2F2)', '1.3s'],
+            ].map(([n, v, w, bg, delay]) => (
+              <div>
+                <div class="hero__bar-row"><span>{n}</span><span class="mono" style="color:var(--gold)">{v}</span></div>
+                <div class="bar"><i style={`width:${w}%;background:${bg};animation-delay:${delay}`}></i></div>
+              </div>
+            ))
+          }
+        </div>
+        <div class="mono" style="font-size:10px;color:var(--dim);margin-top:12px">ilustrativo</div>
+      </div>
+
+      <div class="float hero__card hero__card--msg" aria-hidden="true">
+        <span class="av" style="background:var(--gold)">C</span>
+        <div>
+          <div style="font-size:13px;font-weight:600">Coordenação Êxito</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.45;margin-top:3px">
+            Oi! O Pedro foi muito bem na revisão de hoje. Seguimos com o reforço de frações na quinta.
+          </div>
+          <div class="mono" style="font-size:10px;color:var(--dim);margin-top:6px">14:32 · lida</div>
+        </div>
+      </div>
+
+      <div class="float mono hero__live" aria-hidden="true">
+        <span class="dot" style="background:#5FD38A;box-shadow:0 0 0 4px rgba(95,211,138,.2)"></span>aula em andamento
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { position: relative; overflow: clip; padding: 96px 0 72px; }
+  .hero__grid { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 48px; align-items: center; }
+  .hero__title { margin: 24px 0 0; font-size: clamp(40px, 6vw, 86px); font-weight: 760; line-height: .97; }
+  .hero__lead { margin: 24px 0 0; max-width: 540px; }
+  .hero__ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 34px; }
+  .hero__segs { display: flex; flex-wrap: wrap; gap: 10px 22px; margin: 34px 0 0; padding: 0; list-style: none; font-size: 12px; color: var(--dim); letter-spacing: .06em; }
+  .hero__stats { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 16px 32px; margin: 30px 0 0; padding-top: 26px; border-top: 1px solid var(--line); }
+  .hero__stats dd { margin: 0; }
+  .hero__stat { font-size: 34px; font-weight: 760; line-height: 1; }
+  .hero__stat-l { font-size: 14px; color: var(--muted); margin-top: 4px !important; }
+
+  .hero__visual { position: relative; height: 600px; }
+  .hero__photo {
+    position: absolute; left: 12%; right: 8%; top: 30px; bottom: 30px; border-radius: 32px; overflow: hidden;
+    border: 1px solid var(--line2); box-shadow: 0 50px 100px -30px rgba(11, 31, 92, .6), 0 30px 80px -40px rgba(225, 37, 27, .4);
+  }
+  .hero__photo :global(.ph) { position: absolute; inset: 0; }
+
+  .float {
+    --cream: #FFFFFF; --muted: #D3DCF7; --dim: #B8C6EE; --line: rgba(255, 255, 255, .14); --line2: rgba(255, 255, 255, .26);
+    color: #FFFFFF; position: absolute; z-index: 4; border-radius: 18px; background: rgba(14, 45, 140, .92);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border: 1px solid var(--line2);
+    box-shadow: 0 24px 60px -20px rgba(0, 0, 0, .6);
+  }
+  .hero__card--grades { left: -10px; top: 70px; width: 270px; padding: 16px 18px 18px; }
+  .hero__card-head { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 14px; }
+  .hero__bars { display: grid; gap: 11px; font-size: 13px; }
+  .hero__bar-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .bar { height: 8px; border-radius: 5px; background: rgba(255, 255, 255, .1); overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 5px; transform-origin: left; animation: grow 1.8s var(--ease) both; }
+  @keyframes grow { from { transform: scaleX(0); } }
+  .hero__card--msg { right: -14px; bottom: 80px; width: 290px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; }
+  .hero__live { right: 30px; top: 18px; padding: 10px 14px; border-radius: 999px; font-size: 11.5px; display: flex; align-items: center; gap: 8px; }
+
+  @media (max-width: 759px) {
+    .hero { padding: 56px 0 48px; }
+    .hero__stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .hero__stat { font-size: 26px; }
+    .hero__stat-l { font-size: 12.5px; line-height: 1.35; }
+    .hero__visual { height: 500px; }
+    .hero__photo { left: 0; right: 0; }
+    .hero__card--grades { left: 8px; top: 64px; width: 230px; }
+    .hero__card--msg { right: 8px; bottom: 50px; width: 260px; }
+    .hero__live { right: 16px; }
+  }
+</style>

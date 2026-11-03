@@ -1,0 +1,26 @@
+---
+import { segments, units } from '../data/site';
+const a = segments.map((s) => s.name).filter((n) => n !== 'Berçário');
+const b = [...units.map((u) => u.city), 'Acompanhamento de perto', 'Família informada'];
+---
+
+<div class="bands" aria-hidden="true">
+  <div class="band band--red"><div class="band-in">{[...a, ...a].map((t) => <span>{t}</span>)}</div></div>
+  <div class="band band--soft"><div class="band-in band-in--rev">{[...b, ...b].map((t) => <span>{t}</span>)}</div></div>
+</div>
+
+<style>
+  .bands { position: relative; height: 150px; overflow: hidden; }
+  .band {
+    position: absolute; left: -10%; width: 120%; padding: 14px 0; overflow: hidden; white-space: nowrap;
+    font-family: var(--f-disp); font-weight: 760; font-size: 20px; letter-spacing: .02em; text-transform: uppercase;
+    font-variation-settings: "wdth" 80;
+  }
+  .band--red { top: 34px; background: var(--red); color: #FFFFFF; transform: rotate(-2.4deg); z-index: 2; }
+  .band--soft { top: 64px; background: var(--ink3); color: var(--cream); transform: rotate(1.8deg); border-block: 1px solid var(--line2); }
+  .band-in { display: inline-flex; animation: marq 40s linear infinite; }
+  .band-in--rev { animation-direction: reverse; animation-duration: 48s; }
+  .band-in span { display: inline-flex; align-items: center; margin-right: 28px; }
+  .band-in span::after { content: "✦"; font-size: .75em; margin-left: 28px; opacity: .65; }
+  @keyframes marq { to { transform: translateX(-50%); } }
+</style>

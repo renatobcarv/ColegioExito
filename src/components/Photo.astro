@@ -1,0 +1,32 @@
+---
+/**
+ * Foto com espaço reservado.
+ * Sem `src`, mostra um bloco azul com a legenda do que deve ir ali.
+ * Com `src` (ex.: "/img/fotos/bercario.jpg"), mostra a foto real.
+ */
+interface Props {
+  src: string | null;
+  alt: string;
+  label: string;
+  ratio?: string;
+  dark?: boolean;
+  eager?: boolean;
+}
+const { src, alt, label, ratio, dark = false, eager = false } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const url = src && src.startsWith('/') ? `${base}${src}` : src;
+const style = [
+  ratio ? `aspect-ratio:${ratio}` : '',
+  dark ? 'background:linear-gradient(160deg,#5A1A1F,#1A0F22)' : '',
+].filter(Boolean).join(';');
+---
+
+<div class="ph" style={style || undefined}>
+  {
+    url ? (
+      <img src={url} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+    ) : (
+      <span aria-hidden="true">[{label}]</span>
+    )
+  }
+</div>
