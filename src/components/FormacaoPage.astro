@@ -33,8 +33,10 @@ const icon = f.slug === 'unopar' ? 'cap' : 'tool';
           </div>
         </div>
         <div class="fh__card fade" style="animation-delay:.4s">
-          <span class="fh__icon"><Icon name={icon} size={30} /></span>
-          <p class="mono fh__card-k">{f.name.toUpperCase()}</p>
+          <div class={`fh__logo fh__logo--${f.slug}`}>
+            <img src={`${base}${f.logo.src}`} alt={f.logo.alt} width={f.logo.w} height={f.logo.h} decoding="async" />
+          </div>
+          <p class="mono fh__card-k">Por que escolher</p>
           <ul class="fh__checks">
             {f.facts.map((x) => <li><Icon name="check" size={20} /><span><strong>{x.title}</strong>{x.text}</span></li>)}
           </ul>
@@ -165,7 +167,10 @@ const icon = f.slug === 'unopar' ? 'cap' : 'tool';
 
   .fh__card { position: relative; padding: 30px; border-radius: 28px; background: #FFFFFF; border: 1px solid rgba(30, 139, 58, .2); box-shadow: 0 40px 80px -46px rgba(11, 31, 92, .55); }
   .fh__icon { position: absolute; top: -22px; left: 26px; width: 60px; height: 60px; border-radius: 18px; display: grid; place-items: center; background: var(--green); color: #FFFFFF; box-shadow: 0 14px 30px -12px rgba(30, 139, 58, .8); }
-  .fh__card-k { margin: 26px 0 18px; font-size: 12px; letter-spacing: .14em; color: var(--green); }
+  .fh__logo { display: flex; justify-content: center; align-items: center; height: 150px; padding: 8px 0 22px; border-bottom: 1px solid var(--line); }
+  .fh__logo img { height: 100%; width: auto; max-width: 100%; object-fit: contain; }
+  .fh__logo--tec-mais { height: 110px; }
+  .fh__card-k { margin: 22px 0 18px; font-size: 12px; letter-spacing: .14em; color: var(--green); }
   .fh__checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
   .fh__checks li { display: grid; grid-template-columns: 22px 1fr; gap: 12px; color: var(--green); }
   .fh__checks span { color: var(--muted); font-size: 15px; line-height: 1.5; }
