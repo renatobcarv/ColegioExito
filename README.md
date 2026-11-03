@@ -34,18 +34,16 @@ Um campo `null` ou uma lista vazia some do site sozinho, então nada quebrado va
 - [ ] **Faixa etária** do Berçário e da Educação Infantil (`age`).
 - [ ] **Links**: Conexão Êxito, Unicollege, Matrícula, Webmail e Blog (`school.services`).
 - [ ] **Perguntas frequentes** sobre turnos e adaptação de alunos transferidos.
-- [ ] **Domínio final**: confirmar `SITE_URL` em `astro.config.mjs`.
+- [ ] **Domínio final**: definir `SITE_URL` na Vercel.
 - [ ] Revisar os números do hero (anos, avaliações no Google, seguidores).
 
-## Publicar
+## Publicar (Vercel)
 
-O workflow `.github/workflows/deploy.yml` publica no **GitHub Pages** a cada push na `main`.
+A Vercel publica sozinha a cada push na `main` (e gera uma prévia para cada branch/PR).
 
-1. No GitHub: **Settings → Pages → Source: GitHub Actions**.
-2. Sem domínio próprio, o site fica em `https://<usuario>.github.io/ColegioExito`.
-3. Com domínio próprio: em **Settings → Secrets and variables → Actions → Variables**, crie `SITE_URL` (ex.: `https://colegioexito.com.br`) e `BASE_PATH` = `/`, e configure o domínio em Settings → Pages.
-
-Também funciona sem mudanças na Netlify, Vercel ou Cloudflare Pages (comando `npm run build`, pasta `dist`).
+- Framework: **Astro** (detectado automaticamente) · Build: `npm run build` · Saída: `dist`
+- Em **Settings → Environment Variables**, defina `SITE_URL` com o domínio final (ex.: `https://colegioexito.com.br`).
+- Domínio próprio: **Settings → Domains**.
 
 ## O que já vem pronto
 
