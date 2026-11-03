@@ -1,0 +1,159 @@
+---
+import { school, formatPhone, telLink } from '../data/site';
+import { units } from '../data/content';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const serviceLinks = [
+  { label: 'Conexão Êxito', href: school.services.conexao },
+  { label: 'Unicollege', href: school.services.unicollege },
+  { label: 'Matrícula', href: school.services.matricula },
+  { label: 'Webmail', href: school.services.webmail },
+  { label: 'Instagram', href: school.social.instagram },
+].filter((l): l is { label: string; href: string } => Boolean(l.href));
+
+const nav = [
+  { label: 'Principal', href: '#topo' },
+  { label: 'Unidades', href: '#unidades' },
+  { label: 'Infantil', href: '#seg-educacao-infantil' },
+  { label: 'Fundamental I', href: '#seg-fundamental-i' },
+  { label: 'Fundamental II', href: '#seg-fundamental-ii' },
+  { label: 'Ensino Médio', href: '#seg-ensino-medio' },
+  { label: 'Unopar', href: '#seg-polo-unopar' },
+  ...(school.services.blog ? [{ label: 'Blog', href: school.services.blog }] : []),
+];
+---
+
+<div class="topbar dark">
+  <div class="wrap topbar__in">
+    <span class="topbar__phones">
+      {
+        units.map((u) => (
+          <span>
+            {u.tag} · {u.city.replace(' de Goiás', '')}{' '}
+            {u.phones[0] && <a href={telLink(u.phones[0].number)}>{formatPhone(u.phones[0].number)}</a>}
+          </span>
+        ))
+      }
+    </span>
+    <span class="topbar__links">
+      {serviceLinks.map((l) => <a href={l.href} target="_blank" rel="noopener">{l.label}</a>)}
+    </span>
+  </div>
+</div>
+
+<header class="nav dark" id="nav">
+  <div class="wrap nav__in">
+    <a href="#topo" class="nav__logo" aria-label={`${school.name} — início`}>
+      <img src={`${base}/img/logo-horizontal.png`} alt={`${school.name} — ${school.slogan}`} width="277" height="50" />
+    </a>
+
+    <nav aria-label="Principal" class="nav__menu" id="menu">
+      {nav.map((l, i) => <a href={l.href} aria-current={i === 0 ? 'page' : undefined}>{l.label}</a>)}
+      <a href="#visita" class="pill-sm pill-sm--red nav__cta-m">Agendar visita</a>
+    </nav>
+
+    <div class="nav__actions">
+      <a href="#visita" class="pill-sm pill-sm--red nav__cta">Agendar visita</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="menu" aria-label="Abrir menu">
+        <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <path class="l1" d="M4 7h16"></path><path class="l2" d="M4 12h16"></path><path class="l3" d="M4 17h16"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="tricolor" aria-hidden="true"><span></span><span></span><span></span></div>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('.nav__toggle');
+  const menu = document.getElementById('menu');
+  if (btn && menu) {
+    const set = (open: boolean) => {
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+      menu.classList.toggle('is-open', open);
+    };
+    btn.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'));
+    menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) set(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.classList.contains('is-open')) { set(false); btn.focus(); }
+    });
+  }
+
+  // destaca no menu a seção visível
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('.nav__menu a[href^="#"]:not(.pill-sm)')];
+  const targets = links
+    .map((a) => document.querySelector(a.hash))
+    .filter((el): el is Element => Boolean(el));
+  if ('IntersectionObserver' in window && targets.length) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((en) => {
+          if (!en.isIntersecting) return;
+          links.forEach((a) => a.toggleAttribute('aria-current', a.hash === `#${en.target.id}`));
+        });
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    targets.forEach((t) => io.observe(t));
+  }
+</script>
+
+<style>
+  .topbar { background: var(--royal); font-size: 13px; color: var(--muted); }
+  .topbar__in { padding: 9px 0; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 24px; }
+  .topbar__phones { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+  .topbar a { color: var(--cream); text-decoration: none; }
+  .topbar a:hover { text-decoration: underline; }
+  .topbar__links { display: flex; flex-wrap: wrap; gap: 18px; }
+
+  .nav {
+    position: sticky; top: 0; z-index: 60; background: rgba(18, 55, 166, .94);
+    -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav__in { height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .nav__logo img { height: 50px; width: auto; }
+  .nav__menu { display: flex; flex-wrap: wrap; gap: 24px; font-size: 15px; }
+  .nav__menu a:not(.pill-sm) { color: var(--muted); text-decoration: none; padding-bottom: 3px; border-bottom: 2px solid transparent; transition: color .2s, border-color .2s; }
+  .nav__menu a:not(.pill-sm):hover { color: var(--cream); }
+  .nav__menu a[aria-current] { color: var(--cream); font-weight: 600; border-bottom-color: var(--red); }
+  .nav__actions { display: flex; align-items: center; gap: 10px; }
+  .nav__toggle, .nav__cta-m { display: none; }
+
+  .tricolor { display: flex; height: 4px; }
+  .tricolor span { flex: 1; }
+  .tricolor span:nth-child(1) { background: var(--green); }
+  .tricolor span:nth-child(2) { background: var(--red); }
+  .tricolor span:nth-child(3) { background: #1B30A3; }
+
+  @media (max-width: 1099px) {
+    .nav__toggle {
+      display: grid; place-items: center; width: 48px; height: 48px; border-radius: 12px;
+      border: 1px solid var(--line2); background: transparent; color: #FFFFFF; cursor: pointer;
+    }
+    .nav__toggle path { transition: transform .3s var(--ease), opacity .2s; transform-origin: center; }
+    .nav__toggle[aria-expanded='true'] .l1 { transform: translateY(5px) rotate(45deg); }
+    .nav__toggle[aria-expanded='true'] .l2 { opacity: 0; }
+    .nav__toggle[aria-expanded='true'] .l3 { transform: translateY(-5px) rotate(-45deg); }
+    .nav__menu {
+      position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; flex-wrap: nowrap; gap: 0;
+      padding: 8px 16px 20px; background: var(--royal-deep); border-bottom: 1px solid var(--line2);
+      box-shadow: 0 30px 40px -20px rgba(0, 0, 0, .5);
+      visibility: hidden; opacity: 0; transform: translateY(-8px);
+      transition: opacity .25s, transform .25s var(--ease), visibility 0s .25s;
+    }
+    .nav__menu.is-open { visibility: visible; opacity: 1; transform: none; transition: opacity .25s, transform .25s var(--ease); }
+    .nav__menu a:not(.pill-sm) { padding: 14px 4px; font-size: 17px; border-bottom: 1px solid var(--line); }
+    .nav__menu a[aria-current] { border-bottom-color: var(--line); }
+    .nav__cta-m { display: inline-flex; margin-top: 16px; height: 52px; font-size: 16px; }
+  }
+  @media (max-width: 559px) {
+    .nav__cta { display: none; }
+    .nav__logo img { height: 40px; }
+    .topbar__links { display: none; }
+  }
+</style>

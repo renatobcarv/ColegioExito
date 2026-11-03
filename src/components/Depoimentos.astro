@@ -1,0 +1,37 @@
+---
+import { testimonials } from '../data/content';
+const colors = ['var(--gold)', '#FF8077', '#7DA2F2'];
+---
+
+{
+  testimonials.length > 0 && (
+    <section class="depo" aria-labelledby="depo-t">
+      <div class="glow" aria-hidden="true" style="width:700px;height:500px;left:50%;top:20%;translate:-50% 0;background:radial-gradient(ellipse,rgba(225,37,27,.12),transparent 65%)" />
+      <div class="wrap" style="position:relative">
+        <div class="rv" style="text-align:center;max-width:820px;margin:0 auto">
+          <div class="kicker">Quem já está aqui</div>
+          <h2 id="depo-t" class="disp h2">Palavra de <span class="serif">pai e mãe.</span></h2>
+        </div>
+        <div class="depo__grid">
+          {testimonials.map((t, i) => (
+            <figure class="rv">
+              <blockquote class="bubble">{t.quote}</blockquote>
+              <figcaption>
+                <span class="av" style={`background:${colors[i % colors.length]}`} aria-hidden="true">{t.initial}</span>
+                <span><strong>{t.name}</strong><br /><span style="color:var(--muted)">{t.role}</span></span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .depo { padding: clamp(90px, 10vw, 140px) 0; position: relative; }
+  .depo__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 24px; margin-top: 64px; }
+  figure { margin: 0; display: flex; flex-direction: column; gap: 14px; }
+  figcaption { display: flex; align-items: center; gap: 12px; font-size: 14px; }
+  .bubble { margin: 0; border-radius: 20px 20px 20px 6px; background: var(--ink3); border: 1px solid var(--line); padding: 20px 22px; font-size: 17px; line-height: 1.55; }
+</style>

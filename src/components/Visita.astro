@@ -1,0 +1,24 @@
+---
+import { school, waLink } from '../data/site';
+import Arrow from './Arrow.astro';
+---
+
+<section id="visita" class="visita dark" aria-labelledby="visita-t">
+  <div class="glow" aria-hidden="true" style="width:900px;height:600px;left:50%;top:50%;translate:-50% -50%;background:radial-gradient(ellipse,rgba(225,37,27,.32),transparent 62%)"></div>
+  <div class="gridlines" aria-hidden="true" style="-webkit-mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,#000 10%,transparent 70%);mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,#000 10%,transparent 70%)"></div>
+  <div class="wrap rv visita__in">
+    <div class="eyebrow"><span class="dot"></span>Visitas · {school.visitHours}</div>
+    <h2 id="visita-t" class="disp visita__t">A melhor forma de escolher uma escola é <span class="serif" style="font-size:1.08em">entrar nela.</span></h2>
+    <p class="lead" style="margin:0;max-width:600px">
+      Agende uma visita sem compromisso. Conheça as salas, a equipe e veja de perto como seu filho será acompanhado. As vagas por turma são limitadas.
+    </p>
+    <a href={waLink(school.whatsapp)} target="_blank" rel="noopener" class="btn btn--lg">Agendar pelo WhatsApp<span class="arr"><Arrow /></span></a>
+    <div class="mono" style="font-size:12px;color:var(--dim);letter-spacing:.06em">RESPOSTA NO MESMO DIA EM HORÁRIO COMERCIAL</div>
+  </div>
+</section>
+
+<style>
+  .visita { position: relative; overflow: clip; padding: clamp(110px, 13vw, 180px) 0; background: var(--royal); }
+  .visita__in { position: relative; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 26px; }
+  .visita__t { margin: 0; font-size: clamp(40px, 6.4vw, 96px); font-weight: 760; line-height: .98; max-width: 1050px; text-wrap: balance; }
+</style>

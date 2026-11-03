@@ -1,0 +1,50 @@
+---
+import { waLink, telLink, formatPhone } from '../data/site';
+import { units } from '../data/content';
+import Photo from './Photo.astro';
+---
+
+<section id="unidades" class="unid" aria-labelledby="unid-t">
+  <div class="wrap">
+    <div class="rv">
+      <div class="kicker">Onde estamos</div>
+      <h2 id="unid-t" class="disp h2" style="margin-bottom:48px">Duas unidades, <span class="serif">perto de você.</span></h2>
+    </div>
+    <div class="unid__grid">
+      {
+        units.map((u) => (
+          <article class="card rv" id={u.id}>
+            <Photo src={u.photo} label={`Foto · fachada ${u.tag}`} alt={`Fachada do Colégio Êxito ${u.tag}, ${u.city}`} ratio="16 / 9" />
+            <div class="unid__body">
+              <span class="mono unid__tag">{u.tag.toUpperCase()}</span>
+              <h3 class="disp">{u.city}</h3>
+              <address>
+                {u.address.map((l) => <>{l}<br /></>)}
+                {u.hours && <>{u.hours}<br /></>}
+                {u.phones.map((p, i) => <>{i > 0 && ' · '}<a href={telLink(p.number)}>{formatPhone(p.number)}</a></>)}
+              </address>
+              <div class="unid__ctas">
+                {u.whatsapp && (
+                  <a href={waLink(u.whatsapp, `Olá! Vim pelo site e gostaria de falar com a ${u.tag} (${u.city}).`)} target="_blank" rel="noopener" class="pill-sm pill-sm--wa">
+                    WhatsApp {formatPhone(u.whatsapp.slice(2))}
+                  </a>
+                )}
+                <a href={u.mapsUrl} target="_blank" rel="noopener" class="ghost ghost--sm">Como chegar</a>
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .unid { padding: clamp(60px, 8vw, 110px) 0; }
+  .unid__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 20px; }
+  .unid__body { padding: 26px 26px 30px; display: flex; flex-direction: column; gap: 12px; }
+  .unid__tag { font-size: 11px; color: #6B5200; letter-spacing: .12em; }
+  h3 { margin: 0; font-size: 30px; font-weight: 740; }
+  address { font-style: normal; color: var(--muted); line-height: 1.6; }
+  .unid__ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+</style>

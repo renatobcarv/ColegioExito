@@ -1,0 +1,35 @@
+---
+import { faqs } from '../data/content';
+---
+
+<section id="duvidas" class="faq" aria-labelledby="faq-t">
+  <div class="wrap faq__grid">
+    <div class="rv">
+      <div class="kicker">Antes de decidir</div>
+      <h2 id="faq-t" class="disp h2" style="font-size:clamp(36px,4.6vw,62px)">Perguntas que <span class="serif">todo pai faz.</span></h2>
+    </div>
+    <div class="rv faq__list">
+      {
+        faqs.map((f, i) => (
+          <details class="card" open={i === 0}>
+            <summary>{f.q}<span class="plus" aria-hidden="true">+</span></summary>
+            <p>{f.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq { padding: clamp(60px, 8vw, 110px) 0; }
+  .faq__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 48px; align-items: start; }
+  .faq__list { display: grid; gap: 10px; }
+  details { padding: 20px 22px; }
+  details:hover { translate: none; }
+  summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 16px; font-size: 18px; font-weight: 600; }
+  summary::-webkit-details-marker { display: none; }
+  .plus { color: var(--red); font-size: 24px; line-height: 1; transition: transform .35s var(--ease); }
+  details[open] .plus { transform: rotate(45deg); }
+  details p { margin: 12px 0 0; color: var(--muted); line-height: 1.6; }
+</style>

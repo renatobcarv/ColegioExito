@@ -1,0 +1,102 @@
+---
+import '../styles/global.css';
+import { school } from '../data/site';
+import { units, faqs } from '../data/content';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = `${school.name} — Matrículas ${school.enrollmentYear} | Novo Gama e Valparaíso`, description = school.description } =
+  Astro.props;
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(`${base}/img/og-image.jpg`, Astro.site);
+
+// Dados estruturados (Google): uma organização com duas unidades + FAQ
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'EducationalOrganization',
+      '@id': `${Astro.site}#org`,
+      name: school.name,
+      slogan: school.slogan,
+      foundingDate: String(school.foundedYear),
+      url: Astro.site?.toString(),
+      logo: new URL(`${base}/img/logo-quadrado.jpg`, Astro.site).toString(),
+      sameAs: Object.values(school.social),
+      subOrganization: units.map((u) => ({ '@id': `${Astro.site}#${u.id}` })),
+    },
+    ...units.map((u) => ({
+      '@type': 'School',
+      '@id': `${Astro.site}#${u.id}`,
+      name: `${school.name} — ${u.tag} ${u.city}`,
+      parentOrganization: { '@id': `${Astro.site}#org` },
+      telephone: u.phones.map((p) => `+55${p.number}`),
+      hasMap: u.mapsUrl,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: u.address[0],
+        addressLocality: u.geo?.locality,
+        addressRegion: u.geo?.region,
+        postalCode: u.geo?.postalCode,
+        addressCountry: 'BR',
+      },
+    })),
+    {
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#1237A6" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <link rel="icon" type="image/png" href={`${base}/favicon.png`} />
+    <link rel="apple-touch-icon" href={`${base}/apple-touch-icon.png`} />
+    <link rel="sitemap" href={`${base}/sitemap-index.xml`} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content={school.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap"
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="prog" aria-hidden="true"></div>
+    <slot />
+  </body>
+</html>
