@@ -4,7 +4,7 @@ import Icon from './Icon.astro';
 const anos = new Date().getFullYear() - school.foundedYear;
 ---
 
-<section id="metodologia" class="met" aria-labelledby="met-t">
+<section id="metodologia" class="met" data-accent="green" aria-labelledby="met-t">
   <div class="wrap">
     <div class="met__intro">
       <div class="rv">
@@ -21,7 +21,7 @@ const anos = new Date().getFullYear() - school.foundedYear;
       </div>
     </div>
 
-    <ul class="met__grid stagger">
+    <ul class="met__grid stagger tri">
       {
         metodo.pillars.map((p, i) => (
           <li class="mcard rv">
@@ -61,10 +61,10 @@ const anos = new Date().getFullYear() - school.foundedYear;
     position: relative; padding: 28px 26px; border-radius: 22px; background: linear-gradient(180deg, var(--ink3), var(--ink2));
     border: 1px solid var(--line); overflow: hidden; transition: transform .5s var(--ease), border-color .3s, box-shadow .5s var(--ease);
   }
-  .mcard::before { content: ''; position: absolute; left: 0; top: 0; height: 3px; width: 0; background: linear-gradient(90deg, var(--green), var(--gold)); transition: width .6s var(--ease); }
-  .mcard:hover { transform: translateY(-5px); border-color: rgba(30, 139, 58, .4); box-shadow: 0 30px 60px -42px rgba(11, 31, 92, .55); }
-  .mcard:hover::before { width: 100%; }
-  .mcard__n { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; color: var(--green); font-size: 13px; border: 1px solid rgba(30, 139, 58, .25); }
+  .mcard::before { content: ''; position: absolute; left: 0; top: 0; height: 3px; width: 100%; background: var(--c); transform: scaleX(.18); transform-origin: left; transition: transform .6s var(--ease); }
+  .mcard:hover { transform: translateY(-5px); border-color: var(--c); box-shadow: 0 30px 60px -42px rgba(11, 31, 92, .55); }
+  .mcard:hover::before { transform: scaleX(1); }
+  .mcard__n { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--c); color: #FFFFFF; font-size: 13px; }
   .mcard h3 { margin: 18px 0 8px; font-size: 21px; font-weight: 700; letter-spacing: -.02em; }
   .mcard p { margin: 0; color: var(--muted); line-height: 1.55; font-size: 15.5px; }
 

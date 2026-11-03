@@ -7,7 +7,7 @@ import { steps } from '../data/site';
     <div class="rv">
       <div class="kicker">Como funciona</div>
       <h2 id="acomp-t" class="disp h2" style="font-size:clamp(36px,4.6vw,64px)">Você não descobre no boletim. <span class="serif">Você acompanha.</span></h2>
-      <ol class="steps" id="steps">
+      <ol class="steps tri" id="steps">
         {
           steps.map((s, i) => (
             <li class={`step${i === 0 ? ' on' : ''}`}>
@@ -79,7 +79,8 @@ import { steps } from '../data/site';
   .step b { display: block; font-size: 19px; font-weight: 650; letter-spacing: -.015em; }
   .step small { color: var(--muted); font-size: 14.5px; }
   .step.on { background: var(--ink3); border-color: var(--line2); }
-  .step.on .n { background: var(--red); color: #FFFFFF; }
+  .step.on .n { background: var(--c); color: #FFFFFF; }
+  .step .n { box-shadow: inset 0 0 0 2px var(--c); }
 
   .portal { border-radius: 22px; background: var(--navy); border: 1px solid var(--line2); box-shadow: 0 40px 100px -30px rgba(0, 0, 0, .7); overflow: hidden; }
   .portal__bar { display: flex; align-items: center; gap: 6px; padding: 12px 14px; border-bottom: 1px solid var(--line); background: #0A2272; }

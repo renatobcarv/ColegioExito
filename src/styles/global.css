@@ -67,9 +67,25 @@ a:hover { color: var(--red-dark); }
 @media (min-width: 640px) { .wrap { width: min(1200px, calc(100% - 64px)); } }
 @media (min-width: 1600px) { .wrap { width: 1320px; } }
 .disp { font-family: var(--f-disp); font-variation-settings: "opsz" 96; letter-spacing: -.04em; }
-.serif { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-spacing: -.01em; color: var(--red); }
+.serif { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-spacing: -.01em; color: var(--accent); }
 .mono { font-family: var(--f-mono); }
-.kicker { font-family: var(--f-mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--red-dark); }
+.kicker { font-family: var(--f-mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-ink); }
+
+/* ---------- as três cores da logo ----------
+   Cada seção escolhe sua cor de destaque com data-accent="red|green|blue".
+   Vermelho = ação/urgência · Verde = crescimento/carreira · Azul = confiança/instituição */
+:root, [data-accent='red'] { --accent: var(--red); --accent-ink: var(--red-dark); --accent-soft: rgba(225, 37, 27, .1); }
+[data-accent='green'] { --accent: var(--green); --accent-ink: #17722F; --accent-soft: rgba(30, 139, 58, .1); }
+[data-accent='blue'] { --accent: #2457D6; --accent-ink: var(--royal); --accent-soft: rgba(36, 87, 214, .1); }
+/* rodízio vermelho → verde → azul em listas numeradas */
+.tri > :nth-child(3n + 1) { --c: var(--red); --c-ink: var(--red-dark); --c-soft: rgba(225, 37, 27, .1); }
+.tri > :nth-child(3n + 2) { --c: var(--green); --c-ink: #17722F; --c-soft: rgba(30, 139, 58, .1); }
+.tri > :nth-child(3n) { --c: #2457D6; --c-ink: var(--royal); --c-soft: rgba(36, 87, 214, .1); }
+.tri-line { height: 4px; display: flex; }
+.tri-line::before, .tri-line::after, .tri-line span { content: ''; flex: 1; }
+.tri-line::before { background: var(--green); }
+.tri-line span { background: var(--red); }
+.tri-line::after { background: #1B30A3; }
 .h2 { margin: 16px 0 0; font-size: clamp(36px, 5vw, 70px); font-weight: 740; line-height: 1; text-wrap: balance; }
 .lead { font-size: clamp(17px, 1.4vw, 20px); line-height: 1.6; color: var(--muted); }
 .lead strong, .strong { color: var(--cream); font-weight: 600; }

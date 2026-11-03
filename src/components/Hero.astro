@@ -41,7 +41,7 @@ const d = (i: number) => `animation-delay:${(0.15 + i * 0.05).toFixed(2)}s`;
         {segments.map((s) => <li>{s.name.toUpperCase()}</li>)}
       </ul>
 
-      <dl class="fade hero__stats" style="animation-delay:1.4s">
+      <dl class="fade hero__stats tri" style="animation-delay:1.4s">
         {
           school.stats.map((s) => (
             <div>
@@ -107,9 +107,10 @@ const d = (i: number) => `animation-delay:${(0.15 + i * 0.05).toFixed(2)}s`;
   .hero__lead { margin: 24px 0 0; max-width: 560px; }
   .hero__ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 34px; }
   .hero__segs { display: flex; flex-wrap: wrap; gap: 10px 22px; margin: 34px 0 0; padding: 0; list-style: none; font-size: 12px; color: var(--dim); letter-spacing: .06em; }
-  .hero__stats { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 16px 32px; margin: 30px 0 0; padding-top: 26px; border-top: 1px solid var(--line); }
+  .hero__stats { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 16px 32px; margin: 30px 0 0; padding-top: 22px; }
   .hero__stats dd { margin: 0; }
   .hero__stat { font-size: 34px; font-weight: 760; line-height: 1; }
+  .hero__stats > div { padding-top: 12px; border-top: 3px solid var(--c); }
   .hero__stat-l { font-size: 14px; color: var(--muted); margin-top: 4px !important; }
 
   .hero__visual { position: relative; height: 600px; width: 100%; max-width: 620px; justify-self: center; }
