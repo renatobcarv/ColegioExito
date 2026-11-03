@@ -45,15 +45,33 @@ export type Formacao = {
   pitch: string;
   /** Logo oficial (em public/), com largura e altura reais do arquivo. */
   logo: { src: string; w: number; h: number; alt: string };
+  /** Paleta da marca: a página e o cartão da home usam estas cores. */
+  theme: {
+    primary: string; primaryDark: string; primaryDeep: string;
+    accent: string; accentInk: string; accentBtn: string; soft: string;
+  };
   /** Selo de destaque no cartão (ex.: "Bolsas de até 80%"). */
   badge: string | null;
+  eyebrow: string;
   title: string;
+  /** Trecho do título que ganha destaque na cor de acento. */
+  titleAccent: string;
   lead: string;
+  primaryCta: string;
+  responseNote: string;
+  proof: { value: string; label: string }[];
+  painsTitle: string;
+  painsAccent: string;
+  pains: { pain: string; fix: string }[];
+  factsTitle: string;
   facts: { title: string; text: string }[];
   /** Áreas e cursos. Lista vazia = a página convida para falar com a equipe. */
   areas: { title: string; courses: string; icon: 'briefcase' | 'cpu' | 'heart' | 'book' | 'monitor' | 'bolt' | 'tool' }[];
   modalities: { title: string; text: string; featured?: boolean }[];
   steps: { title: string; text: string }[];
+  form: { title: string; text: string; selectLabel: string; cta: string; askModality: boolean };
+  faq: Faq[];
+  final: { title: string; text: string; cta: string };
   contact: {
     whatsapp: string;
     email: string | null;
@@ -255,35 +273,77 @@ export const formacoes: Formacao[] = [
     name: 'Unopar Anhanguera',
     kind: 'Faculdade',
     logo: { src: '/img/parceiros/unopar-anhanguera.webp', w: 520, h: 441, alt: 'Unopar Anhanguera, Polo Novo Gama' },
-    pitch: 'Graduação presencial, semipresencial ou 100% EAD em Novo Gama, com diploma reconhecido pelo MEC.',
+    theme: {
+      primary: '#0062B1', primaryDark: '#004A8C', primaryDeep: '#002B55',
+      accent: '#FF6B00', accentInk: '#B34700', accentBtn: '#E05A00', soft: '#EEF5FC',
+    },
+    pitch: 'Graduação presencial, semipresencial ou 100% EAD em Novo Gama, com diploma reconhecido pelo MEC e bolsas de até 80%.',
     badge: 'Bolsas de até 80%',
-    title: 'A faculdade continua aqui, perto de casa.',
-    lead: 'O polo Unopar Anhanguera de Novo Gama funciona no endereço da Unidade I do Colégio Êxito. Quem termina o Ensino Médio segue para a graduação sem precisar se deslocar até Brasília.',
+    eyebrow: 'Turmas em formação · Bolsas de até 80%',
+    title: 'Seu diploma começa aqui no Novo Gama. Não em Brasília.',
+    titleAccent: 'Não em Brasília.',
+    lead: 'Faça faculdade na Unopar Anhanguera, uma das maiores redes de ensino do país, com diploma reconhecido pelo MEC e bolsas de até 80%. Presencial, semipresencial ou 100% EAD: você escolhe o formato que cabe na sua rotina.',
+    primaryCta: 'Consultar minha bolsa',
+    responseNote: 'Resposta média em menos de 15 minutos pelo WhatsApp',
+    proof: [
+      { value: 'até 80%', label: 'de bolsa' },
+      { value: 'MEC', label: 'diploma reconhecido' },
+      { value: '3', label: 'modalidades de estudo' },
+      { value: '6', label: 'áreas de formação' },
+    ],
+    painsTitle: 'Faculdade não precisa custar duas horas de ônibus',
+    painsAccent: 'por dia.',
+    pains: [
+      { pain: 'Atravessar o Entorno até Brasília depois de um dia de trabalho', fix: 'Polo no Novo Gama, no mesmo endereço da Unidade I do Colégio Êxito' },
+      { pain: 'Uma mensalidade que não cabe no orçamento da família', fix: 'Bolsas de até 80%. Consulte a sua sem compromisso' },
+      { pain: 'Um horário de aula que não fecha com trabalho e filhos', fix: 'Presencial, semipresencial ou 100% EAD: você escolhe' },
+      { pain: 'Matrícula confusa, documentos e financiamento sem ninguém para ajudar', fix: 'Consultor local que orienta documentação e financiamento' },
+    ],
+    factsTitle: 'Por que a Unopar Anhanguera é a escolha certa',
     facts: [
-      { title: 'Bolsas de até 80%', text: 'Condições especiais. Consulte a disponibilidade para o seu curso.' },
-      { title: 'Diploma reconhecido pelo MEC', text: 'Credibilidade nacional, respeitada pelo mercado de trabalho.' },
-      { title: 'Rede Anhanguera', text: 'Uma das maiores redes de ensino do país.' },
-      { title: 'Apoio na matrícula', text: 'Orientação local sobre documentação e financiamento.' },
+      { title: 'Bolsas de até 80%', text: 'Condições especiais que mudam o valor final da sua faculdade. Consulte a disponibilidade para o seu curso.' },
+      { title: 'Diploma reconhecido pelo MEC', text: 'Validade nacional e credibilidade respeitada pelo mercado de trabalho.' },
+      { title: 'Rede Anhanguera', text: 'A estrutura de uma das maiores redes de ensino do Brasil, perto da sua casa.' },
+      { title: 'Apoio na matrícula', text: 'Atendimento presencial para tirar dúvidas, organizar documentos e entender o financiamento.' },
     ],
     areas: [
-      { title: 'Administração e Gestão', courses: 'Administração, RH, Logística e Processos Gerenciais.', icon: 'briefcase' },
+      { title: 'Administração e Gestão', courses: 'Administração, RH, Logística e Processos Gerenciais para o mercado corporativo.', icon: 'briefcase' },
       { title: 'Tecnologia', courses: 'Análise de Sistemas e Redes, com foco nas tendências digitais.', icon: 'cpu' },
       { title: 'Saúde', courses: 'Enfermagem, Biomedicina e Gestão Pública da Saúde, com laboratórios e prática.', icon: 'heart' },
-      { title: 'Educação', courses: 'Pedagogia, Letras e Educação Física.', icon: 'book' },
+      { title: 'Educação', courses: 'Pedagogia, Letras e Educação Física para quem quer transformar vidas pelo ensino.', icon: 'book' },
       { title: '100% EAD', courses: 'Flexibilidade total para conciliar estudo, trabalho e família.', icon: 'monitor' },
       { title: 'Cursos livres', courses: 'Formações rápidas para qualificação imediata em diversas áreas.', icon: 'bolt' },
     ],
     modalities: [
-      { title: 'Presencial', text: 'Rotina diária no polo, contato direto com professores e colegas.' },
-      { title: 'Semipresencial', text: 'Aulas online com encontros presenciais semanais para prática e suporte.', featured: true },
-      { title: '100% EAD', text: 'Horário livre. Estude de onde quiser, com a mesma qualidade da rede.' },
+      { title: 'Presencial', text: 'Rotina diária no polo, contato direto com professores e uma rede de contatos que abre portas.' },
+      { title: 'Semipresencial', text: 'O equilíbrio ideal: aulas online com encontros presenciais semanais para prática e suporte.', featured: true },
+      { title: '100% EAD', text: 'Horário livre. Estude de onde quiser, com a mesma qualidade de ensino da rede.' },
     ],
     steps: [
-      { title: 'Escolha a área', text: 'Veja os cursos e as modalidades que combinam com a sua rotina.' },
-      { title: 'Consulte sua bolsa', text: 'Fale com um consultor do polo pelo WhatsApp.' },
+      { title: 'Escolha a área', text: 'Veja os cursos e a modalidade que combina com a sua rotina.' },
+      { title: 'Consulte sua bolsa', text: 'Preencha o formulário e fale com um consultor do polo pelo WhatsApp.' },
       { title: 'Faça a matrícula', text: 'Com apoio local na documentação e no financiamento.' },
-      { title: 'Comece a estudar', text: 'Conte com o polo durante todo o curso.' },
+      { title: 'Comece a estudar', text: 'Conte com o polo do primeiro dia até a formatura.' },
     ],
+    form: {
+      title: 'Descubra sua bolsa em poucos minutos',
+      text: 'Preencha e fale direto com um consultor do polo Novo Gama. Você recebe as condições disponíveis para o seu curso hoje.',
+      selectLabel: 'Área de interesse',
+      cta: 'Quero consultar minha bolsa',
+      askModality: true,
+    },
+    faq: [
+      { q: 'Quem pode se matricular na graduação?', a: 'Quem já concluiu o Ensino Médio. Se o seu filho está no 3º ano no Êxito, ele já pode planejar a faculdade com a gente, sem sair do bairro.' },
+      { q: 'O diploma EAD vale o mesmo que o presencial?', a: 'Sim. O diploma é reconhecido pelo MEC e tem validade nacional, qualquer que seja a modalidade escolhida.' },
+      { q: 'Como sei quanto de bolsa eu consigo?', a: 'As bolsas chegam a até 80% e variam por curso e período. Preencha o formulário: um consultor informa a sua condição pelo WhatsApp.' },
+      { q: 'Preciso ir até o polo?', a: 'No presencial, sim. No semipresencial, nos encontros semanais. No 100% EAD você estuda de onde quiser e conta com o polo para o suporte.' },
+      { q: 'Qual o horário de atendimento?', a: 'Segunda a sexta, das 13h30 às 17h30, e sábado, das 8h às 12h.' },
+    ],
+    final: {
+      title: 'As turmas estão em formação. Sua bolsa não espera.',
+      text: 'Cada semana adiada é uma semana a mais para o diploma. Consulte agora as condições para o seu curso.',
+      cta: 'Consultar minha bolsa agora',
+    },
     contact: {
       whatsapp: '5561986262140',
       email: 'contato@anhangueranovogama.com.br',
@@ -301,15 +361,38 @@ export const formacoes: Formacao[] = [
     name: 'TEC Mais',
     kind: 'Cursos técnicos e livres',
     logo: { src: '/img/parceiros/tec-mais.webp', w: 720, h: 203, alt: 'TEC Mais Cursos Técnicos' },
+    theme: {
+      primary: '#1A1A8C', primaryDark: '#000066', primaryDeep: '#00003D',
+      accent: '#F06022', accentInk: '#B8440F', accentBtn: '#E0551A', soft: '#F1F1FA',
+    },
     pitch: 'Cursos de saúde e segurança em Valparaíso: aprenda o que ninguém te ensina, antes de precisar.',
-    badge: null,
-    title: 'Aprenda o que ninguém te ensina. Antes de precisar.',
-    lead: 'A TEC Mais, em Valparaíso de Goiás, forma gente pronta para agir: primeiros socorros, atendimento pré-hospitalar, cuidado com idosos e segurança. Cursos práticos que viram profissão e, um dia, podem salvar uma vida bem na sua frente.',
+    badge: 'Primeiros Socorros em 8h',
+    eyebrow: 'Cursos de saúde e segurança · Valparaíso de Goiás',
+    title: 'Numa emergência, ninguém pergunta seu diploma. Pergunta quem sabe o que fazer.',
+    titleAccent: 'quem sabe o que fazer.',
+    lead: 'Na TEC Mais você aprende, com as mãos, o que salva vidas e abre portas no mercado: Primeiros Socorros, APH, Feridas e Curativos, Cuidador de Idoso, Combate a Incêndio e Injetáveis. Cursos diretos, práticos e perto de casa.',
+    primaryCta: 'Quero me inscrever',
+    responseNote: 'Atendimento humano pelo WhatsApp',
+    proof: [
+      { value: '6', label: 'cursos de saúde e segurança' },
+      { value: '8h', label: 'para aprender Primeiros Socorros' },
+      { value: '192', label: 'quando e como acionar o socorro' },
+      { value: 'Prática', label: 'protocolos treinados com as mãos' },
+    ],
+    painsTitle: 'O medo que paralisa não é falta de coragem.',
+    painsAccent: 'É falta de treino.',
+    pains: [
+      { pain: 'Travar quando alguém passa mal bem na sua frente', fix: 'O protocolo certo, na ordem certa, treinado em aula até virar reflexo' },
+      { pain: 'Ouvir um conselho errado e não ter segurança para discordar', fix: 'Conhecimento para agir com calma até o socorro chegar' },
+      { pain: 'Querer trabalhar na área da saúde sem saber por onde começar', fix: 'Cursos que viram currículo: Cuidador de Idoso, Feridas e Curativos, Injetáveis' },
+      { pain: 'Cursos longos e caros que adiam o seu objetivo', fix: 'Formações diretas ao ponto. Primeiros Socorros em 8 horas' },
+    ],
+    factsTitle: 'Por que aprender na TEC Mais',
     facts: [
       { title: 'Prática de verdade', text: 'Protocolos treinados com as mãos, não só lidos na apostila.' },
       { title: 'Cursos rápidos e diretos', text: 'Primeiros Socorros em 8 horas, por exemplo. Sem enrolação.' },
-      { title: 'Saúde e segurança', text: 'Formações que abrem portas no mercado e servem para a vida.' },
-      { title: 'Na mesma casa do Êxito', text: 'O mesmo cuidado e acompanhamento de perto que as famílias já conhecem.' },
+      { title: 'Saúde e segurança', text: 'Formações que abrem portas no mercado e servem para a vida inteira.' },
+      { title: 'Na mesma casa do Êxito', text: 'O cuidado e o acompanhamento de perto que as famílias de Valparaíso já conhecem.' },
     ],
     areas: [
       { title: 'Primeiros Socorros', courses: 'Reconhecer a emergência, ligar para o 192 e agir certo até o socorro chegar. Carga horária de 8h.', icon: 'heart' },
@@ -323,9 +406,27 @@ export const formacoes: Formacao[] = [
     steps: [
       { title: 'Escolha o curso', text: 'Veja as turmas abertas e as datas mais próximas.' },
       { title: 'Tire suas dúvidas', text: 'Duração, horários, pré-requisitos e valores pelo WhatsApp.' },
-      { title: 'Garanta sua vaga', text: 'Matrícula simples e rápida, com atendimento humano.' },
-      { title: 'Aprenda na prática', text: 'Do primeiro dia ao certificado, com acompanhamento.' },
+      { title: 'Garanta sua vaga', text: 'Inscrição simples e rápida, com atendimento humano.' },
+      { title: 'Aprenda na prática', text: 'Do primeiro dia ao fim do curso, com acompanhamento.' },
     ],
+    form: {
+      title: 'Garanta sua vaga na próxima turma',
+      text: 'Preencha e fale direto com a equipe da TEC Mais. Você recebe datas, horários e valores do curso escolhido.',
+      selectLabel: 'Curso de interesse',
+      cta: 'Quero minha vaga',
+      askModality: false,
+    },
+    faq: [
+      { q: 'Preciso ter experiência na área da saúde?', a: 'Depende do curso. Primeiros Socorros, por exemplo, é para qualquer pessoa que quer saber agir. Os pré-requisitos de cada curso são informados no atendimento.' },
+      { q: 'Quanto tempo dura cada curso?', a: 'Primeiros Socorros tem 8 horas. A duração dos demais é informada no atendimento, junto com as datas das próximas turmas.' },
+      { q: 'As aulas são práticas?', a: 'Sim. Você treina os protocolos com as mãos, com orientação de quem atua na área.' },
+      { q: 'Onde ficam as aulas?', a: 'Em Valparaíso de Goiás. Chame no WhatsApp para receber o endereço e o calendário das turmas.' },
+    ],
+    final: {
+      title: 'A próxima emergência não marca hora.',
+      text: 'Mas a sua inscrição pode ser hoje. Garanta sua vaga e aprenda o que ninguém te ensina, antes de precisar.',
+      cta: 'Garantir minha vaga',
+    },
     contact: {
       whatsapp: '5561986262137', // TODO: confirmar o WhatsApp da TEC Mais
       email: null,
@@ -340,6 +441,67 @@ export const formacoes: Formacao[] = [
   },
 ];
 
+/**
+ * "Saiba mais" de cada fase do ensino (janela aberta pelo cartão).
+ * A chave é o nome do segmento, igual ao do Supabase/site.
+ */
+export const segmentDetails: Record<string, { title: string; intro: string; points: string[]; quote?: string }> = {
+  'Berçário': {
+    title: 'Os primeiros passos, com quem você conhece pelo nome',
+    intro: 'No Berçário, a prioridade é que seu filho se sinta seguro e que você saia tranquilo para trabalhar.',
+    points: [
+      'Rotina organizada de cuidado, alimentação e descanso',
+      'Ambiente acolhedor e seguro, pensado para os primeiros anos',
+      'Estímulos respeitando o ritmo e as características de cada criança',
+      'Comunicação próxima com a família sobre o dia a dia',
+    ],
+  },
+  'Educação Infantil': {
+    title: 'Onde a curiosidade vira hábito de aprender',
+    intro: 'Rotina, afeto e as primeiras descobertas, num ambiente seguro e acolhedor para o desenvolvimento acadêmico e pessoal.',
+    points: [
+      'Primeiras linguagens: falar, desenhar, brincar, criar e se expressar',
+      'Atividades artísticas e de convivência que ensinam a respeitar o outro',
+      'Planejamento que considera o ritmo e a motivação de cada criança',
+      'Família informada sobre cada avanço',
+    ],
+  },
+  'Fundamental I': {
+    title: 'A base sólida de tudo o que vem depois',
+    intro: 'Do 1º ao 5º ano, alfabetização firme e base forte em leitura e matemática, seguindo a BNCC com a Parte Diversificada do Êxito.',
+    points: [
+      'Alfabetização e leitura com acompanhamento próximo do professor',
+      'Matemática construída com compreensão, não só com decoreba',
+      'Temas da Vida Cidadã: saúde, meio ambiente, família e convivência',
+      'Projetos, artes e tecnologia como linguagens de aprendizagem',
+      'Dificuldade percebida cedo e família avisada antes da prova',
+    ],
+  },
+  'Fundamental II': {
+    title: 'A fase em que muitos se perdem. Aqui, o acompanhamento aperta.',
+    intro: 'Do 6º ao 9º ano, o Êxito incentiva a autonomia nos estudos e nas relações, com um professor por disciplina e mais independência.',
+    points: [
+      'Um professor especialista por disciplina',
+      'Oficinas e atividades esportivas além das aulas regulares',
+      'Projetos temáticos, visitas monitoradas e estudos do meio',
+      'Alunos incentivados a organizar atividades de convivência e interação',
+      'Formação de valores: pensamento crítico, liberdade de pensamento e responsabilidade',
+    ],
+    quote: 'Método de estudo e responsabilidade: é aqui que o aluno aprende a aprender.',
+  },
+  'Ensino Médio': {
+    title: 'Novo Ensino Médio com o depois já planejado',
+    intro: 'Da 1ª à 3ª série, preparação para o ENEM e para o vestibular, com foco em uma escolha de carreira consciente.',
+    points: [
+      'Novo Ensino Médio alinhado à BNCC e à legislação educacional',
+      'Preparação para ENEM e vestibulares',
+      'Protagonismo: pesquisa, debate e projetos que formam cidadãos críticos',
+      'Ponte direta para a faculdade (Polo Unopar Anhanguera) e para cursos técnicos (TEC Mais)',
+    ],
+    quote: 'A escola não termina no 3º ano: a faculdade e a profissão continuam na mesma casa.',
+  },
+};
+
 /** Liga um cartão de segmento (ex.: "Polo Unopar") à página de formação. */
 export const formacaoBySegment = (name: string) => {
   const n = name.toLowerCase();
@@ -348,7 +510,11 @@ export const formacaoBySegment = (name: string) => {
 
 export type GalleryItem = { title: string; caption: string | null; date: string | null; photo: string };
 
-/** Galeria de atividades (fallback local; o normal é vir do Supabase). */
+/**
+ * Galeria de atividades (carrossel "Vida no Êxito").
+ * Fotos daqui ficam em public/img/galeria/ e somam com as cadastradas no Supabase (tabela galeria).
+ * Ex.: { title: 'Festa Junina 2026', caption: 'Apresentação do Fundamental I', date: '2026-06-20', photo: '/img/galeria/festa-junina-1.webp' }
+ */
 export const gallery: GalleryItem[] = [];
 
 // ——— utilitários ———
