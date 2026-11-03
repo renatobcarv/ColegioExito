@@ -1,6 +1,7 @@
 ---
 import { segments } from '../data/content';
-import { formacaoBySegment } from '../data/site';
+import { formacaoBySegment, segmentDetails, school, waLink } from '../data/site';
+import Icon from './Icon.astro';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 import Photo from './Photo.astro';
 
@@ -34,18 +35,61 @@ const slug = (s: string) =>
               {s.age && <span class={`mono seg__tag seg__tag--${s.accent}`}>{s.age.toUpperCase()}</span>}
               <h3 class="disp">{s.name}</h3>
               <p>{s.text}</p>
-              {formacaoBySegment(s.name) && (
-                <a class="seg__link" href={`${base}/${formacaoBySegment(s.name)!.slug}`}>Conhecer o polo →</a>
-              )}
+              {formacaoBySegment(s.name) ? (
+                <a class="seg__more" href={`${base}/${formacaoBySegment(s.name)!.slug}`}>Conhecer o polo <Icon name="arrow" size={16} /></a>
+              ) : segmentDetails[s.name] ? (
+                <button type="button" class="seg__more" data-open={`det-${slug(s.name)}`} aria-haspopup="dialog">Saiba mais <Icon name="arrow" size={16} /></button>
+              ) : null}
             </div>
           </li>
         ))
       }
     </ul>
   </div>
+
+  {
+    segments.filter((s) => segmentDetails[s.name]).map((s) => {
+      const d = segmentDetails[s.name];
+      return (
+        <dialog class="det" id={`det-${slug(s.name)}`} aria-labelledby={`det-${slug(s.name)}-t`}>
+          <div class="det__in">
+            <button type="button" class="det__close" aria-label="Fechar">×</button>
+            <p class="mono det__k">{s.name.toUpperCase()}{s.age && ` · ${s.age.toUpperCase()}`}</p>
+            <h3 id={`det-${slug(s.name)}-t`} class="disp det__t">{d.title}</h3>
+            <p class="det__intro">{d.intro}</p>
+            <ul class="det__pts">
+              {d.points.map((pt) => <li><Icon name="check" size={20} /><span>{pt}</span></li>)}
+            </ul>
+            {d.quote && <blockquote class="det__q disp">{d.quote}</blockquote>}
+            <div class="det__ctas">
+              <a href={waLink(school.whatsapp, `Olá! Vim pelo site e gostaria de agendar uma visita para conhecer o ${s.name} do Colégio Êxito.`)} target="_blank" rel="noopener" class="btn">Agendar visita para o {s.name}<span class="arr"><Icon name="arrow" /></span></a>
+              <a href={`${base}/#metodologia`} class="ghost det__met">Ver a proposta pedagógica</a>
+            </div>
+          </div>
+        </dialog>
+      );
+    })
+  }
 </section>
 
 <script>
+  // "Saiba mais": abre a janela da fase
+  document.querySelectorAll<HTMLButtonElement>('[data-open]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const dlg = document.getElementById(b.dataset.open ?? '') as HTMLDialogElement | null;
+      if (!dlg) return;
+      dlg.showModal();
+      document.documentElement.style.overflow = 'hidden';
+    }),
+  );
+  document.querySelectorAll<HTMLDialogElement>('dialog.det').forEach((dlg) => {
+    const close = () => dlg.close();
+    dlg.querySelector('.det__close')?.addEventListener('click', close);
+    dlg.querySelector('.det__met')?.addEventListener('click', close);
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) close(); });
+    dlg.addEventListener('close', () => { document.documentElement.style.overflow = ''; });
+  });
+
   const row = document.getElementById('row-x');
   document.querySelectorAll<HTMLButtonElement>('.jornada__btn').forEach((b) =>
     b.addEventListener('click', () => {
@@ -77,8 +121,41 @@ const slug = (s: string) =>
   .seg { border-top: 4px solid var(--c); }
   .seg__tag--red, .seg__tag--gold { background: var(--c-soft); color: var(--c-ink); }
   .seg h3 { margin: 12px 0 6px; font-size: 24px; font-weight: 700; letter-spacing: -.025em; }
-  .seg__link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 6px; font-weight: 700; color: var(--green); text-decoration: none; }
-  .seg__link:hover { color: var(--green); text-decoration: underline; }
+  .seg__body { display: flex; flex-direction: column; }
+  .seg__more {
+    align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 14px; padding: 0 16px;
+    border: 1px solid var(--c); border-radius: 999px; background: transparent; color: var(--c-ink); font: inherit; font-weight: 700; font-size: 14.5px;
+    text-decoration: none; cursor: pointer; transition: background .25s, color .25s;
+  }
+  .seg__more:hover { background: var(--c); color: #FFFFFF; }
+  .seg__more :global(svg) { transition: transform .3s var(--ease); }
+  .seg__more:hover :global(svg) { transform: translateX(3px); }
+
+  .det { width: min(720px, calc(100% - 24px)); max-height: calc(100dvh - 32px); padding: 0; border: 0; border-radius: 28px; background: #FFFFFF; color: var(--cream); box-shadow: 0 60px 120px -40px rgba(5, 12, 35, .7); overflow: auto; }
+  .det::backdrop { background: rgba(5, 12, 35, .7); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .det[open] { animation: detIn .45s var(--ease); }
+  @keyframes detIn { from { opacity: 0; transform: translateY(24px) scale(.97); } }
+  .det__in { position: relative; padding: 40px 40px 36px; border-top: 6px solid transparent; border-image: linear-gradient(90deg, var(--green) 33%, var(--red) 33% 66%, #1B30A3 66%) 1; }
+  .det__close { position: absolute; top: 14px; right: 14px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line2); background: #FFFFFF; color: var(--cream); font-size: 26px; line-height: 1; cursor: pointer; }
+  .det__close:hover { background: var(--ink3); }
+  .det__k { margin: 0; font-size: 12px; letter-spacing: .14em; color: var(--red-dark); }
+  .det__t { margin: 12px 0 0; padding-right: 40px; font-size: clamp(26px, 3.4vw, 38px); font-weight: 750; line-height: 1.08; letter-spacing: -.03em; }
+  .det__intro { margin: 14px 0 0; font-size: 17px; line-height: 1.6; color: var(--muted); }
+  .det__pts { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 12px; }
+  .det__pts li { display: grid; grid-template-columns: 22px 1fr; gap: 12px; align-items: start; font-size: 16px; line-height: 1.5; }
+  .det__pts li:nth-child(3n + 1) :global(svg) { color: var(--red); }
+  .det__pts li:nth-child(3n + 2) :global(svg) { color: var(--green); }
+  .det__pts li:nth-child(3n) :global(svg) { color: #2457D6; }
+  .det__q { margin: 24px 0 0; padding: 18px 20px; border-radius: 16px; background: var(--ink2); border-left: 4px solid var(--green); font-size: 18px; font-weight: 650; line-height: 1.35; letter-spacing: -.015em; }
+  .det__ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  .det__ctas .btn { height: 56px; font-size: 16px; }
+  .det__ctas .btn .arr { width: 42px; height: 42px; flex-basis: 42px; }
+  .det__ctas .ghost { height: 56px; font-size: 15px; }
+  @media (max-width: 599px) {
+    .det__in { padding: 32px 22px 26px; }
+    .det__ctas > * { flex: 1 1 100%; justify-content: center; }
+    .det__ctas .btn { justify-content: space-between; }
+  }
   .seg p { margin: 0; font-size: 15.5px; line-height: 1.55; color: var(--muted); }
 
   @media (max-width: 899px) { .seg:nth-child(even) { margin-top: 0; } }

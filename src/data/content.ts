@@ -92,7 +92,9 @@ async function load() {
 
   const gallery: GalleryItem[] = g
     .map((r) => ({ title: r.titulo, caption: r.legenda || null, date: r.data || null, photo: photo(r.foto) ?? '' }))
-    .filter((it) => it.photo);
+    .filter((it) => it.photo)
+    // fotos colocadas direto no site (public/img/galeria) entram depois das do Supabase
+    .concat(local.gallery);
 
   console.info(`[conteúdo] Supabase: ${units.length} unidades, ${segments.length} segmentos, ${testimonials.length} depoimentos, ${faqs.length} perguntas, ${gallery.length} fotos na galeria`);
   return { units, segments, testimonials, faqs, gallery, source: 'supabase' };

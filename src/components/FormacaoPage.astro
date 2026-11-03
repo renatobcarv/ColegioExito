@@ -8,35 +8,41 @@ import { school, waLink, formatPhone, type Formacao } from '../data/site';
 
 interface Props { f: Formacao }
 const { f } = Astro.props;
-const wa = waLink(f.contact.whatsapp, f.whatsappMessage);
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const icon = f.slug === 'unopar' ? 'cap' : 'tool';
+const wa = waLink(f.contact.whatsapp, f.whatsappMessage);
+const t = f.theme;
+const themeVars = `--p:${t.primary};--pd:${t.primaryDark};--pdeep:${t.primaryDeep};--a:${t.accent};--ai:${t.accentInk};--ab:${t.accentBtn};--soft:${t.soft}`;
+const [titleA, titleB] = f.title.includes(f.titleAccent)
+  ? [f.title.slice(0, f.title.indexOf(f.titleAccent)), f.titleAccent]
+  : [f.title, ''];
+const options = f.areas.map((a) => a.title);
 ---
 
 <Base title={`${f.name}: ${f.kind} | ${school.name}`} description={`${f.name} no ${school.name}. ${f.pitch}`}>
   <Header />
-  <main id="conteudo">
+  <main id="conteudo" class="fp" style={themeVars}>
     <section class="fh">
-      <div class="glow" aria-hidden="true" style="width:760px;height:760px;right:-240px;top:-260px;background:radial-gradient(circle,rgba(30,139,58,.35),transparent 62%)"></div>
-      <div class="gridlines" aria-hidden="true"></div>
+      <div class="fh__glow" aria-hidden="true"></div>
+      <div class="fh__grid-bg" aria-hidden="true"></div>
       <div class="wrap fh__grid">
         <div>
           <nav aria-label="Você está em" class="mono fh__crumb fade">
             <a href={`${base}/`}>Início</a> <span aria-hidden="true">/</span> Formação profissional <span aria-hidden="true">/</span> <span aria-current="page">{f.name}</span>
           </nav>
-          <div class="eyebrow fade fh__eb" style="animation-delay:.1s"><span class="dot" style="background:var(--green);box-shadow:0 0 0 4px rgba(30,139,58,.2)"></span>{f.kind}{f.badge && <> · {f.badge}</>}</div>
-          <h1 class="disp fh__t fade" style="animation-delay:.2s">{f.title}</h1>
-          <p class="lead fade fh__lead" style="animation-delay:.35s">{f.lead}</p>
+          <div class="fh__eb fade" style="animation-delay:.1s"><span class="fh__dot"></span>{f.eyebrow}</div>
+          <h1 class="disp fh__t fade" style="animation-delay:.2s">{titleA}<span class="fh__accent">{titleB}</span></h1>
+          <p class="fh__lead fade" style="animation-delay:.35s">{f.lead}</p>
           <div class="fh__ctas fade" style="animation-delay:.5s">
-            <a href={wa} target="_blank" rel="noopener" class="btn btn--green">Falar com um consultor<span class="arr"><Arrow /></span></a>
-            {f.externalUrl && <a href={f.externalUrl} target="_blank" rel="noopener" class="ghost">{f.externalLabel}<Icon name="external" size={16} /></a>}
+            <a href="#inscricao" class="fbtn">{f.primaryCta}<span class="fbtn__arr"><Arrow /></span></a>
+            {f.areas.length > 0 && <a href="#cursos" class="fghost">Ver os cursos</a>}
           </div>
+          <p class="fh__note fade" style="animation-delay:.6s"><Icon name="check" size={18} />{f.responseNote}</p>
         </div>
         <div class="fh__card fade" style="animation-delay:.4s">
           <div class={`fh__logo fh__logo--${f.slug}`}>
             <img src={`${base}${f.logo.src}`} alt={f.logo.alt} width={f.logo.w} height={f.logo.h} decoding="async" />
           </div>
-          <p class="mono fh__card-k">Por que escolher</p>
+          <p class="mono fh__card-k">{f.factsTitle}</p>
           <ul class="fh__checks">
             {f.facts.map((x) => <li><Icon name="check" size={20} /><span><strong>{x.title}</strong>{x.text}</span></li>)}
           </ul>
@@ -44,13 +50,41 @@ const icon = f.slug === 'unopar' ? 'cap' : 'tool';
       </div>
     </section>
 
+    <section class="proof" aria-label="Destaques">
+      <ul class="wrap proof__in stagger">
+        {f.proof.map((p) => (
+          <li class="rv">
+            <strong class="disp" data-count={/^\d/.test(p.value) || /\d/.test(p.value.split(' ').pop() ?? '') ? '' : undefined}>{p.value}</strong>
+            <span>{p.label}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="fs" aria-labelledby="dor-t">
+      <div class="wrap">
+        <h2 id="dor-t" class="disp fs__t rv">{f.painsTitle} <span class="serif fs__accent">{f.painsAccent}</span></h2>
+        <ul class="pains stagger">
+          {f.pains.map((x) => (
+            <li class="rv">
+              <p class="pains__pain"><span class="pains__x" aria-hidden="true">×</span><span><small class="mono">O problema</small>{x.pain}</span></p>
+              <p class="pains__fix"><Icon name="check" size={22} /><span><small class="mono">Na {f.name}</small>{x.fix}</span></p>
+            </li>
+          ))}
+        </ul>
+        <div class="fs__mid rv">
+          <a href="#inscricao" class="fbtn">{f.primaryCta}<span class="fbtn__arr"><Arrow /></span></a>
+        </div>
+      </div>
+    </section>
+
     {
       f.areas.length > 0 && (
-        <section class="fs" aria-labelledby="areas-t">
+        <section id="cursos" class="fs fs--soft" aria-labelledby="areas-t">
           <div class="wrap">
             <div class="rv fs__head">
-              <div class="kicker fs__k">Áreas de formação</div>
-              <h2 id="areas-t" class="disp h2">Encontre o curso <span class="serif fs__serif">do seu futuro.</span></h2>
+              <div class="kicker fp__k">{f.slug === 'unopar' ? 'Áreas de formação' : 'Cursos'}</div>
+              <h2 id="areas-t" class="disp h2">Escolha o caminho <span class="serif fs__accent">do seu futuro.</span></h2>
             </div>
             <ul class="areas stagger">
               {f.areas.map((a) => (
@@ -71,11 +105,11 @@ const icon = f.slug === 'unopar' ? 'cap' : 'tool';
 
     {
       f.modalities.length > 0 && (
-        <section class="fs fs--alt" aria-labelledby="mod-t">
+        <section class="fs" aria-labelledby="mod-t">
           <div class="wrap">
             <div class="rv fs__head">
-              <div class="kicker fs__k">Como você prefere aprender?</div>
-              <h2 id="mod-t" class="disp h2">Modalidades</h2>
+              <div class="kicker fp__k">Como você prefere aprender?</div>
+              <h2 id="mod-t" class="disp h2">Três formatos. <span class="serif fs__accent">O mesmo diploma.</span></h2>
             </div>
             <ul class="mods stagger">
               {f.modalities.map((m) => (
@@ -91,26 +125,11 @@ const icon = f.slug === 'unopar' ? 'cap' : 'tool';
       )
     }
 
-    {
-      f.areas.length === 0 && (
-        <section class="fs" aria-labelledby="cursos-t">
-          <div class="wrap fs__empty rv">
-            <span class="area__icon"><Icon name={icon} size={26} /></span>
-            <div>
-              <h2 id="cursos-t" class="disp">Turmas e cursos abertos</h2>
-              <p>Fale com a nossa equipe para conhecer os cursos, horários e valores das próximas turmas.</p>
-            </div>
-            <a href={wa} target="_blank" rel="noopener" class="pill-sm pill-sm--wa"><Icon name="whatsapp" size={18} />Ver cursos pelo WhatsApp</a>
-          </div>
-        </section>
-      )
-    }
-
-    <section class="fs fs--dark dark" aria-labelledby="passos-t">
+    <section class="fs fs--dark" aria-labelledby="passos-t">
       <div class="wrap">
         <div class="rv fs__head">
-          <div class="kicker">Passo a passo</div>
-          <h2 id="passos-t" class="disp h2">Do interesse à <span class="serif">primeira aula.</span></h2>
+          <div class="kicker fp__k fp__k--light">Passo a passo</div>
+          <h2 id="passos-t" class="disp h2">Do interesse à <span class="serif fs__accent">primeira aula.</span></h2>
         </div>
         <ol class="steps4 stagger">
           {f.steps.map((s, i) => (
@@ -124,115 +143,287 @@ const icon = f.slug === 'unopar' ? 'cap' : 'tool';
       </div>
     </section>
 
-    <section class="fs" aria-labelledby="contato-t">
-      <div class="wrap fc rv">
-        <div>
-          <div class="kicker fs__k">Atendimento</div>
-          <h2 id="contato-t" class="disp h2" style="font-size:clamp(32px,4vw,54px)">Seu próximo passo pode <span class="serif fs__serif">começar hoje.</span></h2>
-          <div class="fh__ctas">
-            <a href={wa} target="_blank" rel="noopener" class="btn btn--green">WhatsApp {formatPhone(f.contact.whatsapp.slice(2))}<span class="arr"><Arrow /></span></a>
-          </div>
+    <section id="inscricao" class="fs fs--soft" aria-labelledby="form-t">
+      <div class="wrap lead-grid">
+        <div class="rv">
+          <div class="kicker fp__k">{f.slug === 'unopar' ? 'Consulta de bolsa' : 'Inscrição'}</div>
+          <h2 id="form-t" class="disp h2" style="font-size:clamp(32px,4vw,54px)">{f.form.title}</h2>
+          <p class="lead" style="margin:18px 0 0;max-width:480px">{f.form.text}</p>
+          <ul class="fc__info">
+            {f.contact.address && (
+              <li><span class="fc__i"><Icon name="map" /></span><div><strong>Endereço</strong>{f.contact.address.map((l) => <span>{l}</span>)}{f.contact.mapsUrl && <a href={f.contact.mapsUrl} target="_blank" rel="noopener">Como chegar</a>}</div></li>
+            )}
+            {f.contact.hours && (
+              <li><span class="fc__i"><Icon name="clock" /></span><div><strong>Horário de atendimento</strong>{f.contact.hours.map((l) => <span>{l}</span>)}</div></li>
+            )}
+            {f.contact.email && (
+              <li><span class="fc__i"><Icon name="mail" /></span><div><strong>E-mail</strong><a href={`mailto:${f.contact.email}`}>{f.contact.email}</a></div></li>
+            )}
+            {f.contact.instagram && (
+              <li><span class="fc__i"><Icon name="instagram" /></span><div><strong>Instagram</strong><a href={f.contact.instagram} target="_blank" rel="noopener">@{f.contact.instagram.split('/').filter(Boolean).pop()}</a></div></li>
+            )}
+          </ul>
         </div>
-        <ul class="fc__info">
-          {f.contact.address && (
-            <li><span class="fc__i"><Icon name="map" /></span><div><strong>Endereço</strong>{f.contact.address.map((l) => <span>{l}</span>)}{f.contact.mapsUrl && <a href={f.contact.mapsUrl} target="_blank" rel="noopener">Como chegar</a>}</div></li>
-          )}
-          {f.contact.hours && (
-            <li><span class="fc__i"><Icon name="clock" /></span><div><strong>Horário de atendimento</strong>{f.contact.hours.map((l) => <span>{l}</span>)}</div></li>
-          )}
-          {f.contact.email && (
-            <li><span class="fc__i"><Icon name="mail" /></span><div><strong>E-mail</strong><a href={`mailto:${f.contact.email}`}>{f.contact.email}</a></div></li>
-          )}
-          {f.contact.instagram && (
-            <li><span class="fc__i"><Icon name="instagram" /></span><div><strong>Instagram</strong><a href={f.contact.instagram} target="_blank" rel="noopener">{f.contact.instagram.replace(/https:\/\/www\.instagram\.com\/|\/$/g, '@').replace(/@$/, '')}</a></div></li>
-          )}
-        </ul>
+
+        <form class="lform rv" data-wa={f.contact.whatsapp} data-name={f.name} data-modality={f.form.askModality ? '1' : ''} novalidate>
+          <div class="lform__f">
+            <label for="lf-nome">Seu nome</label>
+            <input id="lf-nome" name="nome" type="text" autocomplete="name" required placeholder="Como podemos te chamar?" />
+          </div>
+          <div class="lform__f">
+            <label for="lf-area">{f.form.selectLabel}</label>
+            <select id="lf-area" name="area" required>
+              <option value="">Selecione…</option>
+              {options.map((o) => <option value={o}>{o}</option>)}
+              <option value="Ainda não sei, quero orientação">Ainda não sei, quero orientação</option>
+            </select>
+          </div>
+          {
+            f.form.askModality && (
+              <fieldset class="lform__f">
+                <legend>Modalidade preferida</legend>
+                <div class="lform__radios">
+                  {f.modalities.map((m, i) => (
+                    <label class="lform__radio">
+                      <input type="radio" name="modalidade" value={m.title} checked={i === 0} />
+                      <span>{m.title}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            )
+          }
+          <p class="lform__err" role="alert" hidden>Preencha seu nome e escolha uma opção.</p>
+          <button type="submit" class="fbtn lform__btn">{f.form.cta}<span class="fbtn__arr"><Arrow /></span></button>
+          <p class="lform__note"><Icon name="whatsapp" size={16} />Você será levado ao WhatsApp {formatPhone(f.contact.whatsapp.slice(2))} com a mensagem pronta. Nada fica salvo no site.</p>
+        </form>
+      </div>
+    </section>
+
+    <section class="fs" aria-labelledby="faq-t">
+      <div class="wrap faq2">
+        <div class="rv">
+          <div class="kicker fp__k">Dúvidas frequentes</div>
+          <h2 id="faq-t" class="disp h2" style="font-size:clamp(32px,4vw,54px)">Tudo o que você precisa <span class="serif fs__accent">saber antes.</span></h2>
+        </div>
+        <div class="faq2__list rv">
+          {f.faq.map((q, i) => (
+            <details class="faq2__item" open={i === 0}>
+              <summary>{q.q}<span class="faq2__plus" aria-hidden="true">+</span></summary>
+              <p>{q.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="final" aria-labelledby="final-t">
+      <div class="fh__glow" aria-hidden="true"></div>
+      <div class="wrap final__in rv">
+        <h2 id="final-t" class="disp">{f.final.title}</h2>
+        <p>{f.final.text}</p>
+        <div class="fh__ctas" style="justify-content:center">
+          <a href="#inscricao" class="fbtn fbtn--lg">{f.final.cta}<span class="fbtn__arr"><Arrow /></span></a>
+          <a href={wa} target="_blank" rel="noopener" class="fghost"><Icon name="whatsapp" size={18} />Falar agora no WhatsApp</a>
+        </div>
+        {f.externalUrl && <a href={f.externalUrl} target="_blank" rel="noopener" class="mono final__ext">{f.externalLabel} <Icon name="external" size={14} /></a>}
       </div>
     </section>
   </main>
-  <Footer wa={wa} waLabel="Falar com consultor" />
+  <Footer cta={false} wa={wa} waLabel="Falar com consultor" />
 </Base>
 
-<style>
-  .fh { position: relative; overflow: clip; padding: 72px 0 88px; background: linear-gradient(180deg, #F2FAF4, #FFFFFF); }
-  .fh__grid { position: relative; display: grid; grid-template-columns: 1.2fr .9fr; gap: 56px; align-items: center; }
-  .fh__crumb { font-size: 12px; color: var(--dim); letter-spacing: .04em; margin-bottom: 22px; }
-  .fh__crumb a { color: var(--muted); }
-  .fh__eb { margin-bottom: 4px; }
-  .fh__t { margin: 22px 0 0; font-size: clamp(38px, 6vw, 76px); font-weight: 760; line-height: 1; text-wrap: balance; }
-  .fh__lead { margin: 22px 0 0; max-width: 580px; }
-  .fh__ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
-  .fh__ctas .ghost { gap: 8px; }
-  :global(.btn--green) { background: linear-gradient(180deg, #27A548, var(--green)) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 14px 34px -10px rgba(30,139,58,.7) !important; }
+<script>
+  document.querySelectorAll<HTMLFormElement>('.lform').forEach((form) =>
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nomeEl = form.elements.namedItem('nome') as HTMLInputElement;
+      const areaEl = form.elements.namedItem('area') as HTMLSelectElement;
+      const nome = nomeEl.value.trim();
+      const area = areaEl.value;
+      const err = form.querySelector<HTMLElement>('.lform__err');
+      if (!nome || !area) {
+        if (err) err.hidden = false;
+        (nome ? areaEl : nomeEl).focus();
+        return;
+      }
+      if (err) err.hidden = true;
+      const mod = form.dataset.modality ? (form.querySelector<HTMLInputElement>('input[name="modalidade"]:checked')?.value ?? '') : '';
+      const msg =
+        `Olá! Meu nome é ${nome}. Vim pelo site do Colégio Êxito e tenho interesse em ${area}` +
+        (mod ? `, na modalidade ${mod}` : '') +
+        `. Gostaria de saber as condições da ${form.dataset.name}.`;
+      const url = `https://wa.me/${form.dataset.wa}?text=${encodeURIComponent(msg)}`;
+      const w = window.open(url, '_blank', 'noopener');
+      if (!w) window.location.href = url;
+    }),
+  );
+</script>
 
-  .fh__card { position: relative; padding: 30px; border-radius: 28px; background: #FFFFFF; border: 1px solid rgba(30, 139, 58, .2); box-shadow: 0 40px 80px -46px rgba(11, 31, 92, .55); }
-  .fh__icon { position: absolute; top: -22px; left: 26px; width: 60px; height: 60px; border-radius: 18px; display: grid; place-items: center; background: var(--green); color: #FFFFFF; box-shadow: 0 14px 30px -12px rgba(30, 139, 58, .8); }
-  .fh__logo { display: flex; justify-content: center; align-items: center; height: 150px; padding: 8px 0 22px; border-bottom: 1px solid var(--line); }
+<style>
+  .fp { --ink-txt: #0B1F5C; }
+
+  .fbtn {
+    position: relative; display: inline-flex; align-items: center; gap: 14px; height: 60px; padding: 0 8px 0 26px; border: 0; border-radius: 999px;
+    background: linear-gradient(180deg, var(--a), var(--ab)); color: #FFFFFF; font: inherit; font-weight: 800; font-size: 17px; text-decoration: none; cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 16px 36px -12px color-mix(in srgb, var(--a) 75%, transparent);
+    transition: transform .35s var(--ease), box-shadow .35s var(--ease); text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+  }
+  .fbtn:hover { color: #FFFFFF; transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 22px 44px -14px color-mix(in srgb, var(--a) 85%, transparent); }
+  .fbtn__arr { width: 44px; height: 44px; flex: 0 0 44px; border-radius: 50%; display: grid; place-items: center; background: var(--pdeep); color: #FFFFFF; transition: transform .45s var(--ease); }
+  .fbtn:hover .fbtn__arr { transform: rotate(-45deg); }
+  .fbtn--lg { height: 68px; font-size: 19px; padding-left: 30px; }
+  .fbtn--lg .fbtn__arr { width: 52px; height: 52px; flex-basis: 52px; }
+  .fghost {
+    display: inline-flex; align-items: center; gap: 8px; height: 60px; padding: 0 24px; border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, .35); color: #FFFFFF; font-weight: 700; text-decoration: none; transition: background .25s;
+  }
+  .fghost:hover { background: rgba(255, 255, 255, .1); color: #FFFFFF; }
+
+  .fh { position: relative; overflow: clip; padding: 64px 0 120px; color: #FFFFFF; background: linear-gradient(160deg, var(--pd), var(--pdeep) 70%); }
+  .fh__glow { position: absolute; width: 820px; height: 820px; right: -260px; top: -300px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--a) 45%, transparent), transparent 62%); pointer-events: none; }
+  .fh__grid-bg { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 64px 64px; -webkit-mask-image: radial-gradient(ellipse 70% 70% at 30% 40%, #000 20%, transparent 75%); mask-image: radial-gradient(ellipse 70% 70% at 30% 40%, #000 20%, transparent 75%); }
+  .fh__grid { position: relative; display: grid; grid-template-columns: 1.2fr .9fr; gap: 56px; align-items: center; }
+  .fh__crumb { font-size: 12px; color: rgba(255, 255, 255, .75); letter-spacing: .04em; margin-bottom: 22px; }
+  .fh__crumb a { color: #FFFFFF; }
+  .fh__eb { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px 8px 11px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .25); background: rgba(255, 255, 255, .06); font-family: var(--f-mono); font-size: 12px; letter-spacing: .03em; }
+  .fh__dot { width: 8px; height: 8px; flex: none; border-radius: 50%; background: var(--a); box-shadow: 0 0 0 4px color-mix(in srgb, var(--a) 30%, transparent); animation: pulse 2s infinite; }
+  .fh__t { margin: 22px 0 0; font-size: clamp(36px, 5.4vw, 72px); font-weight: 760; line-height: 1.02; text-wrap: balance; }
+  .fh__accent { color: var(--a); }
+  .fh__lead { margin: 22px 0 0; max-width: 600px; font-size: clamp(17px, 1.4vw, 20px); line-height: 1.6; color: rgba(255, 255, 255, .88); }
+  .fh__ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  .fh__note { display: flex; align-items: center; gap: 8px; margin: 18px 0 0; font-size: 14px; color: rgba(255, 255, 255, .82); }
+  .fh__note :global(svg) { color: var(--a); flex: none; }
+
+  .fh__card { position: relative; padding: 28px; border-radius: 28px; background: #FFFFFF; color: var(--ink-txt); box-shadow: 0 50px 100px -40px rgba(0, 0, 0, .6); }
+  .fh__card::before { content: ''; position: absolute; left: 28px; right: 28px; top: 0; height: 4px; border-radius: 0 0 4px 4px; background: var(--a); }
+  .fh__logo { display: flex; justify-content: center; align-items: center; height: 150px; padding: 8px 0 22px; border-bottom: 1px solid #E8ECF5; }
   .fh__logo img { height: 100%; width: auto; max-width: 100%; object-fit: contain; }
   .fh__logo--tec-mais { height: 110px; }
-  .fh__card-k { margin: 22px 0 18px; font-size: 12px; letter-spacing: .14em; color: var(--green); }
+  .fh__card-k { margin: 22px 0 18px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ai); }
   .fh__checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
-  .fh__checks li { display: grid; grid-template-columns: 22px 1fr; gap: 12px; color: var(--green); }
-  .fh__checks span { color: var(--muted); font-size: 15px; line-height: 1.5; }
-  .fh__checks strong { display: block; color: var(--cream); font-size: 16px; }
+  .fh__checks li { display: grid; grid-template-columns: 22px 1fr; gap: 12px; color: var(--a); }
+  .fh__checks span { color: #4A5878; font-size: 15px; line-height: 1.5; }
+  .fh__checks strong { display: block; color: var(--ink-txt); font-size: 16px; }
 
-  .fs { padding: clamp(72px, 9vw, 120px) 0; }
-  .fs--alt { background: var(--ink2); }
-  .fs--dark { background: var(--royal); }
+  .proof { position: relative; z-index: 2; margin-top: -64px; }
+  .proof__in { list-style: none; padding: 0; margin-block: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-radius: 24px; background: #FFFFFF; box-shadow: 0 30px 70px -40px rgba(11, 31, 92, .55); border: 1px solid #E8ECF5; overflow: hidden; }
+  .proof__in li { padding: 26px 24px; display: grid; gap: 4px; border-right: 1px solid #E8ECF5; }
+  .proof__in li:last-child { border-right: 0; }
+  .proof__in strong { font-size: clamp(28px, 3vw, 42px); font-weight: 780; line-height: 1; color: var(--pd); letter-spacing: -.03em; }
+  .proof__in li:nth-child(odd) strong { color: var(--ai); }
+  .proof__in span { font-size: 14px; color: #4A5878; }
+
+  .fs { padding: clamp(80px, 9vw, 120px) 0; }
+  .fs--soft { background: var(--soft); }
+  .fs--dark { background: var(--pd); color: #FFFFFF; }
   .fs__head { margin-bottom: 44px; max-width: 760px; }
-  .fs__k { color: var(--green); }
-  .fs__serif { color: var(--green); }
+  .fs__t { margin: 0; max-width: 900px; font-size: clamp(32px, 4.4vw, 60px); font-weight: 740; line-height: 1.04; letter-spacing: -.035em; text-wrap: balance; }
+  .fs .serif.fs__accent { color: var(--a); }
+  .fs:not(.fs--dark) .serif.fs__accent { color: var(--ai); }
+  .fp__k { color: var(--ai); }
+  .fp__k--light { color: var(--a); }
+  .fs__mid { margin-top: 40px; }
+
+  .pains { list-style: none; margin: 48px 0 0; padding: 0; display: grid; gap: 14px; }
+  .pains li { display: grid; grid-template-columns: 1fr 1fr; border-radius: 22px; overflow: hidden; border: 1px solid #E8ECF5; }
+  .pains p { margin: 0; display: flex; gap: 14px; align-items: flex-start; padding: 22px 24px; font-size: 17px; line-height: 1.45; }
+  .pains small { display: block; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 4px; }
+  .pains__pain { background: #FFFFFF; color: #4A5878; }
+  .pains__pain small { color: #6B7488; }
+  .pains__x { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: #FDECEC; color: #C8102E; font-weight: 800; }
+  .pains__fix { background: var(--soft); color: var(--ink-txt); font-weight: 650; }
+  .pains__fix small { color: var(--ai); font-weight: 500; }
+  .pains__fix :global(svg) { flex: none; color: var(--ab); margin-top: 1px; }
 
   .areas { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-  .area { display: flex; flex-direction: column; gap: 10px; padding: 28px; border-radius: 24px; background: #FFFFFF; border: 1px solid var(--line); transition: transform .45s var(--ease), box-shadow .45s var(--ease), border-color .3s; }
-  .area:hover { transform: translateY(-5px); border-color: rgba(30, 139, 58, .45); box-shadow: 0 30px 60px -40px rgba(11, 31, 92, .5); }
-  .area__icon { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: rgba(30, 139, 58, .1); color: var(--green); transition: background .3s, color .3s; flex: none; }
-  .area:hover .area__icon { background: var(--green); color: #FFFFFF; }
-  .area h3 { margin: 8px 0 0; font-size: 22px; font-weight: 720; letter-spacing: -.02em; }
-  .area p { margin: 0; color: var(--muted); line-height: 1.55; }
-  .area__cta { margin-top: auto; padding-top: 10px; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-weight: 700; color: var(--green); text-decoration: none; }
+  .area { display: flex; flex-direction: column; gap: 10px; padding: 28px; border-radius: 24px; background: #FFFFFF; border: 1px solid #E3E8F2; }
+  .area:hover { transform: translateY(-5px); border-color: var(--a); box-shadow: 0 30px 60px -40px rgba(11, 31, 92, .5); }
+  .area__icon { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: var(--soft); color: var(--pd); transition: background .3s, color .3s; flex: none; }
+  .area:hover .area__icon { background: var(--ab); color: #FFFFFF; }
+  .area h3 { margin: 8px 0 0; font-size: 22px; font-weight: 720; letter-spacing: -.02em; color: var(--ink-txt); }
+  .area p { margin: 0; color: #4A5878; line-height: 1.55; }
+  .area__cta { margin-top: auto; padding-top: 10px; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-weight: 800; color: var(--ai); text-decoration: none; }
   .area__cta :global(svg) { transition: transform .3s var(--ease); }
-  .area__cta:hover { color: var(--green); }
+  .area__cta:hover { color: var(--ai); }
   .area__cta:hover :global(svg) { transform: translateX(4px); }
 
   .mods { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-  .mod { position: relative; padding: 34px 28px; border-radius: 24px; background: #FFFFFF; border: 1px solid var(--line); }
-  .mod--hl { border: 2px solid var(--green); box-shadow: 0 30px 60px -40px rgba(30, 139, 58, .7); }
-  .mod__tag { position: absolute; top: -13px; left: 24px; padding: 5px 12px; border-radius: 999px; background: var(--green); color: #FFFFFF; font-size: 12px; font-weight: 700; }
-  .mod h3 { margin: 0 0 10px; font-size: 24px; font-weight: 720; }
-  .mod p { margin: 0; color: var(--muted); line-height: 1.55; }
-
-  .fs__empty { display: grid; grid-template-columns: auto 1fr auto; gap: 24px; align-items: center; padding: 32px; border-radius: 26px; background: #F2FAF4; border: 1px solid rgba(30, 139, 58, .2); }
-  .fs__empty h2 { margin: 0; font-size: 26px; font-weight: 720; }
-  .fs__empty p { margin: 6px 0 0; color: var(--muted); }
+  .mod { position: relative; padding: 34px 28px; border-radius: 24px; background: #FFFFFF; border: 1px solid #E3E8F2; }
+  .mod--hl { border: 2px solid var(--a); box-shadow: 0 30px 60px -40px color-mix(in srgb, var(--a) 80%, transparent); }
+  .mod__tag { position: absolute; top: -13px; left: 24px; padding: 5px 12px; border-radius: 999px; background: var(--ab); color: #FFFFFF; font-size: 12px; font-weight: 800; }
+  .mod h3 { margin: 0 0 10px; font-size: 24px; font-weight: 720; color: var(--pd); }
+  .mod p { margin: 0; color: #4A5878; line-height: 1.55; }
 
   .steps4 { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
-  .steps4 li { padding: 26px 24px; border-radius: 22px; background: var(--ink3); border: 1px solid var(--line2); }
-  .steps4 .mono { display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--green); color: #FFFFFF; font-size: 13px; }
+  .steps4 li { padding: 26px 24px; border-radius: 22px; background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .16); }
+  .steps4 .mono { display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--ab); color: #FFFFFF; font-size: 13px; }
   .steps4 h3 { margin: 18px 0 6px; font-size: 20px; font-weight: 680; }
-  .steps4 p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
+  .steps4 p { margin: 0; color: rgba(255, 255, 255, .82); font-size: 15px; line-height: 1.5; }
 
-  .fc { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
-  .fc__info { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
-  .fc__info li { display: grid; grid-template-columns: 52px 1fr; gap: 16px; align-items: start; }
-  .fc__i { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: var(--royal); color: #FFFFFF; }
-  .fc__info li:nth-child(odd) .fc__i { background: var(--green); }
-  .fc__info div { display: grid; gap: 2px; color: var(--muted); }
-  .fc__info strong { color: var(--cream); font-size: 17px; margin-bottom: 2px; }
-  .fc__info a { display: inline-flex; min-height: 32px; align-items: center; font-weight: 600; }
+  .lead-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+  .fc__info { list-style: none; margin: 34px 0 0; padding: 0; display: grid; gap: 20px; }
+  .fc__info li { display: grid; grid-template-columns: 48px 1fr; gap: 14px; align-items: start; }
+  .fc__i { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: var(--pd); color: #FFFFFF; }
+  .fc__info li:nth-child(even) .fc__i { background: var(--ab); }
+  .fc__info div { display: grid; gap: 2px; color: #4A5878; }
+  .fc__info strong { color: var(--ink-txt); font-size: 16px; }
+  .fc__info a { display: inline-flex; min-height: 32px; align-items: center; font-weight: 700; color: var(--pd); }
+
+  .lform { display: grid; gap: 18px; padding: 32px; border-radius: 28px; background: #FFFFFF; border: 1px solid #E3E8F2; box-shadow: 0 40px 80px -50px rgba(11, 31, 92, .6); border-top: 5px solid var(--a); }
+  .lform__f { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; min-width: 0; }
+  .lform label, .lform legend { font-family: var(--f-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #4A5878; padding: 0; }
+  .lform input[type='text'], .lform select {
+    width: 100%; height: 56px; padding: 0 18px; border-radius: 14px; border: 1px solid #C9D1E0; background: #F7F9FC;
+    font: inherit; font-size: 16px; color: var(--ink-txt); transition: border-color .2s, box-shadow .2s, background .2s;
+  }
+  .lform input[type='text']:focus, .lform select:focus { outline: none; border-color: var(--a); background: #FFFFFF; box-shadow: 0 0 0 4px color-mix(in srgb, var(--a) 22%, transparent); }
+  .lform__radios { display: flex; flex-wrap: wrap; gap: 8px; }
+  .lform .lform__radio { position: relative; font-family: var(--f-body); text-transform: none; letter-spacing: 0; }
+  .lform__radio input { position: absolute; opacity: 0; inset: 0; cursor: pointer; margin: 0; }
+  .lform__radio span { display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #C9D1E0; background: #F7F9FC; font-weight: 700; font-size: 14px; color: #4A5878; transition: all .2s; }
+  .lform__radio input:checked + span { background: var(--pd); border-color: var(--pd); color: #FFFFFF; }
+  .lform__radio input:focus-visible + span { outline: 3px solid var(--a); outline-offset: 2px; }
+  .lform__err { margin: 0; padding: 10px 14px; border-radius: 10px; background: #FDECEC; color: #A30D24; font-size: 14px; font-weight: 600; }
+  .lform__btn { width: 100%; justify-content: space-between; margin-top: 4px; }
+  .lform__note { display: flex; gap: 8px; align-items: flex-start; margin: 0; font-size: 13px; color: #5E6A85; line-height: 1.45; }
+  .lform__note :global(svg) { flex: none; color: #1E8B3A; margin-top: 1px; }
+
+  .faq2 { display: grid; grid-template-columns: .9fr 1.1fr; gap: 48px; align-items: start; }
+  .faq2__list { display: grid; gap: 10px; }
+  .faq2__item { padding: 20px 22px; border-radius: 18px; background: #FFFFFF; border: 1px solid #E3E8F2; transition: border-color .3s; }
+  .faq2__item[open] { border-color: var(--a); }
+  .faq2__item summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 16px; font-size: 18px; font-weight: 700; color: var(--ink-txt); }
+  .faq2__item summary::-webkit-details-marker { display: none; }
+  .faq2__plus { color: var(--ab); font-size: 24px; line-height: 1; transition: transform .35s var(--ease); }
+  .faq2__item[open] .faq2__plus { transform: rotate(45deg); }
+  .faq2__item p { margin: 12px 0 0; color: #4A5878; line-height: 1.6; }
+
+  .final { position: relative; overflow: clip; padding: clamp(90px, 11vw, 150px) 0; background: linear-gradient(160deg, var(--pdeep), var(--pd)); color: #FFFFFF; text-align: center; }
+  .final .fh__glow { left: 50%; top: 50%; right: auto; translate: -50% -50%; }
+  .final__in { position: relative; display: grid; justify-items: center; gap: 18px; }
+  .final h2 { margin: 0; max-width: 900px; font-size: clamp(36px, 5.6vw, 78px); font-weight: 760; line-height: 1; text-wrap: balance; }
+  .final p { margin: 0; max-width: 620px; font-size: clamp(17px, 1.4vw, 20px); line-height: 1.6; color: rgba(255, 255, 255, .88); }
+  .final__ext { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 12px; letter-spacing: .06em; color: rgba(255, 255, 255, .8); text-decoration: none; }
+  .final__ext:hover { color: #FFFFFF; }
 
   @media (max-width: 1023px) {
-    .fh__grid, .fc { grid-template-columns: 1fr; }
+    .fh__grid, .lead-grid, .faq2 { grid-template-columns: 1fr; }
     .areas, .mods { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .steps4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .fh__card { margin-top: 20px; }
+    .steps4, .proof__in { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .proof__in li:nth-child(2) { border-right: 0; }
+    .proof__in li:nth-child(-n + 2) { border-bottom: 1px solid #E8ECF5; }
+    .fh__card { margin-top: 10px; }
   }
   @media (max-width: 639px) {
-    .fh { padding: 48px 0 64px; }
+    .fh { padding: 40px 0 100px; }
     .areas, .mods, .steps4 { grid-template-columns: 1fr; }
     .mods { gap: 26px; }
-    .fs__empty { grid-template-columns: 1fr; padding: 26px 22px; }
+    .pains li { grid-template-columns: 1fr; }
+    .pains p { padding: 18px; font-size: 16px; }
     .fh__ctas > * { flex: 1 1 100%; justify-content: center; }
-    .fh__ctas .btn { justify-content: space-between; }
+    .fh__ctas .fbtn { justify-content: space-between; }
+    .lform { padding: 24px 20px; }
+    .proof__in li { padding: 20px 18px; }
   }
 </style>
