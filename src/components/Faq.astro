@@ -2,7 +2,7 @@
 import { faqs } from '../data/content';
 ---
 
-<section id="duvidas" class="faq" aria-labelledby="faq-t">
+<section id="duvidas" class="faq" data-accent="green" aria-labelledby="faq-t">
   <div class="wrap faq__grid">
     <div class="rv">
       <div class="kicker">Antes de decidir</div>
@@ -29,7 +29,8 @@ import { faqs } from '../data/content';
   details:hover { translate: none; }
   summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 16px; font-size: 18px; font-weight: 600; }
   summary::-webkit-details-marker { display: none; }
-  .plus { color: var(--red); font-size: 24px; line-height: 1; transition: transform .35s var(--ease); }
+  details[open] { border-color: var(--accent); }
+  .plus { color: var(--accent); font-size: 24px; line-height: 1; transition: transform .35s var(--ease); }
   details[open] .plus { transform: rotate(45deg); }
   details p { margin: 12px 0 0; color: var(--muted); line-height: 1.6; }
 </style>

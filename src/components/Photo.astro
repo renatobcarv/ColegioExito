@@ -1,8 +1,9 @@
 ---
 /**
- * Foto com espaço reservado.
- * Sem `src`, mostra um bloco azul com a legenda do que deve ir ali.
- * Com `src` (ex.: "/img/fotos/bercario.jpg"), mostra a foto real.
+ * Foto com arte de reserva.
+ * Sem `src`, mostra uma arte da marca (os três "Ê" do logo) no lugar da foto,
+ * para o site parecer acabado enquanto as fotos reais não chegam.
+ * A legenda do que deve ir ali só aparece no `npm run dev`.
  */
 interface Props {
   src: string | null;
@@ -15,18 +16,39 @@ interface Props {
 const { src, alt, label, ratio, dark = false, eager = false } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const url = src && src.startsWith('/') ? `${base}${src}` : src;
-const style = [
-  ratio ? `aspect-ratio:${ratio}` : '',
-  dark ? 'background:linear-gradient(160deg,#5A1A1F,#1A0F22)' : '',
-].filter(Boolean).join(';');
+const style = ratio ? `aspect-ratio:${ratio}` : undefined;
 ---
 
-<div class="ph" style={style || undefined}>
-  {
-    url ? (
+{
+  url ? (
+    <div class="ph" style={style}>
       <img src={url} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" />
-    ) : (
-      <span aria-hidden="true">[{label}]</span>
-    )
+    </div>
+  ) : (
+    <div class={`ph ph--art${dark ? ' ph--dark' : ''}`} style={style} aria-hidden="true">
+      <span class="ph__sq ph__sq--g">Ê</span>
+      <span class="ph__sq ph__sq--r">Ê</span>
+      <span class="ph__sq ph__sq--b">Ê</span>
+      {import.meta.env.DEV && <span class="ph__dev">[{label}]</span>}
+    </div>
+  )
+}
+
+<style>
+  .ph--art {
+    background:
+      radial-gradient(120% 90% at 100% 0%, rgba(255, 255, 255, .16), transparent 55%),
+      linear-gradient(160deg, #2B55D1, var(--royal-deep));
+    container-type: size;
   }
-</div>
+  .ph--dark { background: radial-gradient(120% 90% at 100% 0%, rgba(225, 37, 27, .35), transparent 60%), linear-gradient(160deg, #5A1A1F, #1A0F22); }
+  .ph__sq {
+    position: absolute; width: 34cqmin; aspect-ratio: 1; display: grid; place-items: center;
+    font-family: Georgia, 'Times New Roman', serif; font-weight: 700; font-size: 26cqmin; line-height: 1;
+    color: rgba(255, 255, 255, .92); border-radius: 4px; box-shadow: 0 18px 40px -18px rgba(0, 0, 0, .55);
+  }
+  .ph__sq--g { background: var(--green); left: 50%; top: 50%; translate: -105% -40%; rotate: -6deg; opacity: .55; }
+  .ph__sq--r { background: var(--red); left: 50%; top: 50%; translate: -50% -55%; rotate: 2deg; opacity: .7; }
+  .ph__sq--b { background: #1B30A3; left: 50%; top: 50%; translate: 5% -70%; rotate: 7deg; opacity: .85; border: 1px solid rgba(255, 255, 255, .25); }
+  .ph__dev { position: relative; z-index: 2; }
+</style>

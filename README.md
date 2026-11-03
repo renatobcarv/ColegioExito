@@ -25,6 +25,7 @@ npm run build    # gera a versão final em dist/
 | `segmentos` | Berçário ao Polo Unopar: nome, faixa etária, texto, foto |
 | `depoimentos` | só aparece no site com `autorizado` = true (LGPD) |
 | `perguntas` | perguntas frequentes |
+| `galeria` | fotos das atividades (carrossel "Vida no Êxito"); aparece quando houver pelo menos uma |
 
 - `publicado` = false esconde a linha sem apagar.
 - `ordem` define a sequência no site.
@@ -35,7 +36,7 @@ O site lê o Supabase **na publicação**. Com o webhook abaixo configurado, cad
 
 #### Configurar uma vez
 
-1. **Criar as tabelas:** Supabase → **SQL Editor** → cole o conteúdo de `supabase/migrations/0001_conteudo.sql` → **Run**. Já vem com o conteúdo atual do site.
+1. **Criar as tabelas:** Supabase → **SQL Editor** → rode `supabase/migrations/0001_conteudo.sql` e depois `0002_galeria.sql` (um de cada vez, botão **Run**). O primeiro já vem com o conteúdo atual do site.
 2. **Variáveis na Vercel** (Settings → Environment Variables): `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (a integração Supabase da Vercel já cria essas).
 3. **Atualização automática:**
    - Vercel → Settings → Git → **Deploy Hooks** → crie um hook para a branch `main` e copie a URL.
@@ -51,13 +52,17 @@ Se o Supabase estiver fora do ar na hora da publicação, o build falha e a Verc
 | O que | Onde |
 | --- | --- |
 | Unidades, segmentos, FAQ, depoimentos, fotos | Supabase (Table Editor / Storage) |
-| Textos fixos, WhatsApp principal, redes | `src/data/site.ts` |
+| Textos fixos, WhatsApp principal, redes, reel em destaque | `src/data/site.ts` |
+| Páginas Unopar e TEC Mais (cursos, contatos) | `formacoes` em `src/data/site.ts` |
+| Proposta pedagógica e quadro comparativo | `metodo` em `src/data/site.ts` |
 | Cores e fontes | `src/styles/global.css` (topo do arquivo) |
 | Cada seção da página | `src/components/` |
 
 ## Conteúdo pendente (antes de divulgar)
 
-- [ ] Rodar o SQL no Supabase e configurar o webhook (passos acima).
+- [ ] Rodar `0002_galeria.sql` no Supabase e subir as primeiras fotos de atividades.
+- [ ] Configurar o webhook do Supabase → Vercel (passos acima).
+- [ ] **TEC Mais**: confirmar WhatsApp, endereço e carga horária dos cursos (`formacoes` em `src/data/site.ts`).
 
 - [ ] **Fotos reais**: hero, os 6 segmentos e as 2 fachadas (hoje aparecem blocos azuis com legenda).
 - [ ] **Depoimentos** de pais e ex-alunos, com autorização por escrito (a seção aparece quando houver pelo menos um).

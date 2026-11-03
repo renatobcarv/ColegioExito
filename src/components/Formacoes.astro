@@ -1,0 +1,96 @@
+---
+import { formacoes } from '../data/site';
+import Icon from './Icon.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<section id="formacao" class="form" aria-labelledby="form-t">
+  <div class="wrap">
+    <div class="form__head rv">
+      <div>
+        <div class="kicker form__kicker">Formação profissional</div>
+        <h2 id="form-t" class="disp h2">Depois da escola, <span class="serif form__serif">uma profissão</span> esperando seu filho.</h2>
+      </div>
+      <p class="lead form__lead">
+        A jornada no Êxito não termina no Ensino Médio. Faculdade e cursos técnicos, perto de casa, com a mesma
+        seriedade de sempre.
+      </p>
+    </div>
+
+    <div class="form__grid stagger">
+      {
+        formacoes.map((f, i) => (
+          <a href={`${base}/${f.slug}`} class={`fcard rv${i === 0 ? ' fcard--main' : ''}`}>
+            <div class="fcard__top">
+              <span class="fcard__icon"><Icon name={i === 0 ? 'cap' : 'tool'} size={26} /></span>
+              {f.badge && <span class="fcard__badge">{f.badge}</span>}
+            </div>
+            <span class="mono fcard__kind">{f.kind.toUpperCase()}</span>
+            <h3 class="disp">{f.name}</h3>
+            <p>{f.pitch}</p>
+            {f.areas.length > 0 && (
+              <ul class="fcard__areas">
+                {f.areas.slice(0, 4).map((a) => <li>{a.title}</li>)}
+              </ul>
+            )}
+            <span class="fcard__more">Conhecer {f.name} <Icon name="arrow" size={18} /></span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .form { position: relative; padding: clamp(80px, 10vw, 130px) 0; background: linear-gradient(180deg, #F2FAF4, #FFFFFF 70%); overflow: hidden; }
+  .form::before {
+    content: ''; position: absolute; width: 640px; height: 640px; left: -240px; top: -200px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(30, 139, 58, .14), transparent 62%); pointer-events: none;
+  }
+  .form__head { position: relative; display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px 56px; align-items: end; margin-bottom: 52px; }
+  .form__kicker { color: var(--green); }
+  .form__serif { color: var(--green); }
+  .form__lead { margin: 0; }
+
+  .form__grid { position: relative; display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; }
+  .fcard {
+    position: relative; display: flex; flex-direction: column; gap: 10px; padding: 32px; border-radius: 26px; text-decoration: none;
+    color: var(--cream); background: #FFFFFF; border: 1px solid rgba(30, 139, 58, .18); overflow: hidden;
+    box-shadow: 0 24px 50px -36px rgba(11, 31, 92, .45);
+    transition: transform .5s var(--ease), box-shadow .5s var(--ease), border-color .3s;
+  }
+  .fcard::after {
+    content: ''; position: absolute; inset: auto -40% -60% auto; width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(30, 139, 58, .16), transparent 65%); transition: transform .6s var(--ease);
+  }
+  .fcard:hover { transform: translateY(-6px); box-shadow: 0 40px 70px -40px rgba(11, 31, 92, .55); border-color: var(--green); color: var(--cream); }
+  .fcard:hover::after { transform: scale(1.4); }
+  .fcard--main { background: linear-gradient(155deg, #1E8B3A, #136B2B); color: #FFFFFF; border-color: transparent; }
+  .fcard--main:hover { color: #FFFFFF; }
+  .fcard--main::after { background: radial-gradient(circle, rgba(242, 194, 48, .3), transparent 65%); }
+
+  .fcard__top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .fcard__icon { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; background: rgba(30, 139, 58, .12); color: var(--green); }
+  .fcard--main .fcard__icon { background: rgba(255, 255, 255, .16); color: #FFFFFF; }
+  .fcard__badge { padding: 8px 14px; border-radius: 999px; background: var(--gold); color: var(--navy); font-weight: 800; font-size: 13px; }
+  .fcard__kind { font-size: 11.5px; letter-spacing: .14em; color: var(--green); }
+  .fcard--main .fcard__kind { color: #BFF0CC; }
+  .fcard h3 { margin: 0; font-size: clamp(28px, 3vw, 38px); font-weight: 760; letter-spacing: -.03em; }
+  .fcard p { margin: 0; font-size: 16.5px; line-height: 1.55; color: var(--muted); max-width: 460px; }
+  .fcard--main p { color: #E3F6E8; }
+  .fcard__areas { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; padding: 0; }
+  .fcard__areas li { padding: 6px 12px; border-radius: 999px; font-size: 13px; background: rgba(255, 255, 255, .14); border: 1px solid rgba(255, 255, 255, .22); }
+  .fcard:not(.fcard--main) { border-top: 4px solid var(--red); }
+  .fcard:not(.fcard--main) .fcard__icon { background: rgba(225, 37, 27, .1); color: var(--red-dark); }
+  .fcard:not(.fcard--main) .fcard__kind { color: var(--red-dark); }
+  .fcard:not(.fcard--main):hover { border-color: var(--red); }
+  .fcard:not(.fcard--main) .fcard__areas li { background: rgba(30, 139, 58, .08); border-color: rgba(30, 139, 58, .22); color: #145C27; font-weight: 600; }
+  .fcard__more { position: relative; z-index: 1; margin-top: auto; padding-top: 22px; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; }
+  .fcard__more :global(svg) { transition: transform .35s var(--ease); }
+  .fcard:hover .fcard__more :global(svg) { transform: translateX(5px); }
+
+  @media (max-width: 899px) {
+    .form__head, .form__grid { grid-template-columns: 1fr; }
+    .fcard { padding: 26px 22px; }
+  }
+</style>
