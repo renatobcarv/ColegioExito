@@ -554,7 +554,6 @@ export const photos: {
     'Fundamental I': { src: '/img/fotos/fundamental-i.webp', alt: 'Turma do Fundamental I em aula', illustrative: true },
     'Fundamental II': { src: '/img/fotos/fundamental-ii-9ano.webp', alt: 'Aula de matemática do 9º ano', illustrative: true },
     'Ensino Médio': { src: '/img/fotos/refeitorio.webp', alt: 'Alunos do Colégio Êxito no refeitório' },
-    'Polo Unopar': { src: '/img/fotos/fachada-novo-gama.webp', alt: 'Fachada da Unidade I com o Polo Universitário Unopar Anhanguera' },
   },
   units: {
     'novo-gama': { src: '/img/fotos/fachada-novo-gama.webp', alt: 'Fachada do Colégio Êxito, Unidade I, Novo Gama' },
