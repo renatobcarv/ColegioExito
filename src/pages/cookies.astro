@@ -3,35 +3,58 @@ import LegalPage from '../components/LegalPage.astro';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
-<LegalPage title="Política de Cookies" kicker="Cookies e conteúdos de terceiros" description="Quais cookies e armazenamentos o site do Colégio Êxito usa.">
-  <p class="lg__box"><strong>Este site não usa cookies de rastreamento, de análise ou de publicidade.</strong> Conteúdos de outros serviços (vídeos, reel e tour 360°) só são carregados quando você clica neles.</p>
+<LegalPage title="Política de Cookies" kicker="Cookies e tecnologias de medição" description="Quais cookies o site do Colégio Êxito usa e como gerenciar o seu consentimento.">
+  <p class="lg__box"><strong>Cookies de análise e de marketing só são ativados com o seu consentimento.</strong> Você escolhe no aviso exibido na primeira visita e pode mudar quando quiser em <a href="#" data-cookie-prefs>Preferências de cookies</a>.</p>
 
   <h2>1. O que são cookies</h2>
-  <p>Cookies são pequenos arquivos que um site grava no seu navegador para lembrar informações. Também existem formas parecidas de armazenamento, como o armazenamento local (localStorage).</p>
+  <p>Cookies são pequenos arquivos que um site grava no seu navegador para lembrar informações, como preferências e visitas anteriores. Usamos também tecnologias semelhantes, como o armazenamento local (localStorage) e pixels de medição.</p>
 
-  <h2>2. O que este site usa</h2>
+  <h2>2. Categorias que usamos</h2>
+  <h3>Necessários (sempre ativos)</h3>
   <table>
-    <thead><tr><th>Nome</th><th>Tipo</th><th>Para que serve</th><th>Duração</th></tr></thead>
+    <thead><tr><th>Nome</th><th>Fornecedor</th><th>Finalidade</th><th>Duração</th></tr></thead>
     <tbody>
-      <tr><td>exito-aviso-cookies</td><td>Armazenamento local, estritamente necessário</td><td>Lembrar que você já viu o aviso de cookies</td><td>Até você limpar os dados do navegador</td></tr>
+      <tr><td>exito-consent</td><td>Colégio Êxito (armazenamento local)</td><td>Guardar a sua escolha de cookies</td><td>Até você limpar os dados do navegador</td></tr>
+      <tr><td>exito-utm</td><td>Colégio Êxito (armazenamento da aba)</td><td>Lembrar a origem da campanha (UTM) para informar no WhatsApp de onde veio o contato</td><td>Até fechar a aba</td></tr>
     </tbody>
   </table>
-  <p>As fontes e as imagens do site são servidas pelo próprio site, sem rastreamento.</p>
 
-  <h2>3. Conteúdos de terceiros, só com o seu clique</h2>
+  <h3>Análise (com consentimento)</h3>
+  <table>
+    <thead><tr><th>Nome</th><th>Fornecedor</th><th>Finalidade</th><th>Duração</th></tr></thead>
+    <tbody>
+      <tr><td>_ga</td><td>Google Analytics</td><td>Diferenciar visitantes e contar visitas</td><td>2 anos</td></tr>
+      <tr><td>_ga_&lt;ID&gt;</td><td>Google Analytics</td><td>Manter o estado da sessão</td><td>2 anos</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Marketing (com consentimento)</h3>
+  <table>
+    <thead><tr><th>Nome</th><th>Fornecedor</th><th>Finalidade</th><th>Duração</th></tr></thead>
+    <tbody>
+      <tr><td>_gcl_au</td><td>Google Ads</td><td>Medir conversões de anúncios</td><td>90 dias</td></tr>
+      <tr><td>_fbp</td><td>Meta (Facebook/Instagram)</td><td>Medir e otimizar anúncios</td><td>90 dias</td></tr>
+      <tr><td>_fbc</td><td>Meta (Facebook/Instagram)</td><td>Registrar o clique em um anúncio</td><td>90 dias</td></tr>
+    </tbody>
+  </table>
+  <p>Usamos o <strong>Google Consent Mode</strong>: enquanto você não consente, as tags do Google não gravam cookies de análise ou de anúncios. O Pixel da Meta só é carregado depois do consentimento de marketing.</p>
+
+  <h2>3. Eventos medidos</h2>
+  <p>Com consentimento, medimos ações como cliques no WhatsApp, cliques para ligar e envio dos formulários de visita, bolsa ou inscrição. Não enviamos às plataformas o nome nem o telefone digitados.</p>
+
+  <h2>4. Conteúdos de terceiros, só com o seu clique</h2>
   <table>
     <thead><tr><th>Serviço</th><th>Onde aparece</th><th>Quando carrega</th></tr></thead>
     <tbody>
-      <tr><td>YouTube (modo de privacidade aprimorada, youtube-nocookie.com)</td><td>Depoimentos em vídeo</td><td>Ao tocar no play</td></tr>
+      <tr><td>YouTube (youtube-nocookie.com)</td><td>Depoimentos em vídeo</td><td>Ao tocar no play</td></tr>
       <tr><td>Instagram (Meta)</td><td>Reel em destaque</td><td>Ao tocar para assistir</td></tr>
       <tr><td>DD360</td><td>Tour 360° das unidades</td><td>Ao tocar em “Entrar no tour”</td></tr>
     </tbody>
   </table>
-  <p>Depois do clique, esses serviços podem gravar cookies próprios, conforme as políticas deles. As capas dos vídeos são imagens públicas do YouTube (i.ytimg.com).</p>
 
-  <h2>4. Como gerenciar</h2>
-  <p>Você pode apagar ou bloquear cookies e dados de sites nas configurações do seu navegador (Chrome, Safari, Firefox, Edge). Isso não impede o uso deste site.</p>
+  <h2>5. Como mudar ou retirar o consentimento</h2>
+  <p>Clique em <a href="#" data-cookie-prefs>Preferências de cookies</a> (também no rodapé de todas as páginas). Você também pode apagar cookies nas configurações do navegador. Recusar não impede o uso do site.</p>
 
-  <h2>5. Mais informações</h2>
+  <h2>6. Mais informações</h2>
   <p>Veja a <a href={`${base}/privacidade`}>Política de Privacidade</a> e os <a href={`${base}/termos`}>Termos de Uso</a>.</p>
 </LegalPage>

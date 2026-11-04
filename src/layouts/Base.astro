@@ -6,6 +6,7 @@ import '@fontsource/instrument-serif/latin-400-italic.css';
 import '@fontsource/instrument-serif/latin-400.css';
 import '../styles/global.css';
 import AvisoCookies from '../components/AvisoCookies.astro';
+import Tracking from '../components/Tracking.astro';
 import { school, legal } from '../data/site';
 import { units, faqs } from '../data/content';
 
@@ -70,6 +71,7 @@ const jsonLd = {
 <html lang="pt-BR">
   <head>
     <meta charset="utf-8" />
+    <Tracking />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />

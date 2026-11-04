@@ -151,6 +151,17 @@ export const school = {
  * Dados do controlador (LGPD) e datas das políticas.
  * TODO: preencher razão social, CNPJ e e-mail do encarregado (DPO). Campos null não aparecem.
  */
+/**
+ * Rastreamento e anúncios. Cole os IDs aqui (ou use variáveis na Vercel:
+ * PUBLIC_GTM_ID, PUBLIC_GA4_ID, PUBLIC_META_PIXEL_ID). null = não carrega.
+ * Tudo só roda depois do consentimento do visitante (LGPD + Google Consent Mode v2).
+ */
+export const tracking = {
+  gtmId: (import.meta.env.PUBLIC_GTM_ID as string | undefined) ?? (null as string | null), // ex.: 'GTM-XXXXXXX'
+  ga4Id: (import.meta.env.PUBLIC_GA4_ID as string | undefined) ?? (null as string | null), // ex.: 'G-XXXXXXXXXX' (use se não tiver GTM)
+  metaPixelId: (import.meta.env.PUBLIC_META_PIXEL_ID as string | undefined) ?? (null as string | null), // ex.: '123456789012345'
+};
+
 export const legal = {
   razaoSocial: null as string | null,
   cnpj: '63.239.574/0001-37' as string | null,

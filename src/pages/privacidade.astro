@@ -12,7 +12,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   <Controlador />
 
   <h2>2. Resumo em uma frase</h2>
-  <p class="lg__box"><strong>Este site não tem cadastro, não guarda os dados digitados nos formulários e não usa cookies de rastreamento ou de publicidade.</strong> Os formulários apenas montam uma mensagem e abrem o seu WhatsApp. Você decide se envia.</p>
+  <p class="lg__box"><strong>Este site não tem cadastro e não guarda os dados digitados nos formulários.</strong> Os formulários apenas montam uma mensagem e abrem o seu WhatsApp, e você decide se envia. Cookies de análise e de marketing só são usados com o seu consentimento.</p>
 
   <h2>3. Quais dados podem ser tratados</h2>
   <table>
@@ -21,6 +21,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <tr><td>Formulários de visita, bolsa ou inscrição</td><td>Nome, fase do filho ou curso de interesse, unidade e período, enviados por você no WhatsApp</td><td>Responder o contato, agendar visita e informar sobre matrícula e cursos</td><td>Procedimentos preliminares a contrato, a pedido do titular (art. 7º, V)</td></tr>
       <tr><td>Contato por WhatsApp ou telefone</td><td>Nome, telefone e o conteúdo da conversa</td><td>Atendimento</td><td>Art. 7º, V, e legítimo interesse (art. 7º, IX)</td></tr>
       <tr><td>Navegação no site</td><td>Registros técnicos de acesso (endereço IP, data, hora, navegador), gerados pela hospedagem</td><td>Segurança e funcionamento do site</td><td>Legítimo interesse (art. 7º, IX) e Marco Civil da Internet</td></tr>
+      <tr><td>Medição de audiência e anúncios (Google Analytics, Google Ads, Meta)</td><td>Identificadores de cookie, páginas visitadas, origem da visita (UTM), dispositivo e cidade aproximada, e eventos como clique no WhatsApp</td><td>Entender o uso do site e medir e melhorar campanhas</td><td>Consentimento (art. 7º, I), que pode ser retirado a qualquer momento</td></tr>
       <tr><td>Fotos, vídeos e depoimentos de alunos</td><td>Imagem e voz</td><td>Divulgação institucional</td><td>Consentimento específico e destacado do responsável legal (art. 14) ou do próprio titular maior de idade</td></tr>
     </tbody>
   </table>
@@ -30,6 +31,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <li><strong>WhatsApp (Meta):</strong> quando você envia a mensagem pelo aplicativo.</li>
     <li><strong>Vercel:</strong> empresa que hospeda o site e gera os registros técnicos de acesso.</li>
     <li><strong>Supabase:</strong> serviço que guarda o conteúdo e as fotos do site (não guarda dados de visitantes).</li>
+    <li><strong>Google (Analytics, Ads e Tag Manager) e Meta (Pixel):</strong> somente com o seu consentimento de análise ou de marketing. Esses fornecedores podem tratar dados fora do Brasil, conforme o art. 33 da LGPD.</li>
     <li><strong>YouTube, Instagram e DD360 (tour 360°):</strong> somente se você clicar para assistir ou abrir o conteúdo. Veja a <a href={`${base}/cookies`}>Política de Cookies</a>.</li>
     <li><strong>Parceiros educacionais</strong> (Unopar Anhanguera, TEC Mais, Edify) e <strong>portais</strong> (Unicollege, Ambiente Virtual EAD): são sites e serviços próprios, com políticas próprias. Ao clicar nos links, você sai deste site.</li>
   </ul>
@@ -54,7 +56,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   <p>Para exercer seus direitos, use o canal do titular indicado no item 1. Você também pode reclamar à Autoridade Nacional de Proteção de Dados (ANPD), em gov.br/anpd.</p>
 
   <h2>8. Segurança</h2>
-  <p>O site usa conexão criptografada (HTTPS), cabeçalhos de segurança que bloqueiam scripts e janelas não autorizadas, e acesso restrito ao painel de conteúdo. Conteúdos de terceiros só são carregados após a sua ação.</p>
+  <p>O site usa conexão criptografada (HTTPS), cabeçalhos de segurança que só permitem scripts e janelas de fornecedores autorizados, e acesso restrito ao painel de conteúdo. Tags de medição só rodam com consentimento, e vídeos e tour 360° só carregam após a sua ação.</p>
 
   <h2>9. Alterações</h2>
   <p>Esta política pode ser atualizada. A data da última atualização fica no topo da página.</p>

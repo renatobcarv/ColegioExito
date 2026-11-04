@@ -2,36 +2,96 @@
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
-<div class="ck" id="ck" role="region" aria-label="Aviso de cookies" hidden>
-  <p>Este site <strong>não usa cookies de rastreamento</strong>. Vídeos, reel e tour 360° só carregam quando você clica. <a href={`${base}/cookies`}>Saiba mais</a></p>
-  <button type="button" class="ck__ok">Entendi</button>
+<div class="ck" id="ck" role="dialog" aria-modal="false" aria-labelledby="ck-t" hidden>
+  <div class="ck__main">
+    <p id="ck-t" class="ck__t">Sua privacidade</p>
+    <p>Usamos cookies necessários para o site funcionar e, com a sua permissão, cookies de <strong>análise</strong> (Google Analytics) e de <strong>marketing</strong> (Google Ads e Meta) para medir visitas e mostrar anúncios relevantes. <a href={`${base}/cookies`}>Política de Cookies</a></p>
+  </div>
+
+  <div class="ck__prefs" hidden>
+    <label class="ck__opt ck__opt--fixed">
+      <input type="checkbox" checked disabled />
+      <span><strong>Necessários</strong>Funcionamento, segurança e a sua escolha de cookies. Sempre ativos.</span>
+    </label>
+    <label class="ck__opt">
+      <input type="checkbox" name="analytics" />
+      <span><strong>Análise</strong>Google Analytics: quantas pessoas visitam e quais páginas ajudam mais.</span>
+    </label>
+    <label class="ck__opt">
+      <input type="checkbox" name="marketing" />
+      <span><strong>Marketing</strong>Google Ads e Pixel da Meta: medir campanhas e mostrar anúncios do Êxito.</span>
+    </label>
+  </div>
+
+  <div class="ck__btns">
+    <button type="button" class="ck__btn ck__btn--ghost" data-ck="custom">Personalizar</button>
+    <button type="button" class="ck__btn ck__btn--ghost ck__save" data-ck="save" hidden>Salvar escolhas</button>
+    <button type="button" class="ck__btn ck__btn--ghost" data-ck="reject">Só necessários</button>
+    <button type="button" class="ck__btn ck__btn--ok" data-ck="accept">Aceitar todos</button>
+  </div>
 </div>
 
 <script>
-  const KEY = 'exito-aviso-cookies';
+  type C = { analytics: boolean; marketing: boolean };
+  const W = window as unknown as { exitoApplyConsent?: (c: C, save: boolean) => void; exitoReadConsent?: () => C | null };
   const el = document.getElementById('ck');
-  let seen = false;
-  try { seen = localStorage.getItem(KEY) === '1'; } catch { seen = false; }
-  if (el && !seen) {
-    el.hidden = false;
-    el.querySelector('.ck__ok')?.addEventListener('click', () => {
-      try { localStorage.setItem(KEY, '1'); } catch { /* navegador sem armazenamento: só esconde */ }
-      el.hidden = true;
+  if (el) {
+    const prefs = el.querySelector<HTMLElement>('.ck__prefs')!;
+    const save = el.querySelector<HTMLElement>('.ck__save')!;
+    const custom = el.querySelector<HTMLElement>('[data-ck="custom"]')!;
+    const box = (n: string) => el.querySelector<HTMLInputElement>(`input[name="${n}"]`)!;
+    const choose = (c: C) => { W.exitoApplyConsent?.(c, true); el.hidden = true; };
+    const open = (withPrefs: boolean) => {
+      const cur = W.exitoReadConsent?.();
+      box('analytics').checked = !!cur?.analytics;
+      box('marketing').checked = !!cur?.marketing;
+      prefs.hidden = !withPrefs; save.hidden = !withPrefs; custom.hidden = withPrefs;
+      el.hidden = false;
+    };
+    el.addEventListener('click', (e) => {
+      const act = (e.target as HTMLElement).closest<HTMLElement>('[data-ck]')?.dataset.ck;
+      if (act === 'accept') choose({ analytics: true, marketing: true });
+      if (act === 'reject') choose({ analytics: false, marketing: false });
+      if (act === 'custom') open(true);
+      if (act === 'save') choose({ analytics: box('analytics').checked, marketing: box('marketing').checked });
     });
+    // link "Preferências de cookies" em qualquer lugar do site
+    document.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('[data-cookie-prefs]')) { e.preventDefault(); open(true); }
+    });
+    if (!W.exitoReadConsent?.()) open(false);
   }
 </script>
 
 <style>
   .ck {
-    position: fixed; left: 20px; bottom: 20px; z-index: 85; max-width: 440px; display: flex; align-items: center; gap: 14px;
-    padding: 14px 14px 14px 18px; border-radius: 18px; background: #0B1F5C; color: #FFFFFF; box-shadow: 0 24px 50px -20px rgba(0, 0, 0, .6);
-    animation: ckIn .5s var(--ease) both .8s;
+    position: fixed; left: 20px; bottom: 20px; z-index: 95; width: min(560px, calc(100% - 40px)); display: grid; gap: 14px;
+    padding: 20px; border-radius: 20px; background: #0B1F5C; color: #FFFFFF; box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .65);
+    animation: ckIn .5s var(--ease) both .6s;
   }
   .ck[hidden] { display: none; }
-  .ck p { margin: 0; font-size: 13.5px; line-height: 1.45; color: #D3DCF7; }
+  .ck__t { margin: 0 0 6px; font-family: var(--f-disp); font-weight: 750; font-size: 18px; color: #FFFFFF; }
+  .ck__main p:not(.ck__t) { margin: 0; font-size: 13.5px; line-height: 1.5; color: #D3DCF7; }
   .ck strong { color: #FFFFFF; }
   .ck a { color: var(--gold); font-weight: 600; }
-  .ck__ok { flex: none; min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #FFFFFF; color: #0B1F5C; font: inherit; font-weight: 800; font-size: 14px; cursor: pointer; }
+  .ck__prefs { display: grid; gap: 8px; }
+  .ck__prefs[hidden] { display: none; }
+  .ck__opt { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; padding: 10px 12px; border-radius: 12px; background: rgba(255, 255, 255, .06); cursor: pointer; }
+  .ck__opt input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--green); }
+  .ck__opt span { font-size: 13px; line-height: 1.45; color: #D3DCF7; }
+  .ck__opt strong { display: block; font-size: 14px; }
+  .ck__opt--fixed { cursor: default; opacity: .85; }
+  .ck__btns { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+  .ck__btn { min-height: 44px; padding: 0 16px; border-radius: 999px; font: inherit; font-weight: 800; font-size: 14px; cursor: pointer; }
+  .ck__btn[hidden] { display: none; }
+  .ck__btn--ghost { background: transparent; color: #FFFFFF; border: 1px solid rgba(255, 255, 255, .35); }
+  .ck__btn--ghost:hover { background: rgba(255, 255, 255, .1); }
+  .ck__btn--ok { background: #FFFFFF; color: #0B1F5C; border: 0; }
   @keyframes ckIn { from { opacity: 0; transform: translateY(16px); } }
-  @media (max-width: 759px) { .ck { left: 12px; right: 12px; bottom: calc(80px + env(safe-area-inset-bottom)); max-width: none; } }
+  @media (max-width: 759px) {
+    .ck { left: 10px; right: 10px; width: auto; bottom: calc(76px + env(safe-area-inset-bottom)); padding: 16px; max-height: 70vh; overflow-y: auto; }
+    .ck__btns { justify-content: stretch; }
+    .ck__btn { flex: 1 1 calc(50% - 8px); }
+    .ck__btn--ok { flex-basis: 100%; order: -1; }
+  }
 </style>

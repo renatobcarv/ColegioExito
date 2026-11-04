@@ -78,8 +78,11 @@ const series = segments.filter((s) => !/unopar/i.test(s.name)).map((s) => s.name
       const pick = (n: string) => form.querySelector<HTMLInputElement>(`input[name="${n}"]:checked`)?.value ?? '';
       const msg =
         `Olá! Meu nome é ${nomeEl.value.trim()}. Vim pelo site e quero agendar uma visita de diagnóstico ` +
-        `para o ${serieEl.value}, na ${pick('unidade')}, de preferência no período da ${pick('periodo')}.`;
-      const url = `https://wa.me/${form.dataset.wa}?text=${encodeURIComponent(msg)}`;
+        `(fase: ${serieEl.value}), na ${pick('unidade')}, de preferência no período da ${pick('periodo')}.`;
+      const raw = `https://wa.me/${form.dataset.wa}?text=${encodeURIComponent(msg)}`;
+      const W = window as unknown as { exitoWa?: (u: string) => string; exitoTrack?: (n: string, p?: object) => void };
+      const url = W.exitoWa ? W.exitoWa(raw) : raw;
+      W.exitoTrack?.('generate_lead', { form: 'visita', page: location.pathname });
       const w = window.open(url, '_blank', 'noopener');
       if (!w) window.location.href = url;
     }),
