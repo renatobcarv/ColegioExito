@@ -1,0 +1,89 @@
+---
+/**
+ * Objeções → peças. Cada dúvida comum dos pais tem a peça do site que a resolve.
+ * Regra: só fatos reais (nada de garantia, prazo ou número inventado).
+ */
+import Icon from './Icon.astro';
+import { school } from '../data/site';
+const anos = new Date().getFullYear() - school.foundedYear;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const home = `${base}/`;
+
+const items = [
+  {
+    q: 'Escola particular é cara.',
+    a: 'Caro é descobrir no fim do ano que seu filho ficou para trás. Aqui a dificuldade é percebida cedo e corrigida junto com a família, antes de virar reforço, recuperação ou ano perdido.',
+    link: { label: 'Ver como acompanhamos', href: `${home}#acompanhamento` },
+  },
+  {
+    q: 'Será que funciona com o meu filho?',
+    a: `Ouça quem já está aqui. Pais e mães contam, em vídeo, o que mudou. E são ${anos} anos formando alunos no Novo Gama e em Valparaíso.`,
+    link: { label: 'Assistir depoimentos', href: `${home}#depoimentos` },
+  },
+  {
+    q: 'Ele vem de outra escola. Vai acompanhar?',
+    a: 'O planejamento considera o nível, o ritmo e a motivação de cada estudante. Na visita, a coordenação conversa com você sobre a fase do seu filho.',
+    link: { label: 'Agendar a conversa', href: `${home}#visita` },
+  },
+  {
+    q: 'Matrícula dá trabalho.',
+    a: 'Você agenda pelo WhatsApp, visita a unidade e a secretaria orienta cada documento, valor e prazo da série. Sem burocracia escondida.',
+    link: { label: 'Começar agora', href: `${home}#visita` },
+  },
+  {
+    q: 'Vou pensar e vejo depois.',
+    a: 'Pense com informação na mão: a visita é sem compromisso. Só não deixe para a última hora, porque as vagas por turma são limitadas.',
+    link: { label: 'Garantir minha visita', href: `${home}#visita` },
+  },
+  {
+    q: 'É só mais uma escola.',
+    a: 'Veja o método antes de decidir: BNCC com Parte Diversificada, Vida Cidadã, projetos e o quadro escola comum × Êxito.',
+    link: { label: 'Conhecer o método', href: `${home}#metodologia` },
+  },
+];
+---
+
+<section id="objecoes" class="obj" data-accent="blue" aria-labelledby="obj-t">
+  <div class="wrap">
+    <div class="obj__head rv">
+      <div class="kicker">Sem rodeio</div>
+      <h2 id="obj-t" class="disp h2">Toda dúvida tem resposta. <span class="serif">Veja as nossas.</span></h2>
+      <p class="lead">As perguntas que todo pai faz antes de trocar de escola, respondidas sem rodeio.</p>
+    </div>
+    <ul class="obj__grid stagger tri">
+      {
+        items.map((it) => (
+          <li class="ob rv">
+            <p class="ob__q"><span class="ob__ico" aria-hidden="true">?</span>“{it.q}”</p>
+            <div class="ob__a">
+              <Icon name="check" size={22} />
+              <div>
+                <p>{it.a}</p>
+                <a href={it.link.href}>{it.link.label} <Icon name="arrow" size={16} /></a>
+              </div>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .obj { padding: clamp(80px, 10vw, 130px) 0; }
+  .obj__head { max-width: 760px; margin-bottom: 48px; }
+  .obj__head .lead { margin: 18px 0 0; }
+  .obj__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .ob { display: grid; grid-template-rows: auto 1fr; border-radius: 24px; overflow: hidden; border: 1px solid var(--line); background: #FFFFFF; }
+  .ob:hover { transform: translateY(-4px); border-color: var(--c); box-shadow: 0 30px 60px -44px rgba(11, 31, 92, .55); }
+  .ob__q { margin: 0; display: flex; align-items: center; gap: 12px; padding: 18px 22px; background: #EEF0F4; color: #4A5878; font-weight: 700; font-size: 16.5px; }
+  .ob__ico { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: #9AA3B5; color: #FFFFFF; font-weight: 800; }
+  .ob__a { display: grid; grid-template-columns: 22px 1fr; gap: 12px; padding: 20px 22px 22px; border-top: 3px solid var(--c); }
+  .ob__a > :global(svg) { color: var(--c); margin-top: 2px; }
+  .ob__a p { margin: 0; color: var(--cream); line-height: 1.55; font-size: 15.5px; }
+  .ob__a a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 6px; font-weight: 700; color: var(--c-ink); text-decoration: none; }
+  .ob__a a :global(svg) { transition: transform .3s var(--ease); }
+  .ob__a a:hover :global(svg) { transform: translateX(4px); }
+  @media (max-width: 1023px) { .obj__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 639px) { .obj__grid { grid-template-columns: 1fr; } }
+</style>
