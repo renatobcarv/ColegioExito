@@ -541,6 +541,12 @@ export const gallery: GalleryItem[] = [
  * Fotos do site (em public/img/fotos). Usadas quando o Supabase não tem foto cadastrada.
  * illustrative: true mostra o selo "imagem ilustrativa"; troque por foto real e apague a marca.
  */
+/** Tours virtuais 360° (dd360) de cada unidade, na seção "Por dentro do Êxito". */
+export const tours = [
+  { unitId: 'novo-gama', label: 'Unidade I · Pedregal', city: 'Novo Gama', url: 'https://dd360.app/colegioexito1', cover: '/img/fotos/fachada-novo-gama.webp' },
+  { unitId: 'valparaiso', label: 'Unidade II · Céu Azul', city: 'Valparaíso de Goiás', url: 'https://dd360.app/colegioexito2', cover: '/img/fotos/fachada-valparaiso.webp' },
+];
+
 export type SitePhoto = { src: string; alt: string; illustrative?: boolean };
 export const photos: {
   hero: SitePhoto;

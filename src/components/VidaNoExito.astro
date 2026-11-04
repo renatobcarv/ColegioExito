@@ -1,8 +1,9 @@
 ---
-import { school } from '../data/site';
+import { school, tours } from '../data/site';
 import { gallery } from '../data/content';
 import Icon from './Icon.astro';
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const fmt = (d: string | null) =>
   d ? new Date(`${d}T12:00:00`).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) : null;
 ---
@@ -45,11 +46,41 @@ const fmt = (d: string | null) =>
     </div>
   </div>
 
+  <div class="tours" id="tour">
+    <div class="wrap">
+      <div class="tours__head rv">
+        <div>
+          <div class="kicker">Por dentro do Êxito</div>
+          <h3 class="disp tours__t">Visite a escola agora, <span class="serif">em 360°.</span></h3>
+        </div>
+        <p class="tours__lead">Ande pelos corredores, entre nas salas e conheça cada espaço do seu celular, antes mesmo da visita.</p>
+      </div>
+      <ul class="tours__grid stagger">
+        {tours.map((t) => (
+          <li class="tour rv">
+            <div class="tour__frame">
+              <button type="button" class="tour__play" data-tour={t.url} aria-label={`Abrir tour 360° da ${t.label}`}>
+                <img src={`${base}${t.cover}`} alt="" loading="lazy" decoding="async" />
+                <span class="tour__shade" aria-hidden="true"></span>
+                <span class="tour__badge" aria-hidden="true">360°</span>
+                <span class="tour__cta" aria-hidden="true"><Icon name="play" size={18} />Entrar no tour</span>
+              </button>
+            </div>
+            <div class="tour__cap">
+              <div><strong>{t.label}</strong><span>{t.city}</span></div>
+              <a href={t.url} target="_blank" rel="noopener" class="tour__full">Abrir em tela cheia <Icon name="external" size={14} /></a>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
   {
     gallery.length > 0 && (
       <div class="gal" aria-roledescription="carrossel" aria-label="Fotos das atividades">
         <div class="wrap gal__head">
-          <h3 class="disp">Por dentro do Êxito</h3>
+          <h3 class="disp">Momentos do Êxito</h3>
           <div class="gal__nav">
             <span class="mono gal__count" aria-live="polite"><span data-cur>1</span> / {gallery.length}</span>
             <button type="button" class="gal__btn" data-dir="-1" aria-label="Foto anterior"><Icon name="arrow" size={20} class="flip" /></button>
@@ -80,6 +111,19 @@ const fmt = (d: string | null) =>
 </section>
 
 <script>
+  // Tour 360°: carrega o dd360 só no clique
+  document.querySelectorAll<HTMLButtonElement>('.tour__play').forEach((b) =>
+    b.addEventListener('click', () => {
+      const f = document.createElement('iframe');
+      f.src = b.dataset.tour ?? '';
+      f.title = b.getAttribute('aria-label') ?? 'Tour virtual 360°';
+      f.allow = 'fullscreen; accelerometer; gyroscope; magnetometer; xr-spatial-tracking';
+      f.allowFullscreen = true;
+      f.className = 'tour__iframe';
+      b.replaceWith(f);
+    }),
+  );
+
   const track = document.querySelector<HTMLElement>('.gal__track');
   if (track) {
     const items = [...track.querySelectorAll<HTMLElement>('.gal__item')];
@@ -140,6 +184,32 @@ const fmt = (d: string | null) =>
   .phone iframe { width: 100%; height: 100%; border: 0; border-radius: 30px; background: #FFFFFF; }
   .vida__open { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: .06em; color: var(--muted); text-decoration: none; }
   .vida__open:hover { color: var(--royal); }
+
+  .tours { margin-top: clamp(64px, 8vw, 100px); }
+  .tours__head { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px 48px; align-items: end; margin-bottom: 28px; }
+  .tours__t { margin: 14px 0 0; font-size: clamp(30px, 3.8vw, 52px); font-weight: 740; line-height: 1.02; letter-spacing: -.035em; }
+  .tours__lead { margin: 0; color: var(--muted); font-size: 17px; line-height: 1.6; }
+  .tours__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .tour { display: grid; gap: 14px; }
+  .tour__frame { position: relative; aspect-ratio: 16 / 10; border-radius: 24px; overflow: hidden; background: var(--royal-deep); box-shadow: 0 40px 80px -50px rgba(11, 31, 92, .7); }
+  .tour__play { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; cursor: pointer; background: transparent; }
+  .tour__play img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: scale 1.2s var(--ease); }
+  .tour__play:hover img { scale: 1.06; }
+  .tour__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5, 12, 35, .1), rgba(5, 12, 35, .65)); }
+  .tour__badge {
+    position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: 96px; height: 96px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(255, 255, 255, .16); border: 2px solid rgba(255, 255, 255, .7); color: #FFFFFF; font-family: var(--f-disp); font-weight: 800; font-size: 26px;
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: tourSpin 6s linear infinite;
+  }
+  @keyframes tourSpin { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, .4); } 50% { box-shadow: 0 0 0 14px rgba(255, 255, 255, 0); } }
+  .tour__cta { position: absolute; left: 18px; bottom: 18px; display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 18px; border-radius: 999px; background: var(--red); color: #FFFFFF; font-weight: 800; font-size: 15px; transition: transform .3s var(--ease); }
+  .tour__play:hover .tour__cta { transform: translateY(-2px); }
+  .tour__frame :global(.tour__iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .tour__cap { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 16px; padding: 0 4px; }
+  .tour__cap strong { display: block; font-size: 17px; }
+  .tour__cap span { font-size: 14px; color: var(--muted); }
+  .tour__full { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-weight: 700; font-size: 14.5px; color: var(--royal); }
+  @media (max-width: 899px) { .tours__head, .tours__grid { grid-template-columns: 1fr; } }
 
   .gal { margin-top: clamp(64px, 8vw, 100px); }
   .gal__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; }

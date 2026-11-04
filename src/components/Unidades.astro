@@ -1,5 +1,5 @@
 ---
-import { waLink, telLink, formatPhone } from '../data/site';
+import { waLink, telLink, formatPhone, tours } from '../data/site';
 import { units } from '../data/content';
 import Photo from './Photo.astro';
 ---
@@ -30,6 +30,9 @@ import Photo from './Photo.astro';
                   </a>
                 )}
                 <a href={u.mapsUrl} target="_blank" rel="noopener" class="ghost ghost--sm">Como chegar</a>
+                {tours.find((t) => t.unitId === u.id) && (
+                  <a href={tours.find((t) => t.unitId === u.id)!.url} target="_blank" rel="noopener" class="ghost ghost--sm">Tour 360°</a>
+                )}
               </div>
             </div>
           </article>
