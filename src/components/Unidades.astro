@@ -2,48 +2,92 @@
 import { waLink, telLink, formatPhone, tours } from '../data/site';
 import { units } from '../data/content';
 import Photo from './Photo.astro';
+import Icon from './Icon.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const tourOf = (id: string) => tours.find((t) => t.unitId === id);
 ---
 
 <section id="unidades" class="unid" data-accent="blue" aria-labelledby="unid-t">
   <div class="wrap">
-    <div class="rv">
-      <div class="kicker">Onde estamos</div>
-      <h2 id="unid-t" class="disp h2" style="margin-bottom:48px">Duas unidades, <span class="serif">perto de você.</span></h2>
+    <div class="unid__head rv">
+      <div>
+        <div class="kicker">Onde estamos</div>
+        <h2 id="unid-t" class="disp h2">Duas unidades, <span class="serif">perto de você.</span></h2>
+      </div>
+      <p class="lead unid__lead">
+        <span class="unid__360" aria-hidden="true">360°</span>
+        <span>Entre em cada unidade agora, ande pelos corredores e conheça as salas pelo celular, antes mesmo de ir até lá.</span>
+      </p>
     </div>
-    <div class="unid__grid stagger tri">
+
+    <div class="unid__grid stagger tri" id="tour">
       {
-        units.map((u) => (
-          <article class="card rv" id={u.id}>
-            <Photo src={u.photo} label={`Foto · fachada ${u.tag}`} alt={`Fachada do Colégio Êxito ${u.tag}, ${u.city}`} ratio="16 / 9" illustrative={u.photoIllustrative} />
-            <div class="unid__body">
-              <span class="mono unid__tag">{u.tag.toUpperCase()}</span>
-              <h3 class="disp">{u.city}</h3>
-              <address>
-                {u.address.map((l) => <>{l}<br /></>)}
-                {u.hours && <>{u.hours}<br /></>}
-                {u.phones.map((p, i) => <>{i > 0 && ' · '}<a href={telLink(p.number)}>{formatPhone(p.number)}</a></>)}
-              </address>
-              <div class="unid__ctas">
-                {u.whatsapp && (
-                  <a href={waLink(u.whatsapp, `Olá! Vim pelo site e gostaria de falar com a ${u.tag} (${u.city}).`)} target="_blank" rel="noopener" class="pill-sm pill-sm--wa">
-                    WhatsApp {formatPhone(u.whatsapp.slice(2))}
-                  </a>
-                )}
-                <a href={u.mapsUrl} target="_blank" rel="noopener" class="ghost ghost--sm">Como chegar</a>
-                {tours.find((t) => t.unitId === u.id) && (
-                  <a href={tours.find((t) => t.unitId === u.id)!.url} target="_blank" rel="noopener" class="ghost ghost--sm">Tour 360°</a>
-                )}
+        units.map((u) => {
+          const t = tourOf(u.id);
+          return (
+            <article class="card rv" id={u.id}>
+              {t ? (
+                <div class="tour__frame">
+                  <button type="button" class="tour__play" data-tour={t.url} aria-label={`Entrar no tour 360° da ${u.tag}, ${u.city}`}>
+                    {u.photo && <img src={u.photo.startsWith('/') ? `${base}${u.photo}` : u.photo} alt="" loading="lazy" decoding="async" />}
+                    <span class="tour__shade" aria-hidden="true"></span>
+                    <span class="tour__badge" aria-hidden="true">360°</span>
+                    <span class="tour__cta" aria-hidden="true"><Icon name="play" size={18} />Entrar no tour</span>
+                  </button>
+                </div>
+              ) : (
+                <Photo src={u.photo} label={`Foto · fachada ${u.tag}`} alt={`Fachada do Colégio Êxito ${u.tag}, ${u.city}`} ratio="16 / 10" illustrative={u.photoIllustrative} />
+              )}
+              <div class="unid__body">
+                <span class="mono unid__tag">{u.tag.toUpperCase()}</span>
+                <h3 class="disp">{u.city}</h3>
+                <address>
+                  {u.address.map((l) => <>{l}<br /></>)}
+                  {u.hours && <>{u.hours}<br /></>}
+                  {u.phones.map((p, i) => <>{i > 0 && ' · '}<a href={telLink(p.number)}>{formatPhone(p.number)}</a></>)}
+                </address>
+                <div class="unid__ctas">
+                  {u.whatsapp && (
+                    <a href={waLink(u.whatsapp, `Olá! Vim pelo site e gostaria de falar com a ${u.tag} (${u.city}).`)} target="_blank" rel="noopener" class="pill-sm pill-sm--wa">
+                      WhatsApp {formatPhone(u.whatsapp.slice(2))}
+                    </a>
+                  )}
+                  <a href={u.mapsUrl} target="_blank" rel="noopener" class="ghost ghost--sm">Como chegar</a>
+                  {t && <a href={t.url} target="_blank" rel="noopener" class="ghost ghost--sm">360° em tela cheia <Icon name="external" size={14} /></a>}
+                </div>
               </div>
-            </div>
-          </article>
-        ))
+            </article>
+          );
+        })
       }
     </div>
   </div>
 </section>
 
+<script>
+  // Tour 360°: o dd360 só carrega no clique
+  document.querySelectorAll<HTMLButtonElement>('.tour__play').forEach((b) =>
+    b.addEventListener('click', () => {
+      const f = document.createElement('iframe');
+      f.src = b.dataset.tour ?? '';
+      f.title = b.getAttribute('aria-label') ?? 'Tour virtual 360°';
+      f.allow = 'fullscreen; accelerometer; gyroscope; magnetometer; xr-spatial-tracking';
+      f.allowFullscreen = true;
+      f.className = 'tour__iframe';
+      b.replaceWith(f);
+    }),
+  );
+</script>
+
 <style>
   .unid { padding: clamp(60px, 8vw, 110px) 0; }
+  .unid__head { display: grid; grid-template-columns: 1.1fr 1fr; gap: 20px 56px; align-items: end; margin-bottom: 44px; }
+  .unid__lead { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; }
+  .unid__360 {
+    width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center; background: var(--royal); color: #FFFFFF;
+    font-family: var(--f-disp); font-weight: 800; font-size: 17px; box-shadow: 0 0 0 6px rgba(18, 55, 166, .12);
+  }
   .unid__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 20px; }
   .unid__body { padding: 26px 26px 30px; display: flex; flex-direction: column; gap: 12px; }
   .unid__tag { align-self: flex-start; font-size: 11px; letter-spacing: .12em; padding: 5px 10px; border-radius: 6px; background: var(--c-soft); color: var(--c-ink); }
@@ -54,4 +98,26 @@ import Photo from './Photo.astro';
   address { font-style: normal; color: var(--muted); line-height: 1.6; }
   address a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; }
   .unid__ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+  .unid__ctas .ghost { gap: 6px; }
+
+  .tour__frame { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: var(--royal-deep); }
+  .tour__play { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; cursor: pointer; background: transparent; }
+  .tour__play img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: scale 1.2s var(--ease); }
+  .tour__play:hover img { scale: 1.06; }
+  .tour__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5, 12, 35, .1), rgba(5, 12, 35, .62)); }
+  .tour__badge {
+    position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: 92px; height: 92px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(255, 255, 255, .16); border: 2px solid rgba(255, 255, 255, .75); color: #FFFFFF; font-family: var(--f-disp); font-weight: 800; font-size: 25px;
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: tourPulse 3s ease-out infinite;
+  }
+  @keyframes tourPulse { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, .45); } 70%, 100% { box-shadow: 0 0 0 18px rgba(255, 255, 255, 0); } }
+  .tour__cta { position: absolute; left: 18px; bottom: 18px; display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 18px; border-radius: 999px; background: var(--red); color: #FFFFFF; font-weight: 800; font-size: 15px; transition: transform .3s var(--ease); }
+  .tour__play:hover .tour__cta { transform: translateY(-2px); }
+  .tour__frame :global(.tour__iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+  @media (max-width: 899px) { .unid__head { grid-template-columns: 1fr; } }
+  @media (max-width: 559px) {
+    .tour__badge { width: 62px; height: 62px; font-size: 17px; left: auto; right: 14px; top: 14px; translate: none; }
+    .tour__cta { left: 14px; bottom: 14px; }
+  }
 </style>
