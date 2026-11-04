@@ -1,6 +1,7 @@
 ---
 import { programas } from '../data/site';
 import Icon from './Icon.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <section id="programas" class="pgm" aria-labelledby="prog-t">
@@ -16,10 +17,19 @@ import Icon from './Icon.astro';
       {
         programas.map((p, i) => (
           <li class={`pc rv${i === 0 ? ' pc--hl' : ''}`} id={p.id}>
-            <span class="mono pc__tag">{p.tag}</span>
+            <div class="pc__top">
+              <span class="mono pc__tag">{p.tag}</span>
+              {p.logo && <span class="pc__logo"><img src={`${base}${p.logo.src}`} alt={p.logo.alt} width={p.logo.w} height={p.logo.h} loading="lazy" /></span>}
+            </div>
             <h3 class="disp">{p.title}</h3>
             <p>{p.text}</p>
             <ul class="pc__pts">{p.points.map((x) => <li><Icon name="check" size={18} />{x}</li>)}</ul>
+            {p.stats && (
+              <dl class="pc__stats">
+                {p.stats.map((x) => <div><dt class="disp">{x.value}</dt><dd>{x.label}</dd></div>)}
+              </dl>
+            )}
+            {p.awards && <p class="mono pc__aw">★ {p.awards}</p>}
           </li>
         ))
       }
@@ -35,6 +45,14 @@ import Icon from './Icon.astro';
   .pc { position: relative; display: grid; gap: 12px; align-content: start; padding: 30px; border-radius: 26px; background: #FFFFFF; border: 1px solid var(--line); border-top: 5px solid var(--c); overflow: hidden; }
   .pc:hover { transform: translateY(-5px); box-shadow: 0 34px 70px -46px rgba(11, 31, 92, .55); border-color: var(--c); }
   .pc--hl { background: linear-gradient(160deg, var(--royal), var(--royal-deep)); color: #FFFFFF; border-color: transparent; border-top-color: var(--red); }
+  .pc__top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .pc__logo { display: inline-flex; align-items: center; height: 46px; padding: 6px 12px; border-radius: 12px; background: #FFFFFF; }
+  .pc__logo img { height: 100%; width: auto; }
+  .pc__stats { margin: 8px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .pc__stats div { padding: 12px; border-radius: 14px; background: rgba(255, 255, 255, .1); }
+  .pc__stats dt { font-size: 24px; font-weight: 780; color: #FFFFFF; letter-spacing: -.02em; }
+  .pc__stats dd { margin: 2px 0 0; font-size: 12.5px; color: #D3DCF7; }
+  .pc__aw { margin: 4px 0 0; font-size: 12px !important; letter-spacing: .06em; color: var(--gold) !important; }
   .pc__tag { justify-self: start; padding: 5px 10px; border-radius: 6px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; background: var(--c-soft); color: var(--c-ink); }
   .pc--hl .pc__tag { background: rgba(255, 255, 255, .14); color: var(--gold); }
   .pc h3 { margin: 4px 0 0; font-size: clamp(24px, 2.4vw, 30px); font-weight: 750; letter-spacing: -.03em; }
