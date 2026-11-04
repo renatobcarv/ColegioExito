@@ -4,6 +4,7 @@ import Header from './Header.astro';
 import Footer from './Footer.astro';
 import Icon from './Icon.astro';
 import Arrow from './Arrow.astro';
+import TecCursos from './TecCursos.astro';
 import { school, waLink, formatPhone, type Formacao } from '../data/site';
 
 interface Props { f: Formacao }
@@ -15,7 +16,7 @@ const themeVars = `--p:${t.primary};--pd:${t.primaryDark};--pdeep:${t.primaryDee
 const [titleA, titleB] = f.title.includes(f.titleAccent)
   ? [f.title.slice(0, f.title.indexOf(f.titleAccent)), f.titleAccent]
   : [f.title, ''];
-const options = f.areas.map((a) => a.title);
+const options = [...(f.technical ?? []).map((c) => c.name), ...f.areas.map((a) => a.title)];
 ---
 
 <Base title={`${f.name}: ${f.kind} | ${school.name}`} description={`${f.name} no ${school.name}. ${f.pitch}`}>
@@ -34,7 +35,7 @@ const options = f.areas.map((a) => a.title);
           <p class="fh__lead fade" style="animation-delay:.35s">{f.lead}</p>
           <div class="fh__ctas fade" style="animation-delay:.5s">
             <a href="#inscricao" class="fbtn">{f.primaryCta}<span class="fbtn__arr"><Arrow /></span></a>
-            {f.areas.length > 0 && <a href="#cursos" class="fghost">Ver os cursos</a>}
+            {(f.technical || f.areas.length > 0) && <a href={f.technical ? '#tecnicos' : '#cursos'} class="fghost">Ver os cursos</a>}
           </div>
           <p class="fh__note fade" style="animation-delay:.6s"><Icon name="check" size={18} />{f.responseNote}</p>
         </div>
@@ -61,6 +62,8 @@ const options = f.areas.map((a) => a.title);
       </ul>
     </section>
 
+    <TecCursos f={f} />
+
     <section class="fs" aria-labelledby="dor-t">
       <div class="wrap">
         <h2 id="dor-t" class="disp fs__t rv">{f.painsTitle} <span class="serif fs__accent">{f.painsAccent}</span></h2>
@@ -83,8 +86,8 @@ const options = f.areas.map((a) => a.title);
         <section id="cursos" class="fs fs--soft" aria-labelledby="areas-t">
           <div class="wrap">
             <div class="rv fs__head">
-              <div class="kicker fp__k">{f.slug === 'unopar' ? 'Áreas de formação' : 'Cursos'}</div>
-              <h2 id="areas-t" class="disp h2">Escolha o caminho <span class="serif fs__accent">do seu futuro.</span></h2>
+              <div class="kicker fp__k">{f.technical ? 'Cursos de qualificação' : 'Áreas de formação'}</div>
+              <h2 id="areas-t" class="disp h2">{f.technical ? <>Cursos rápidos para <span class="serif fs__accent">se qualificar já.</span></> : <>Escolha o caminho <span class="serif fs__accent">do seu futuro.</span></>}</h2>
             </div>
             <ul class="areas stagger">
               {f.areas.map((a) => (
@@ -263,22 +266,22 @@ const options = f.areas.map((a) => a.title);
 <style>
   .fp { --ink-txt: #0B1F5C; }
 
-  .fbtn {
+  :global(.fbtn) {
     position: relative; display: inline-flex; align-items: center; gap: 14px; height: 60px; padding: 0 8px 0 26px; border: 0; border-radius: 999px;
     background: linear-gradient(180deg, var(--a), var(--ab)); color: #FFFFFF; font: inherit; font-weight: 800; font-size: 17px; text-decoration: none; cursor: pointer;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 16px 36px -12px color-mix(in srgb, var(--a) 75%, transparent);
     transition: transform .35s var(--ease), box-shadow .35s var(--ease); text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
   }
-  .fbtn:hover { color: #FFFFFF; transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 22px 44px -14px color-mix(in srgb, var(--a) 85%, transparent); }
-  .fbtn__arr { width: 44px; height: 44px; flex: 0 0 44px; border-radius: 50%; display: grid; place-items: center; background: var(--pdeep); color: #FFFFFF; transition: transform .45s var(--ease); }
+  :global(.fbtn:hover) { color: #FFFFFF; transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 22px 44px -14px color-mix(in srgb, var(--a) 85%, transparent); }
+  :global(.fbtn__arr) { width: 44px; height: 44px; flex: 0 0 44px; border-radius: 50%; display: grid; place-items: center; background: var(--pdeep); color: #FFFFFF; transition: transform .45s var(--ease); }
   .fbtn:hover .fbtn__arr { transform: rotate(-45deg); }
-  .fbtn--lg { height: 68px; font-size: 19px; padding-left: 30px; }
+  :global(.fbtn--lg) { height: 68px; font-size: 19px; padding-left: 30px; }
   .fbtn--lg .fbtn__arr { width: 52px; height: 52px; flex-basis: 52px; }
-  .fghost {
+  :global(.fghost) {
     display: inline-flex; align-items: center; gap: 8px; height: 60px; padding: 0 24px; border-radius: 999px;
     border: 1px solid rgba(255, 255, 255, .35); color: #FFFFFF; font-weight: 700; text-decoration: none; transition: background .25s;
   }
-  .fghost:hover { background: rgba(255, 255, 255, .1); color: #FFFFFF; }
+  :global(.fghost:hover) { background: rgba(255, 255, 255, .1); color: #FFFFFF; }
 
   .fh { position: relative; overflow: clip; padding: 64px 0 120px; color: #FFFFFF; background: linear-gradient(160deg, var(--pd), var(--pdeep) 70%); }
   .fh__glow { position: absolute; width: 820px; height: 820px; right: -260px; top: -300px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--a) 45%, transparent), transparent 62%); pointer-events: none; }

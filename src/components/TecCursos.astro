@@ -1,0 +1,180 @@
+---
+import Icon from './Icon.astro';
+import { waLink, type Formacao } from '../data/site';
+
+interface Props { f: Formacao }
+const { f } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const courses = f.technical ?? [];
+---
+
+{
+  courses.length > 0 && (
+    <section id="tecnicos" class="tc" aria-labelledby="tc-t">
+      <div class="wrap">
+        <div class="tc__head rv">
+          <div class="kicker fp__k">Cursos técnicos · habilitação de nível médio</div>
+          <h2 id="tc-t" class="disp h2">Três profissões. <span class="serif fs__accent">Um diploma que abre portas.</span></h2>
+          {f.trust && (
+            <ul class="tc__trust">
+              {f.trust.map((t) => <li><Icon name="check" size={16} />{t}</li>)}
+            </ul>
+          )}
+        </div>
+
+        <div class="tc__list">
+          {courses.map((c) => (
+            <article class={`tcard rv${c.featured ? ' tcard--hl' : ''}`} id={c.slug}>
+              {c.featured && <span class="tcard__tag">Mais procurado</span>}
+              <div class="tcard__media">
+                <img src={`${base}${c.photo}`} alt={`Alunos do curso ${c.name} da TEC Mais`} loading="lazy" decoding="async" />
+              </div>
+              <div class="tcard__body">
+                <h3 class="disp">{c.name}</h3>
+                <p class="tcard__tl">{c.tagline}</p>
+
+                <dl class="tcard__facts">
+                  <div><dt>Carga horária</dt><dd>{c.hours}</dd></div>
+                  <div><dt>Duração</dt><dd>{c.duration}</dd></div>
+                  <div><dt>Aulas</dt><dd>{c.schedule}</dd></div>
+                </dl>
+
+                <div class="tcard__sal">
+                  <span class="mono">Média salarial</span>
+                  <strong class="disp">{c.salary.headline}</strong>
+                  <small>{c.salary.detail} · fonte: {c.salary.source}</small>
+                </div>
+
+                <div class="tcard__car">
+                  <span class="mono">Onde você pode trabalhar</span>
+                  <ul>{c.careers.map((x) => <li>{x}</li>)}</ul>
+                </div>
+
+                <details class="tcard__grade">
+                  <summary>Ver a grade curricular <span aria-hidden="true">+</span></summary>
+                  <div class="tcard__mods">
+                    {c.modules.map((m) => (
+                      <div>
+                        <strong>{m.title}</strong>
+                        <ul>{m.subjects.map((x) => <li>{x}</li>)}</ul>
+                      </div>
+                    ))}
+                  </div>
+                </details>
+
+                <div class="tcard__ctas">
+                  <a href={waLink(f.contact.whatsapp, `Olá! Vim pelo site do Colégio Êxito e quero saber sobre o curso ${c.name} da TEC Mais.`)} target="_blank" rel="noopener" class="fbtn tcard__btn">
+                    Quero esse curso<span class="fbtn__arr"><Icon name="arrow" /></span>
+                  </a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+{
+  (f.testimonial || f.referral) && (
+    <section class="tproof" aria-label="Quem já estudou na TEC Mais">
+      <div class="wrap tproof__grid">
+        {f.testimonial && (
+          <figure class="tdep rv">
+            <img src={`${base}${f.testimonial.photo}`} alt={f.testimonial.name} loading="lazy" decoding="async" />
+            <div>
+              <span class="mono fp__k">Quem já se formou</span>
+              <blockquote class="disp">“{f.testimonial.quote}”</blockquote>
+              <figcaption><strong>{f.testimonial.name}</strong><span>{f.testimonial.role}</span></figcaption>
+            </div>
+          </figure>
+        )}
+        {f.referral && (
+          <aside class="tref rv">
+            <span class="tref__big disp">R$ 50</span>
+            <h3 class="disp">{f.referral.title}</h3>
+            <p>{f.referral.text}</p>
+            <a href={waLink(f.contact.whatsapp, 'Olá! Quero indicar um amigo para a TEC Mais.')} target="_blank" rel="noopener" class="fghost tref__btn"><Icon name="whatsapp" size={18} />Indicar um amigo</a>
+          </aside>
+        )}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .tc { padding: clamp(80px, 9vw, 120px) 0; background: var(--soft); }
+  .tc__head { max-width: 820px; margin-bottom: 44px; }
+  .tc__trust { list-style: none; margin: 22px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .tc__trust li { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px; background: #FFFFFF; border: 1px solid #DCE0EE; font-size: 14px; font-weight: 600; color: var(--pd); }
+  .tc__trust :global(svg) { color: var(--ab); }
+
+  .tc__list { display: grid; gap: 24px; }
+  .tcard {
+    position: relative; display: grid; grid-template-columns: .9fr 1.1fr; border-radius: 28px; overflow: hidden; background: #FFFFFF;
+    border: 1px solid #DCE0EE; box-shadow: 0 40px 80px -60px rgba(0, 0, 61, .6);
+  }
+  .tcard--hl { border: 2px solid var(--a); box-shadow: 0 40px 90px -50px color-mix(in srgb, var(--a) 70%, transparent); }
+  .tcard__tag { position: absolute; z-index: 2; top: 18px; left: 18px; padding: 8px 14px; border-radius: 999px; background: var(--ab); color: #FFFFFF; font-weight: 800; font-size: 13px; box-shadow: 0 10px 24px -10px rgba(0, 0, 0, .5); }
+  .tcard__media { position: relative; min-height: 320px; background: var(--pd); }
+  .tcard__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: scale 1.2s var(--ease); }
+  .tcard:hover .tcard__media img { scale: 1.05; }
+  .tcard__body { padding: 32px; display: grid; gap: 18px; align-content: start; }
+  .tcard h3 { margin: 0; font-size: clamp(26px, 2.8vw, 36px); font-weight: 760; letter-spacing: -.03em; color: var(--pd); }
+  .tcard__tl { margin: -8px 0 0; color: #4A5878; font-size: 16.5px; line-height: 1.5; }
+
+  .tcard__facts { margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .tcard__facts div { padding: 12px 14px; border-radius: 14px; background: var(--soft); }
+  .tcard__facts dt { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: #5E6A85; }
+  .tcard__facts dd { margin: 4px 0 0; font-weight: 800; color: var(--pd); font-size: 15px; }
+
+  .tcard__sal { display: grid; gap: 2px; padding: 16px 18px; border-radius: 16px; background: linear-gradient(135deg, var(--pd), var(--pdeep)); color: #FFFFFF; }
+  .tcard__sal .mono { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--a); }
+  .tcard__sal strong { font-size: clamp(26px, 2.6vw, 34px); font-weight: 780; letter-spacing: -.02em; }
+  .tcard__sal small { font-size: 13px; color: rgba(255, 255, 255, .8); }
+
+  .tcard__car .mono { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ai); }
+  .tcard__car ul { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .tcard__car li { padding: 6px 12px; border-radius: 999px; font-size: 13.5px; background: var(--soft); color: var(--pd); font-weight: 600; }
+
+  .tcard__grade { border-radius: 16px; border: 1px solid #DCE0EE; padding: 0 18px; }
+  .tcard__grade summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; min-height: 52px; font-weight: 800; color: var(--pd); }
+  .tcard__grade summary::-webkit-details-marker { display: none; }
+  .tcard__grade summary span { color: var(--ab); font-size: 22px; transition: transform .3s var(--ease); }
+  .tcard__grade[open] summary span { transform: rotate(45deg); }
+  .tcard__mods { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 22px; padding: 4px 0 18px; }
+  .tcard__mods strong { display: block; font-size: 14px; color: var(--ai); margin-bottom: 6px; }
+  .tcard__mods ul { margin: 0; padding-left: 18px; color: #4A5878; font-size: 14px; line-height: 1.55; }
+
+  .tcard__btn { justify-self: start; }
+
+  .tproof { padding: clamp(72px, 8vw, 110px) 0; }
+  .tproof__grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; align-items: stretch; }
+  .tdep { margin: 0; display: grid; grid-template-columns: 220px 1fr; gap: 28px; align-items: center; padding: 28px; border-radius: 28px; background: #FFFFFF; border: 1px solid #DCE0EE; }
+  .tdep img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 20px; }
+  .tdep blockquote { margin: 12px 0 0; font-size: clamp(17px, 1.5vw, 20px); font-weight: 600; line-height: 1.45; letter-spacing: -.01em; color: var(--pd); }
+  .tdep figcaption { margin-top: 16px; display: grid; }
+  .tdep figcaption strong { color: var(--pd); }
+  .tdep figcaption span { color: #5E6A85; font-size: 14px; }
+  .tref { display: grid; align-content: center; gap: 10px; padding: 32px; border-radius: 28px; background: linear-gradient(160deg, var(--pd), var(--pdeep)); color: #FFFFFF; }
+  .tref__big { font-size: 64px; font-weight: 800; line-height: 1; color: var(--a); letter-spacing: -.04em; }
+  .tref h3 { margin: 0; font-size: 24px; font-weight: 740; }
+  .tref p { margin: 0; color: rgba(255, 255, 255, .85); line-height: 1.55; }
+  .tref__btn { justify-self: start; height: 52px; margin-top: 8px; }
+
+  @media (max-width: 1023px) {
+    .tcard { grid-template-columns: 1fr; }
+    .tcard__media { min-height: 0; aspect-ratio: 16 / 9; }
+    .tproof__grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 639px) {
+    .tcard__body { padding: 24px 20px; }
+    .tcard__facts { grid-template-columns: 1fr 1fr; }
+    .tcard__facts div:last-child { grid-column: 1 / -1; }
+    .tcard__mods { grid-template-columns: 1fr; }
+    .tcard__btn { justify-self: stretch; justify-content: space-between; }
+    .tdep { grid-template-columns: 1fr; }
+    .tdep img { max-width: 220px; }
+  }
+</style>
