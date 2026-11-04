@@ -30,7 +30,7 @@ const slug = (s: string) =>
       {
         segments.map((s) => (
           <li class={`seg card rv${s.highlight ? ' seg--hl' : ''}`} id={`seg-${slug(s.name)}`}>
-            <Photo src={s.photo} label={`Foto · ${s.name}`} alt={`Alunos do ${s.name} no Colégio Êxito`} ratio="4 / 5" dark={s.highlight} />
+            <Photo src={s.photo} label={`Foto · ${s.name}`} alt={`Alunos do ${s.name} no Colégio Êxito`} ratio="4 / 5" dark={s.highlight} illustrative={s.photoIllustrative} />
             <div class="seg__body">
               {s.age && <span class={`mono seg__tag seg__tag--${s.accent}`}>{s.age.toUpperCase()}</span>}
               <h3 class="disp">{s.name}</h3>

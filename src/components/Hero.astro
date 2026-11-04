@@ -1,5 +1,5 @@
 ---
-import { school } from '../data/site';
+import { school, photos } from '../data/site';
 import { segments } from '../data/content';
 import Arrow from './Arrow.astro';
 import Photo from './Photo.astro';
@@ -61,7 +61,7 @@ const d = (i: number) => `animation-delay:${(0.15 + i * 0.05).toFixed(2)}s`;
 
     <div class="fade hero__visual" style="animation-delay:.5s">
       <div class="bob hero__photo">
-        <Photo src={null} label="Foto real · aluno em sala, luz natural" alt="Aluno do Colégio Êxito em sala de aula" />
+        <Photo src={photos.hero.src} label="Foto real · aluno em sala, luz natural" alt={photos.hero.alt} illustrative={photos.hero.illustrative} eager />
       </div>
 
       <div class="float bob2 hero__card hero__card--grades" aria-hidden="true">

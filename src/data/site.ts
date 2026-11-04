@@ -12,6 +12,7 @@ export type Phone = { label: string; number: string };
 
 export type Unit = {
   id: string;
+  photoIllustrative?: boolean;
   tag: string;
   city: string;
   address: string[];
@@ -26,6 +27,8 @@ export type Unit = {
 
 export type Segment = {
   name: string;
+  /** true = foto ilustrativa (mostra o selo "imagem ilustrativa"). */
+  photoIllustrative?: boolean;
   age: string | null;
   text: string;
   photo: string | null;
@@ -149,7 +152,7 @@ export const units: Unit[] = [
       { label: 'Secretaria', number: '6136241735' },
       { label: 'Secretaria', number: '6136244062' },
     ],
-    whatsapp: null, // TODO: confirmar o WhatsApp da Unidade II
+    whatsapp: '5561986263138', // WhatsApp da unidade Céu Azul (confirmado pela escola)
     mapsUrl: 'https://share.google/XqeIMQirPjSmhgo65',
     photo: null,
     geo: { locality: 'Valparaíso de Goiás', region: 'GO' },
@@ -441,12 +444,12 @@ export const formacoes: Formacao[] = [
       cta: 'Garantir minha vaga',
     },
     contact: {
-      whatsapp: '5561986262137', // TODO: confirmar o WhatsApp da TEC Mais
+      whatsapp: '5561998200367', // telefone do cartaz da TEC Mais na fachada da Unidade II
       email: null,
-      address: ['Valparaíso de Goiás – GO'],
+      address: ['No prédio da Unidade II do Colégio Êxito', 'Quadra 122 Lote 09/14, Jardim Céu Azul, Valparaíso de Goiás – GO'],
       hours: null,
       instagram: 'https://www.instagram.com/tecmais.valparaisodegoias/',
-      mapsUrl: null,
+      mapsUrl: 'https://share.google/XqeIMQirPjSmhgo65',
     },
     externalUrl: 'https://www.instagram.com/tecmais.valparaisodegoias/',
     externalLabel: 'Ver no Instagram',
@@ -528,7 +531,36 @@ export type GalleryItem = { title: string; caption: string | null; date: string 
  * Fotos daqui ficam em public/img/galeria/ e somam com as cadastradas no Supabase (tabela galeria).
  * Ex.: { title: 'Festa Junina 2026', caption: 'Apresentação do Fundamental I', date: '2026-06-20', photo: '/img/galeria/festa-junina-1.webp' }
  */
-export const gallery: GalleryItem[] = [];
+export const gallery: GalleryItem[] = [
+  { title: 'Intervalo no refeitório', caption: 'Alunos do Fundamental II e do Ensino Médio', date: null, photo: '/img/fotos/refeitorio.webp' },
+  { title: 'Unidade I · Novo Gama', caption: 'Colégio Êxito e Polo Universitário Unopar Anhanguera', date: null, photo: '/img/fotos/fachada-novo-gama.webp' },
+  { title: 'Unidade II · Valparaíso de Goiás', caption: 'Colégio Êxito e TEC Mais Cursos Técnicos', date: null, photo: '/img/fotos/fachada-valparaiso.webp' },
+];
+
+/**
+ * Fotos do site (em public/img/fotos). Usadas quando o Supabase não tem foto cadastrada.
+ * illustrative: true mostra o selo "imagem ilustrativa"; troque por foto real e apague a marca.
+ */
+export type SitePhoto = { src: string; alt: string; illustrative?: boolean };
+export const photos: {
+  hero: SitePhoto;
+  segments: Record<string, SitePhoto>;
+  units: Record<string, SitePhoto>;
+} = {
+  hero: { src: '/img/fotos/fundamental-i.webp', alt: 'Professora do Colégio Êxito acompanhando de perto uma aluna do Fundamental I', illustrative: true },
+  segments: {
+    'Berçário': { src: '/img/fotos/bercario.webp', alt: 'Bebês do Berçário brincando com a professora', illustrative: true },
+    'Educação Infantil': { src: '/img/fotos/educacao-infantil.webp', alt: 'Crianças da Educação Infantil pintando com a professora', illustrative: true },
+    'Fundamental I': { src: '/img/fotos/fundamental-i.webp', alt: 'Turma do Fundamental I em aula', illustrative: true },
+    'Fundamental II': { src: '/img/fotos/fundamental-ii-9ano.webp', alt: 'Aula de matemática do 9º ano', illustrative: true },
+    'Ensino Médio': { src: '/img/fotos/refeitorio.webp', alt: 'Alunos do Colégio Êxito no refeitório' },
+    'Polo Unopar': { src: '/img/fotos/fachada-novo-gama.webp', alt: 'Fachada da Unidade I com o Polo Universitário Unopar Anhanguera' },
+  },
+  units: {
+    'novo-gama': { src: '/img/fotos/fachada-novo-gama.webp', alt: 'Fachada do Colégio Êxito, Unidade I, Novo Gama' },
+    'valparaiso': { src: '/img/fotos/fachada-valparaiso.webp', alt: 'Fachada do Colégio Êxito, Unidade II, Valparaíso de Goiás' },
+  },
+};
 
 // ——— utilitários ———
 
