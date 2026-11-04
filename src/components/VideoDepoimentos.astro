@@ -9,26 +9,26 @@ import Icon from './Icon.astro';
       <div class="wrap">
         <div class="vdep__head rv">
           <div>
-            <div class="kicker">Quem já está aqui</div>
-            <h2 id="vdep-t" class="disp h2">Palavra de <span class="serif">pai e mãe.</span></h2>
+            <div class="kicker">Quem estuda aqui</div>
+            <h2 id="vdep-t" class="disp h2">Quem vive o Êxito <span class="serif">conta como é.</span></h2>
           </div>
-          <p class="lead">Não acredite só na gente. Ouça quem confia o próprio filho ao Êxito todos os dias.</p>
+          <p class="lead">Não acredite só na gente. Ouça os alunos que estudam no Êxito todos os dias e sabem como é ser acompanhado de perto.</p>
         </div>
 
         <ul class={`vdep__grid stagger tri vdep__grid--${Math.min(videoTestimonials.length, 3)}`}>
           {videoTestimonials.map((v, i) => (
             <li class="vcard rv">
               <div class="vcard__frame">
-                <button type="button" class="vcard__play" data-yt={v.id} aria-label={`Assistir depoimento ${v.name ? `de ${v.name}` : i + 1}`}>
+                <button type="button" class="vcard__play" data-yt={v.id} aria-label={`Assistir depoimento ${v.name ? `de ${v.name}` : `do aluno ${i + 1}`}`}>
                   <img src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`} alt="" loading="lazy" decoding="async" onerror="this.remove()" />
                   <span class="vcard__shade" aria-hidden="true"></span>
                   <span class="vcard__btn" aria-hidden="true"><Icon name="play" size={26} /></span>
-                  <span class="mono vcard__tag" aria-hidden="true">DEPOIMENTO</span>
+                  <span class="mono vcard__tag" aria-hidden="true">ALUNO ÊXITO</span>
                 </button>
               </div>
               <div class="vcard__cap">
                 {v.quote && <p class="disp vcard__q">“{v.quote}”</p>}
-                <strong>{v.name ?? 'Família Êxito'}</strong>
+                <strong>{v.name ?? 'Aluno Êxito'}</strong>
                 {v.role && <span>{v.role}</span>}
               </div>
             </li>
@@ -36,7 +36,7 @@ import Icon from './Icon.astro';
         </ul>
 
         <div class="vdep__cta rv">
-          <a href={waLink(school.whatsapp)} target="_blank" rel="noopener" class="btn">Quero essa experiência para meu filho<span class="arr"><Icon name="arrow" /></span></a>
+          <a href={waLink(school.whatsapp)} target="_blank" rel="noopener" class="btn">Quero isso para o meu filho<span class="arr"><Icon name="arrow" /></span></a>
         </div>
       </div>
     </section>

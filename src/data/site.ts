@@ -243,7 +243,8 @@ export const steps = [
 export const testimonials: Testimonial[] = [];
 
 /**
- * Depoimentos em VÍDEO (YouTube, de preferência "Não listado").
+ * Depoimentos em VÍDEO de ALUNOS (YouTube, de preferência "Não listado").
+ * Alunos menores de idade: só com autorização por escrito do responsável (LGPD/ECA).
  * `id` é o código do link: youtube.com/shorts/ESTE_CODIGO
  * `name`, `role` e `quote` são opcionais: preencha para mostrar quem fala e uma frase de destaque.
  */
