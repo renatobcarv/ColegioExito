@@ -12,7 +12,8 @@ type Group = { label: string; id: string; items: Item[]; active?: boolean };
 
 const ensino: Item[] = [
   { label: 'Proposta pedagógica', href: `${home}#metodologia`, desc: 'Como ensinamos e por que somos diferentes' },
-  { label: 'Berçário e Educação Infantil', href: `${home}#seg-educacao-infantil`, desc: 'Rotina, afeto e primeiras descobertas' },
+  { label: 'Programas Êxito', href: `${home}#programas`, desc: 'Bilíngue Edify, Mindset e Socioemocional' },
+  { label: 'Educação Infantil', href: `${home}#seg-educacao-infantil`, desc: '3 a 5 anos' },
   { label: 'Fundamental I', href: `${home}#seg-fundamental-i`, desc: '1º ao 5º ano' },
   { label: 'Fundamental II', href: `${home}#seg-fundamental-ii`, desc: '6º ao 9º ano' },
   { label: 'Ensino Médio', href: `${home}#seg-ensino-medio`, desc: '1ª a 3ª série, foco em ENEM' },
@@ -42,6 +43,10 @@ const isCurrent = (href: string) => !href.includes('#') && path.endsWith(href.re
           </span>
         ))
       }
+    </span>
+    <span class="topbar__portals">
+      {school.services.unicollege && <a href={school.services.unicollege} target="_blank" rel="noopener" title="Notas, frequência, boletim e recados">Portal Unicollege</a>}
+      {school.services.ead && <a href={school.services.ead} target="_blank" rel="noopener" title="Aulas, materiais e provas online">Ambiente Virtual EAD</a>}
     </span>
     <span class="topbar__social">
       <a href={school.instagramReels} target="_blank" rel="noopener" aria-label="Instagram do Colégio Êxito"><Icon name="instagram" size={16} /><span>{school.instagramHandle}</span></a>
@@ -81,6 +86,10 @@ const isCurrent = (href: string) => !href.includes('#') && path.endsWith(href.re
         {links.map((l) => <li><a href={l.href} class="nav__link">{l.label}</a></li>)}
       </ul>
       <a href={`${home}#visita`} class="pill-sm pill-sm--red nav__cta-m">Agendar visita</a>
+      <div class="nav__portals-m">
+        {school.services.unicollege && <a href={school.services.unicollege} target="_blank" rel="noopener">Portal Unicollege</a>}
+        {school.services.ead && <a href={school.services.ead} target="_blank" rel="noopener">Ambiente Virtual EAD</a>}
+      </div>
     </nav>
 
     <div class="nav__actions">
@@ -146,6 +155,10 @@ const isCurrent = (href: string) => !href.includes('#') && path.endsWith(href.re
   .topbar a { color: var(--cream); text-decoration: none; }
   .topbar a:hover { color: var(--gold); }
   .topbar__social { display: flex; align-items: center; gap: 16px; }
+  .topbar__portals { display: flex; gap: 6px; margin-left: auto; }
+  .topbar__portals a { padding: 3px 10px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .28); font-weight: 600; }
+  .topbar__portals a:hover { background: rgba(255, 255, 255, .1); text-decoration: none; }
+  @media (max-width: 899px) { .topbar__portals { display: none; } }
   .topbar__social a { display: inline-flex; align-items: center; gap: 6px; }
 
   .nav {
@@ -199,7 +212,7 @@ const isCurrent = (href: string) => !href.includes('#') && path.endsWith(href.re
 
   .nav__actions { display: flex; align-items: center; gap: 10px; }
   .nav__cta { height: 48px; padding: 0 22px; font-size: 15px; }
-  .nav__toggle, .nav__cta-m { display: none; }
+  .nav__toggle, .nav__cta-m, .nav__portals-m { display: none; }
 
   .tricolor { display: flex; height: 3px; }
   .tricolor span { flex: 1; }
@@ -237,6 +250,8 @@ const isCurrent = (href: string) => !href.includes('#') && path.endsWith(href.re
     .dd__btn[aria-expanded='true'] + .dd__panel { display: block; }
     .dd__item { padding: 10px 12px; border-left: 3px solid var(--green); border-radius: 0 12px 12px 0; margin: 4px 0; background: var(--ink2); }
     .nav__cta-m { display: flex; margin-top: 20px; height: 54px; font-size: 16px; }
+    .nav__portals-m { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+    .nav__portals-m a { display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 14px; border: 1px solid var(--line2); font-weight: 700; font-size: 14px; color: var(--royal); text-decoration: none; text-align: center; padding: 0 8px; }
   }
   @media (max-width: 559px) {
     .nav__cta { display: none; }

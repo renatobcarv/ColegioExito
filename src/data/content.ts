@@ -110,7 +110,12 @@ export const units: Unit[] = raw.units.map((u) => {
   const withPhoto = u.photo || !p ? u : { ...u, photo: p.src, photoIllustrative: p.illustrative };
   return { ...withPhoto, whatsapp };
 });
-export const segments: Segment[] = raw.segments.map((s) => {
+// Berçário não é mais oferecido; Educação Infantil é de 3 a 5 anos; TEC Mais entra na jornada.
+const segBase = raw.segments
+  .filter((s) => s.name !== 'Berçário')
+  .map((s) => (s.name === 'Educação Infantil' && !s.age ? { ...s, age: '3 a 5 anos' } : s));
+for (const ls of local.segments) if (!segBase.some((s) => s.name === ls.name) && ls.name === 'TEC Mais') segBase.push(ls);
+export const segments: Segment[] = segBase.map((s) => {
   const p = local.photos.segments[s.name];
   return s.photo || !p ? s : { ...s, photo: p.src, photoIllustrative: p.illustrative };
 });

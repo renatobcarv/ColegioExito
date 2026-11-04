@@ -15,13 +15,14 @@ interface Props {
 const { cta = true, wa = waLink(school.whatsapp), waLabel = 'Agendar visita' } = Astro.props;
 
 const ensino = [
-  { label: 'Berçário e Infantil', href: `${home}#seg-educacao-infantil` },
+  { label: 'Educação Infantil', href: `${home}#seg-educacao-infantil` },
   { label: 'Fundamental I', href: `${home}#seg-fundamental-i` },
   { label: 'Fundamental II', href: `${home}#seg-fundamental-ii` },
   { label: 'Ensino Médio', href: `${home}#seg-ensino-medio` },
 ];
 const services = [
-  { label: 'Conexão Êxito', href: school.services.conexao },
+  { label: 'Portal Unicollege', href: school.services.unicollege },
+  { label: 'Ambiente Virtual EAD', href: school.services.ead },
   { label: 'Webmail', href: school.services.webmail },
 ].filter((l): l is { label: string; href: string } => Boolean(l.href));
 ---

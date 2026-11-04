@@ -1,5 +1,5 @@
 ---
-import { steps } from '../data/site';
+import { steps, school } from '../data/site';
 ---
 
 <section id="acompanhamento" class="acomp dark" aria-labelledby="acomp-t">
@@ -20,12 +20,24 @@ import { steps } from '../data/site';
           ))
         }
       </ol>
+      <div class="plats">
+        {school.services.unicollege && (
+          <a href={school.services.unicollege} target="_blank" rel="noopener" class="plat">
+            <strong>Portal Unicollege</strong><span>Notas, frequência, boletim e recados da escola</span>
+          </a>
+        )}
+        {school.services.ead && (
+          <a href={school.services.ead} target="_blank" rel="noopener" class="plat">
+            <strong>Ambiente Virtual EAD</strong><span>Aulas, materiais e provas online para os alunos</span>
+          </a>
+        )}
+      </div>
     </div>
 
     <div class="rv portal" aria-hidden="true">
       <div class="portal__bar">
         <i style="background:var(--red)"></i><i></i><i></i>
-        <span class="mono">Conexão Êxito · área do responsável</span>
+        <span class="mono">Unicollege · notas, frequência e boletim</span>
       </div>
       <div class="portal__body">
         <div class="portal__head">
@@ -78,6 +90,12 @@ import { steps } from '../data/site';
   .step .n { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 13px; background: var(--ink3); color: var(--muted); transition: background .4s, color .4s; }
   .step b { display: block; font-size: 19px; font-weight: 650; letter-spacing: -.015em; }
   .step small { color: var(--muted); font-size: 14.5px; }
+  .plats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px; }
+  .plat { display: grid; gap: 2px; padding: 14px 16px; border-radius: 16px; border: 1px solid var(--line2); background: rgba(255, 255, 255, .06); color: #FFFFFF; text-decoration: none; transition: background .25s, border-color .25s; }
+  .plat:hover { background: rgba(255, 255, 255, .12); border-color: var(--gold); color: #FFFFFF; }
+  .plat strong { font-size: 16px; }
+  .plat span { font-size: 13.5px; color: var(--muted); line-height: 1.4; }
+  @media (max-width: 559px) { .plats { grid-template-columns: 1fr; } }
   .step.on { background: var(--ink3); border-color: var(--line2); }
   .step.on .n { background: var(--c); color: #FFFFFF; }
   .step .n { box-shadow: inset 0 0 0 2px var(--c); }
