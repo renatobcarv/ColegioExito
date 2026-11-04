@@ -265,8 +265,15 @@ export const programas = [
     id: 'bilingue',
     tag: 'Parceria Edify',
     title: 'Programa Bilíngue Edify',
-    text: 'Inglês vivido no dia a dia, não decorado. Em parceria com a Edify, o aluno aprende a se comunicar com naturalidade e ganha uma vantagem que o acompanha para a vida toda.',
-    points: ['Inglês integrado à rotina escolar', 'Material e metodologia do programa Edify', 'Comunicação, escuta e confiança para falar'],
+    logo: { src: '/img/parceiros/edify.webp', w: 400, h: 195, alt: 'Edify' },
+    text: 'Seu filho falando inglês de verdade. O Edify adiciona aulas de inglês à grade, sem substituir nenhuma disciplina, e é o único programa bilíngue que avalia o aprendizado de cada aluno de forma contínua. A família vê a evolução, não só a nota.',
+    points: ['Mais horas de inglês na grade, de forma estruturada', 'Avaliação contínua: a evolução do aluno fica visível', 'Edify Play: plataforma gamificada para praticar em casa'],
+    stats: [
+      { value: '600+', label: 'escolas parceiras' },
+      { value: '170 mil', label: 'alunos no Brasil' },
+      { value: '25', label: 'estados' },
+    ],
+    awards: 'Premiado no Bett Awards 2025 e no ELTons 2024',
   },
   {
     id: 'mindset',
