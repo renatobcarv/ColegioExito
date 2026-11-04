@@ -90,7 +90,7 @@ export const school = {
   slogan: 'Quem tem êxito tem tudo!',
   foundedYear: 1989,
   description:
-    'Colégio Êxito: da Educação Infantil ao Ensino Médio no Novo Gama e em Valparaíso de Goiás. Acompanhamento de perto, família informada e polo Unopar. Matrículas 2027 abertas.',
+    'Disciplina hoje. Faculdade e profissão amanhã. Há mais de 35 anos o Colégio Êxito forma os filhos do Entorno, da Educação Infantil ao Ensino Médio, com faculdade e cursos técnicos na mesma casa. Novo Gama e Valparaíso de Goiás. Matrículas 2027 abertas.',
   enrollmentYear: 2027,
   /** WhatsApp principal usado nos botões de agendamento. */
   whatsapp: '5561986262137',

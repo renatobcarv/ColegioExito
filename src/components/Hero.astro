@@ -4,8 +4,9 @@ import { segments } from '../data/content';
 import Arrow from './Arrow.astro';
 import Photo from './Photo.astro';
 
-const line1 = 'Seu filho não precisa de mais uma escola.'.split(' ');
-const line2 = 'Precisa de uma que'.split(' ');
+const line1 = 'Disciplina hoje.'.split(' ');
+const line2 = 'Faculdade e profissão amanhã.'.split(' ');
+const anos = new Date().getFullYear() - school.foundedYear;
 const d = (i: number) => `animation-delay:${(0.15 + i * 0.05).toFixed(2)}s`;
 ---
 
@@ -23,17 +24,18 @@ const d = (i: number) => `animation-delay:${(0.15 + i * 0.05).toFixed(2)}s`;
       <h1 class="disp hero__title">
         {line1.map((w, i) => <><span class="w"><span class="wi" style={d(i)}>{w}</span></span>{' '}</>)}
         <br />
-        {line2.map((w, i) => <><span class="w"><span class="wi" style={d(i + 9)}>{w}</span></span>{' '}</>)}
-        <span class="w"><span class="wi serif" style="animation-delay:.85s;font-size:1.1em">acompanha.</span></span>
+        <span class="hero__future">
+          {line2.map((w, i) => <><span class="w"><span class="wi serif" style={d(i + 4)}>{w}</span></span>{' '}</>)}
+        </span>
       </h1>
 
-      <p class="lead fade hero__lead" style="animation-delay:1s">
-        Da Educação Infantil ao Ensino Médio, no Novo Gama e em Valparaíso. Turmas em que o professor sabe o nome do seu
-        filho, percebe a dúvida cedo e <strong>avisa você antes que vire nota baixa.</strong>
+      <p class="lead fade hero__lead" style="animation-delay:.9s">
+        Há {anos} anos o Êxito forma os filhos do Entorno com rotina, respeito e acompanhamento de perto. Da Educação
+        Infantil ao Ensino Médio, com faculdade e cursos técnicos na mesma casa. <strong>Agora é a vez do seu.</strong>
       </p>
 
       <div class="fade hero__ctas" style="animation-delay:1.15s">
-        <a href="#visita" class="btn">Agendar uma visita<span class="arr"><Arrow /></span></a>
+        <a href="#visita" class="btn">Quero conhecer a escola<span class="arr"><Arrow /></span></a>
         <a href="#jornada" class="ghost">Conhecer o ensino</a>
       </div>
 
@@ -103,6 +105,8 @@ const d = (i: number) => `animation-delay:${(0.15 + i * 0.05).toFixed(2)}s`;
   .hero { position: relative; overflow: clip; padding: 96px 0 72px; }
   .hero__grid { position: relative; display: grid; grid-template-columns: 1fr; gap: 56px; align-items: center; }
   @media (min-width: 1024px) { .hero__grid { grid-template-columns: 1.08fr 1fr; gap: 48px; } }
+  .hero__future { display: inline; }
+  .hero__future .serif { color: var(--green); font-size: 1.04em; letter-spacing: -.02em; }
   .hero__title { margin: 24px 0 0; font-size: clamp(38px, 8.6vw, 86px); text-wrap: balance; font-weight: 760; line-height: .97; }
   .hero__lead { margin: 24px 0 0; max-width: 560px; }
   .hero__ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 34px; }
