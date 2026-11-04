@@ -260,7 +260,25 @@ export const metodo = {
  * Programas e diferenciais do Êxito (seção "Programas Êxito").
  * TODO: confirmar com a escola as séries atendidas pelo Edify e pelo Mindset.
  */
-export const programas = [
+export type Programa = {
+  id: string;
+  tag: string;
+  title: string;
+  logo?: { src: string; w: number; h: number; alt: string };
+  text: string;
+  points: string[];
+  stats: { value: string; label: string }[];
+  source: string;
+  more: {
+    title: string;
+    intro: string;
+    pillars: { title: string; text: string }[];
+    quote?: string;
+    note?: string;
+  };
+};
+
+export const programas: Programa[] = [
   {
     id: 'bilingue',
     tag: 'Parceria Edify',
@@ -273,28 +291,92 @@ export const programas = [
       { value: '170 mil', label: 'alunos no Brasil' },
       { value: '25', label: 'estados' },
     ],
-    awards: 'Premiado no Bett Awards 2025 e no ELTons 2024',
+    source: '★ Premiado no Bett Awards 2025 e no ELTons 2024 · Fonte: Edify Education',
+    more: {
+      title: 'Inglês de verdade, com evolução que você acompanha',
+      intro: 'O Edify une tecnologia e qualidade pedagógica para transformar o inglês da escola. Um programa bilíngue de verdade não se resume a livros ou carga horária: exige vivência prática do idioma, formação contínua dos professores e resultados mensuráveis.',
+      pillars: [
+        { title: 'Mais exposição ao idioma', text: 'Aulas de inglês somadas à grade, sem tirar espaço das disciplinas regulares. O aluno aprende de forma natural.' },
+        { title: 'Avaliação contínua', text: 'O aprendizado é medido ao longo do ano, não só na prova. A escola e a família enxergam a evolução.' },
+        { title: 'Edify Play', text: 'Plataforma gamificada: o aluno pratica e evolui enquanto se diverte, e gera dados claros sobre o desenvolvimento.' },
+        { title: 'Professores bem preparados', text: 'Formação contínua e ferramentas de planejamento (Teacher\'s Toolkit) para garantir a qualidade de cada aula.' },
+      ],
+      note: 'O Edify faz parte da Arco Educação e atende mais de 600 escolas em 25 estados.',
+    },
   },
   {
     id: 'mindset',
     tag: 'Ensino Médio',
     title: 'Mindset Ensino Médio',
-    text: 'Nota alta é consequência de quem sabe aonde quer chegar. O Mindset trabalha projeto de vida, foco e disciplina de estudo para o ENEM e para as escolhas depois da escola.',
-    points: ['Projeto de vida e escolha de carreira', 'Rotina, foco e método de estudo', 'Preparação para ENEM e vestibulares'],
+    text: 'Mais do que aprender conteúdos, é aprender a construir o próprio futuro. O aluno aprende a definir objetivos, organizar a rotina, desenvolver um método de estudo e se preparar para o ENEM, os vestibulares e a vida profissional.',
+    points: ['Projeto de vida e orientação de carreira', 'Rotina, foco e métodos de aprendizagem', 'Autonomia, responsabilidade e disciplina', 'Preparação para ENEM e vestibulares'],
+    stats: [
+      { value: '58 estudos', label: 'mostram: ensinar a estudar melhora o desempenho' },
+      { value: '71% × 54%', label: 'alunos cuidadosos: melhor × menor desempenho (PISA)' },
+      { value: 'BNCC', label: 'Competência 6: Trabalho e Projeto de Vida' },
+    ],
+    source: 'Fontes: Donker et al. (2014), Educational Research Review; OCDE, PISA 2022; BNCC/MEC',
+    more: {
+      title: 'Não é só para a próxima prova. É para as escolhas dos próximos anos.',
+      intro: 'No Brasil, só 4,5% dos alunos do 3º ano da rede pública chegam ao aprendizado adequado em Matemática e Português ao mesmo tempo (Anuário da Educação Básica, dados do Inep, 2023). O problema não é só conteúdo: é saber estudar, ter rotina e saber aonde quer chegar.',
+      pillars: [
+        { title: 'Projeto de vida e carreira', text: 'Autoconhecimento, interesses, profissões e caminhos de formação. A OCDE associa a exploração de carreiras na adolescência a melhores resultados profissionais na vida adulta.' },
+        { title: 'Rotina, foco e disciplina', text: 'Planejamento semanal, metas alcançáveis e constância. Não é estudar mais horas: é criar um método que o aluno consegue manter.' },
+        { title: 'Método de aprendizagem', text: 'Revisão, recuperação ativa, resolução de questões e avaliação do próprio progresso. Uma meta-análise de 58 estudos mostrou efeito positivo dessas estratégias, inclusive em Matemática e Ciências.' },
+        { title: 'Preparação para ENEM e vestibulares', text: 'Metas, simulados e análise de resultados. O ENEM cobra gestão do tempo, interpretação e argumentação, habilidades construídas ao longo do Ensino Médio.' },
+        { title: 'Mentalidade de crescimento', text: 'Trocar “não sou bom em Matemática” por “o que eu ainda não entendi?”. Com estratégia, orientação e feedback, não só pensamento positivo.' },
+      ],
+      quote: 'Não queremos apenas preparar o aluno para a próxima prova. Queremos prepará-lo para as escolhas que vão definir os próximos anos da sua vida.',
+      note: 'Ter método e disciplina não garante nota alta. As pesquisas mostram que autonomia, planejamento e bons hábitos de estudo favorecem a aprendizagem.',
+    },
   },
   {
     id: 'socioemocional',
     tag: 'Todas as fases',
     title: 'Educação Socioemocional',
-    text: 'Saber lidar com as emoções, respeitar o outro e assumir responsabilidades também se aprende. É o que forma um aluno equilibrado, dentro e fora da sala.',
+    text: 'Saber lidar com as emoções, respeitar o outro e assumir responsabilidades também se aprende. É o que forma um aluno equilibrado, que convive melhor, decide melhor e aprende melhor, dentro e fora da sala.',
     points: ['Autoconhecimento e autocontrole', 'Empatia, respeito e convivência', 'Responsabilidade e tomada de decisão'],
+    stats: [
+      { value: '270 mil', label: 'alunos em 213 programas analisados' },
+      { value: '+11', label: 'pontos percentis no desempenho escolar' },
+      { value: 'BNCC', label: 'Competências 8, 9 e 10' },
+    ],
+    source: 'Fontes: Durlak et al. (2011), Child Development; BNCC/MEC',
+    more: {
+      title: 'Aluno equilibrado aprende melhor',
+      intro: 'Uma das maiores meta-análises sobre o tema reuniu 213 programas escolares com mais de 270 mil alunos. Os estudantes que participaram de educação socioemocional melhoraram o comportamento, as atitudes e o desempenho acadêmico, com ganho médio de 11 pontos percentis.',
+      pillars: [
+        { title: 'Autoconhecimento', text: 'Reconhecer emoções, forças e dificuldades. É a base para o aluno pedir ajuda quando não entendeu.' },
+        { title: 'Autocontrole', text: 'Lidar com frustração, ansiedade e pressão, inclusive em provas e no ENEM.' },
+        { title: 'Empatia e convivência', text: 'Respeito às diferenças, diálogo e cooperação. Menos conflito e mais aprendizagem em sala.' },
+        { title: 'Responsabilidade', text: 'Assumir compromissos, cumprir combinados e tomar decisões conscientes, em linha com as competências 8, 9 e 10 da BNCC.' },
+      ],
+      note: 'As competências socioemocionais fazem parte das competências gerais da BNCC: autoconhecimento e autocuidado (8), empatia e cooperação (9), responsabilidade e cidadania (10).',
+    },
   },
   {
     id: 'metodologias',
     tag: 'Jeito Êxito',
     title: 'Metodologias Inovadoras',
-    text: 'Uma forma própria de ensinar, construída em mais de 35 anos: o aluno aprende fazendo, pesquisando e apresentando, com o professor acompanhando de perto cada passo.',
+    text: 'Uma forma própria de ensinar, construída em mais de 35 anos: o aluno aprende fazendo, pesquisando e apresentando, com o professor acompanhando de perto cada passo. Sai da posição de quem só escuta e vira protagonista.',
     points: ['Aprendizagem ativa e por projetos', 'Tecnologia, ambiente virtual e vídeo como linguagem', 'Acompanhamento individual do ritmo de cada aluno'],
+    stats: [
+      { value: '225 estudos', label: 'compararam aulas ativas e só expositivas' },
+      { value: '1,5×', label: 'mais reprovação nas aulas só expositivas' },
+      { value: 'BNCC', label: 'Competência 2: pensamento crítico e criativo' },
+    ],
+    source: 'Fontes: Freeman et al. (2014), PNAS (ciências e matemática); BNCC/MEC',
+    more: {
+      title: 'Aprender fazendo, com o professor por perto',
+      intro: 'Uma meta-análise de 225 estudos, publicada na revista PNAS, comparou aulas com aprendizagem ativa e aulas só expositivas em ciências e matemática. Nas aulas só expositivas, a chance de reprovação foi 1,5 vez maior, e as notas de prova foram, em média, 6% menores.',
+      pillars: [
+        { title: 'Projetos temáticos', text: 'Pesquisas sobre os ecossistemas da região, estudos do meio e visitas monitoradas ligam o conteúdo à vida real.' },
+        { title: 'Protagonismo', text: 'O aluno pesquisa, debate, apresenta e organiza atividades de convivência. Aprende a pensar, não a decorar.' },
+        { title: 'Tecnologia como linguagem', text: 'Informática, vídeo e o Ambiente Virtual EAD com aulas, materiais e provas online.' },
+        { title: 'Cada aluno no seu ritmo', text: 'O planejamento considera o nível, o ritmo e a motivação de cada estudante, com acompanhamento individual.' },
+      ],
+      note: 'Os números da pesquisa vêm de cursos de ciências e matemática no ensino superior. O princípio, aprender participando, vale para todas as fases.',
+    },
   },
 ];
 
