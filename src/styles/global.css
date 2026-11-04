@@ -23,10 +23,10 @@
   --dim: #5E6A85;     /* legendas */
 
   --ease: cubic-bezier(.2, .8, .2, 1);
-  --f-body: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --f-disp: 'Bricolage Grotesque', 'Geist', system-ui, sans-serif;
+  --f-body: 'Geist Variable', 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-disp: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', 'Geist Variable', system-ui, sans-serif;
   --f-serif: 'Instrument Serif', Georgia, serif;
-  --f-mono: 'Geist Mono', ui-monospace, SFMono-Regular, monospace;
+  --f-mono: 'Geist Mono Variable', 'Geist Mono', ui-monospace, SFMono-Regular, monospace;
 
   color-scheme: light;
 }

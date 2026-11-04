@@ -1,0 +1,68 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { school, legal } from '../data/site';
+
+interface Props { title: string; kicker: string; description: string }
+const { title, kicker, description } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const path = Astro.url.pathname.replace(/\/$/, '');
+const pages = [
+  { href: `${base}/privacidade`, label: 'Política de Privacidade' },
+  { href: `${base}/termos`, label: 'Termos de Uso' },
+  { href: `${base}/cookies`, label: 'Política de Cookies' },
+];
+---
+
+<Base title={`${title} | ${school.name}`} description={description}>
+  <Header />
+  <main id="conteudo" class="lg">
+    <div class="wrap lg__wrap">
+      <aside class="lg__nav">
+        <p class="mono">Documentos</p>
+        <nav aria-label="Documentos legais">
+          {pages.map((p) => <a href={p.href} aria-current={path.endsWith(p.href.replace(base, '')) ? 'page' : undefined}>{p.label}</a>)}
+        </nav>
+      </aside>
+      <article class="lg__doc">
+        <p class="kicker">{kicker}</p>
+        <h1 class="disp">{title}</h1>
+        <p class="lg__upd mono">Última atualização: {legal.atualizadoEm}</p>
+        <slot />
+      </article>
+    </div>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .lg { padding: clamp(48px, 7vw, 90px) 0 clamp(70px, 9vw, 120px); }
+  .lg__wrap { display: grid; grid-template-columns: 240px 1fr; gap: 56px; align-items: start; }
+  .lg__nav { position: sticky; top: 110px; display: grid; gap: 10px; }
+  .lg__nav .mono { margin: 0; font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+  .lg__nav nav { display: grid; gap: 4px; }
+  .lg__nav a { display: flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 12px; color: var(--muted); font-weight: 600; text-decoration: none; }
+  .lg__nav a:hover { background: var(--ink2); color: var(--royal); }
+  .lg__nav a[aria-current='page'] { background: var(--ink3); color: var(--royal); box-shadow: inset 3px 0 0 var(--green); }
+  .lg__doc { max-width: 760px; }
+  .lg__doc h1 { margin: 12px 0 0; font-size: clamp(34px, 5vw, 56px); font-weight: 760; line-height: 1.02; letter-spacing: -.035em; }
+  .lg__upd { margin: 14px 0 36px; font-size: 12px; color: var(--dim); }
+  .lg__doc :global(h2) { margin: 40px 0 10px; font-family: var(--f-disp); font-size: 24px; font-weight: 720; letter-spacing: -.02em; }
+  .lg__doc :global(h3) { margin: 22px 0 6px; font-size: 17px; }
+  .lg__doc :global(p), .lg__doc :global(li) { color: var(--muted); line-height: 1.7; font-size: 16.5px; }
+  .lg__doc :global(strong) { color: var(--cream); }
+  .lg__doc :global(ul) { padding-left: 22px; }
+  .lg__doc :global(li) { margin: 4px 0; }
+  .lg__doc :global(.lg__box) { padding: 18px 20px; border-radius: 16px; background: var(--ink2); border-left: 4px solid var(--green); }
+  .lg__doc :global(table) { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 15px; }
+  .lg__doc :global(th), .lg__doc :global(td) { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line2); color: var(--muted); }
+  .lg__doc :global(th) { color: var(--cream); font-size: 13px; text-transform: uppercase; letter-spacing: .06em; }
+  @media (max-width: 899px) {
+    .lg__wrap { grid-template-columns: 1fr; gap: 24px; }
+    .lg__nav { position: static; }
+    .lg__nav nav { grid-auto-flow: column; overflow-x: auto; }
+    .lg__nav a { white-space: nowrap; }
+    .lg__doc :global(table) { display: block; overflow-x: auto; }
+  }
+</style>

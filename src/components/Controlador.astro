@@ -1,0 +1,14 @@
+---
+import { school, legal, formatPhone, telLink, waLink } from '../data/site';
+import { units } from '../data/content';
+---
+
+<div class="lg__box">
+  <p><strong>{legal.razaoSocial ?? school.name}</strong>{legal.cnpj && <> · CNPJ {legal.cnpj}</>}</p>
+  {units.map((u) => <p>{u.tag} · {u.address.join(', ')}{u.phones[0] && <> · <a href={telLink(u.phones[0].number)}>{formatPhone(u.phones[0].number)}</a></>}</p>)}
+  <p>
+    Canal do titular de dados: <a href={waLink(school.whatsapp, 'Olá! Quero fazer uma solicitação sobre meus dados pessoais (LGPD).')} target="_blank" rel="noopener">WhatsApp {school.whatsappDisplay}</a>
+    {legal.dpoEmail && <> · e-mail <a href={`mailto:${legal.dpoEmail}`}>{legal.dpoEmail}</a></>}
+    {legal.dpoNome && <> · Encarregado (DPO): {legal.dpoNome}</>}
+  </p>
+</div>

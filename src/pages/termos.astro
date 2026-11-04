@@ -1,0 +1,42 @@
+---
+import LegalPage from '../components/LegalPage.astro';
+import Controlador from '../components/Controlador.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<LegalPage title="Termos de Uso" kicker="Regras de uso do site" description="Condições de uso do site do Colégio Êxito.">
+  <p>Ao usar este site, você concorda com os termos abaixo. Se não concordar, recomendamos não utilizá-lo.</p>
+
+  <h2>1. Finalidade do site</h2>
+  <p>O site apresenta o Colégio Êxito, suas unidades, propostas pedagógicas, programas e parceiros, e facilita o contato para visitas, matrículas e cursos. O conteúdo é informativo.</p>
+
+  <h2>2. Informações sobre matrícula, valores e vagas</h2>
+  <p>Valores, bolsas, descontos, vagas, turmas, horários e calendários são confirmados pela secretaria no atendimento e podem mudar. As informações do site não constituem oferta vinculante nem contrato. Bolsas e condições de parceiros (Unopar Anhanguera e TEC Mais) seguem as regras de cada instituição.</p>
+
+  <h2>3. Imagens e números</h2>
+  <ul>
+    <li>Algumas imagens são identificadas como <strong>“imagem ilustrativa”</strong> e não retratam necessariamente as instalações ou os alunos do Colégio.</li>
+    <li>Dados de pesquisas, médias salariais e números de parceiros são citados com a fonte e servem como referência, sem garantia de resultado individual.</li>
+  </ul>
+
+  <h2>4. Propriedade intelectual</h2>
+  <p>Textos, marca, logotipo e identidade visual do Colégio Êxito são protegidos. As marcas Unopar Anhanguera, TEC Mais e Edify pertencem aos seus titulares e são exibidas em razão de parceria. Não é permitido copiar ou reutilizar o conteúdo do site para fins comerciais sem autorização.</p>
+
+  <h2>5. Links e serviços externos</h2>
+  <p>O site contém links para WhatsApp, Instagram, YouTube, tour 360°, portais Unicollege e Ambiente Virtual EAD, e sites de parceiros. Esses serviços têm termos e políticas próprios, e o Colégio não responde por seu conteúdo ou disponibilidade.</p>
+
+  <h2>6. Uso adequado</h2>
+  <p>É proibido usar o site para atividades ilícitas, tentar acessar áreas restritas, enviar conteúdo malicioso ou prejudicar seu funcionamento.</p>
+
+  <h2>7. Privacidade</h2>
+  <p>O tratamento de dados pessoais segue a <a href={`${base}/privacidade`}>Política de Privacidade</a> e a <a href={`${base}/cookies`}>Política de Cookies</a>.</p>
+
+  <h2>8. Disponibilidade e alterações</h2>
+  <p>O site pode passar por manutenção ou ficar temporariamente indisponível. Estes termos podem ser atualizados a qualquer momento.</p>
+
+  <h2>9. Legislação e foro</h2>
+  <p>Estes termos seguem a legislação brasileira, incluindo o Código de Defesa do Consumidor. Fica eleito o foro do domicílio do usuário consumidor, nos termos da lei.</p>
+
+  <h2>10. Contato</h2>
+  <Controlador />
+</LegalPage>

@@ -1,0 +1,105 @@
+---
+/**
+ * Consentimento + rastreamento (Google Consent Mode v2, GTM/GA4, Meta Pixel) e UTMs.
+ * Ordem: 1) consentimento padrão NEGADO; 2) aplica a escolha salva; 3) carrega as tags.
+ * O GTM/GA4 respeitam o Consent Mode. O Pixel da Meta só carrega com consentimento de marketing.
+ */
+import { tracking } from '../data/site';
+const { gtmId, ga4Id, metaPixelId } = tracking;
+---
+
+<script is:inline define:vars={{ gtmId, ga4Id, metaPixelId }}>
+  // @ts-nocheck
+  (function () {
+    var w = window, d = document;
+    w.dataLayer = w.dataLayer || [];
+    function gtag() { w.dataLayer.push(arguments); }
+    w.gtag = w.gtag || gtag;
+
+    // 1) Padrão: tudo negado, exceto o estritamente necessário
+    gtag('consent', 'default', {
+      ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied',
+      analytics_storage: 'denied', functionality_storage: 'granted', security_storage: 'granted',
+      wait_for_update: 500,
+    });
+
+    var KEY = 'exito-consent';
+    function read() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
+
+    var pixelLoaded = false;
+    function loadPixel() {
+      if (!metaPixelId || pixelLoaded) return;
+      pixelLoaded = true;
+      !function (f, b, e, v, n, t, s) { if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); }; if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = []; t = b.createElement(e); t.async = !0; t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s); }(w, d, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+      w.fbq('init', metaPixelId);
+      w.fbq('track', 'PageView');
+    }
+
+    // 2) Aplica uma escolha (salva ou nova)
+    w.exitoApplyConsent = function (c, save) {
+      if (!c) return;
+      gtag('consent', 'update', {
+        analytics_storage: c.analytics ? 'granted' : 'denied',
+        ad_storage: c.marketing ? 'granted' : 'denied',
+        ad_user_data: c.marketing ? 'granted' : 'denied',
+        ad_personalization: c.marketing ? 'granted' : 'denied',
+      });
+      if (save) { try { localStorage.setItem(KEY, JSON.stringify({ analytics: !!c.analytics, marketing: !!c.marketing, v: 1, at: new Date().toISOString() })); } catch (e) {} }
+      if (c.marketing) loadPixel();
+      w.dataLayer.push({ event: 'consent_update', consent_analytics: !!c.analytics, consent_marketing: !!c.marketing });
+    };
+    w.exitoReadConsent = read;
+    var saved = read();
+    if (saved) w.exitoApplyConsent(saved, false);
+
+    // 3) Tags do Google (respeitam o Consent Mode)
+    if (gtmId) {
+      w.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+      var j = d.createElement('script'); j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + gtmId;
+      d.head.appendChild(j);
+    } else if (ga4Id) {
+      var g = d.createElement('script'); g.async = true; g.src = 'https://www.googletagmanager.com/gtag/js?id=' + ga4Id;
+      d.head.appendChild(g);
+      gtag('js', new Date());
+      gtag('config', ga4Id);
+    }
+
+    // UTMs e IDs de clique: guardados só nesta aba (sessionStorage), sem cookie
+    try {
+      var p = new URLSearchParams(location.search), keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid'], got = {}, any = false;
+      keys.forEach(function (k) { var v = p.get(k); if (v) { got[k] = v.slice(0, 80); any = true; } });
+      if (any) { got.landing = location.pathname; sessionStorage.setItem('exito-utm', JSON.stringify(got)); }
+    } catch (e) {}
+
+    // Acrescenta a origem da campanha na mensagem do WhatsApp (a secretaria sabe de onde veio o contato)
+    w.exitoWa = function (url) {
+      try {
+        var u = JSON.parse(sessionStorage.getItem('exito-utm') || 'null');
+        if (!u || !(u.utm_source || u.utm_campaign)) return url;
+        var ref = ' (origem: ' + [u.utm_source, u.utm_medium, u.utm_campaign].filter(Boolean).join(' / ') + ')';
+        var x = new URL(url); x.searchParams.set('text', (x.searchParams.get('text') || '') + ref); return x.toString();
+      } catch (e) { return url; }
+    };
+
+    // Eventos de conversão
+    w.exitoTrack = function (name, params) {
+      var data = Object.assign({ event: name }, params || {});
+      w.dataLayer.push(data);
+      if (w.fbq && name === 'generate_lead') w.fbq('track', 'Lead', params || {});
+      if (w.fbq && name === 'whatsapp_click') w.fbq('track', 'Contact', params || {});
+    };
+    d.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+      if (!a) return;
+      var h = a.getAttribute('href') || '';
+      if (h.indexOf('wa.me/') > -1) {
+        a.href = w.exitoWa(a.href);
+        w.exitoTrack('whatsapp_click', { link_text: (a.textContent || '').trim().slice(0, 60), page: location.pathname });
+      } else if (h.indexOf('tel:') === 0) {
+        w.exitoTrack('phone_click', { phone: h.slice(4), page: location.pathname });
+      }
+    }, true);
+  })();
+</script>
+
+{gtmId && <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`} height="0" width="0" style="display:none;visibility:hidden" title="GTM"></iframe></noscript>}

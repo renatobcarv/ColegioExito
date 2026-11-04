@@ -57,7 +57,7 @@ const series = segments.filter((s) => !/unopar/i.test(s.name)).map((s) => s.name
       </fieldset>
       <p class="vform__err" role="alert" hidden>Preencha seu nome e a fase do seu filho.</p>
       <button type="submit" class="btn vform__btn">Agendar minha visita<span class="arr"><Arrow /></span></button>
-      <p class="vform__note"><Icon name="whatsapp" size={16} />A mensagem vai pronta para o WhatsApp da secretaria. Resposta no mesmo dia em horário comercial.</p>
+      <p class="vform__note"><Icon name="whatsapp" size={16} />A mensagem vai pronta para o WhatsApp da secretaria. Resposta no mesmo dia em horário comercial. Seus dados seguem a <a href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/privacidade`}>Política de Privacidade</a>.</p>
     </form>
   </div>
 </section>
@@ -78,8 +78,11 @@ const series = segments.filter((s) => !/unopar/i.test(s.name)).map((s) => s.name
       const pick = (n: string) => form.querySelector<HTMLInputElement>(`input[name="${n}"]:checked`)?.value ?? '';
       const msg =
         `Olá! Meu nome é ${nomeEl.value.trim()}. Vim pelo site e quero agendar uma visita de diagnóstico ` +
-        `para o ${serieEl.value}, na ${pick('unidade')}, de preferência no período da ${pick('periodo')}.`;
-      const url = `https://wa.me/${form.dataset.wa}?text=${encodeURIComponent(msg)}`;
+        `(fase: ${serieEl.value}), na ${pick('unidade')}, de preferência no período da ${pick('periodo')}.`;
+      const raw = `https://wa.me/${form.dataset.wa}?text=${encodeURIComponent(msg)}`;
+      const W = window as unknown as { exitoWa?: (u: string) => string; exitoTrack?: (n: string, p?: object) => void };
+      const url = W.exitoWa ? W.exitoWa(raw) : raw;
+      W.exitoTrack?.('generate_lead', { form: 'visita', page: location.pathname });
       const w = window.open(url, '_blank', 'noopener');
       if (!w) window.location.href = url;
     }),

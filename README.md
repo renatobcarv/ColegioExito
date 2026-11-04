@@ -74,6 +74,20 @@ Se o Supabase estiver fora do ar na hora da publicação, o build falha e a Verc
 - [ ] **Domínio final**: definir `SITE_URL` na Vercel.
 - [ ] Revisar os números do hero (anos, avaliações no Google, seguidores).
 
+## Rastreamento (Google e Meta)
+
+As tags só rodam depois do consentimento do visitante (banner de cookies + Google Consent Mode v2).
+
+1. Na Vercel, em **Settings → Environment Variables**, crie as que for usar:
+   - `PUBLIC_GTM_ID` (ex.: `GTM-XXXXXXX`), recomendado: GA4, Google Ads e demais tags ficam dentro do GTM.
+   - `PUBLIC_GA4_ID` (ex.: `G-XXXXXXXXXX`), só se não usar GTM.
+   - `PUBLIC_META_PIXEL_ID` (ex.: `123456789012345`).
+2. Faça um novo deploy.
+3. No GTM, ative o **Consent Mode** nas tags (o site já envia `consent default` e `consent update`).
+
+Eventos enviados ao `dataLayer`: `whatsapp_click`, `phone_click`, `generate_lead` (formulários) e `consent_update`. No Pixel: `Lead` e `Contact`.
+As UTMs (`utm_source`, `utm_medium`, `utm_campaign`) entram no fim da mensagem do WhatsApp: *(origem: instagram / cpc / matriculas2027)*.
+
 ## Publicar (Vercel)
 
 A Vercel publica sozinha a cada push na `main` (e gera uma prévia para cada branch/PR).

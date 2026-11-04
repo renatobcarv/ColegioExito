@@ -124,6 +124,7 @@ export const school = {
     instagram: 'https://www.instagram.com/colegioexitooficial/',
     facebook: 'https://www.facebook.com/ColegioExitoII',
   },
+  email: 'colegioexitoficial@gmail.com',
   instagramHandle: '@colegioexitooficial',
   instagramReels: 'https://www.instagram.com/colegioexitooficial/reels/',
   /** Reel em destaque na página inicial (o código depois de /reel/ no link). */
@@ -144,6 +145,29 @@ export const school = {
     { value: '77', star: true, label: 'avaliações de famílias no Google' },
     { value: '7,8 mil', label: 'acompanham no Instagram' },
   ],
+};
+
+/**
+ * Dados do controlador (LGPD) e datas das políticas.
+ * TODO: preencher razão social, CNPJ e e-mail do encarregado (DPO). Campos null não aparecem.
+ */
+/**
+ * Rastreamento e anúncios. Cole os IDs aqui (ou use variáveis na Vercel:
+ * PUBLIC_GTM_ID, PUBLIC_GA4_ID, PUBLIC_META_PIXEL_ID). null = não carrega.
+ * Tudo só roda depois do consentimento do visitante (LGPD + Google Consent Mode v2).
+ */
+export const tracking = {
+  gtmId: (import.meta.env.PUBLIC_GTM_ID as string | undefined) ?? (null as string | null), // ex.: 'GTM-XXXXXXX'
+  ga4Id: (import.meta.env.PUBLIC_GA4_ID as string | undefined) ?? (null as string | null), // ex.: 'G-XXXXXXXXXX' (use se não tiver GTM)
+  metaPixelId: (import.meta.env.PUBLIC_META_PIXEL_ID as string | undefined) ?? (null as string | null), // ex.: '123456789012345'
+};
+
+export const legal = {
+  razaoSocial: null as string | null,
+  cnpj: '63.239.574/0001-37' as string | null,
+  dpoNome: null as string | null,
+  dpoEmail: 'colegioexitoficial@gmail.com' as string | null,
+  atualizadoEm: '4 de novembro de 2026',
 };
 
 export const units: Unit[] = [
