@@ -14,7 +14,7 @@ import Photo from './Photo.astro';
       {
         units.map((u) => (
           <article class="card rv" id={u.id}>
-            <Photo src={u.photo} label={`Foto · fachada ${u.tag}`} alt={`Fachada do Colégio Êxito ${u.tag}, ${u.city}`} ratio="16 / 9" />
+            <Photo src={u.photo} label={`Foto · fachada ${u.tag}`} alt={`Fachada do Colégio Êxito ${u.tag}, ${u.city}`} ratio="16 / 9" illustrative={u.photoIllustrative} />
             <div class="unid__body">
               <span class="mono unid__tag">{u.tag.toUpperCase()}</span>
               <h3 class="disp">{u.city}</h3>

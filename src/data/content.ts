@@ -100,4 +100,18 @@ async function load() {
   return { units, segments, testimonials, faqs, gallery, source: 'supabase' };
 }
 
-export const { units, segments, testimonials, faqs, gallery, source } = await load();
+const raw = await load();
+
+// Foto do Supabase tem prioridade; sem ela, usa as fotos do site (src/data/site.ts → photos).
+// O mesmo vale para o WhatsApp: sem número no Supabase, usa o de site.ts.
+export const units: Unit[] = raw.units.map((u) => {
+  const p = local.photos.units[u.id];
+  const whatsapp = u.whatsapp ?? local.units.find((l) => l.id === u.id)?.whatsapp ?? null;
+  const withPhoto = u.photo || !p ? u : { ...u, photo: p.src, photoIllustrative: p.illustrative };
+  return { ...withPhoto, whatsapp };
+});
+export const segments: Segment[] = raw.segments.map((s) => {
+  const p = local.photos.segments[s.name];
+  return s.photo || !p ? s : { ...s, photo: p.src, photoIllustrative: p.illustrative };
+});
+export const { testimonials, faqs, gallery, source } = raw;
