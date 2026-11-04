@@ -40,8 +40,28 @@ export type Testimonial = { quote: string; name: string; role: string; initial: 
 
 export type Faq = { q: string; a: string };
 
+export type TechCourse = {
+  slug: string;
+  name: string;
+  tagline: string;
+  photo: string;
+  featured?: boolean;
+  hours: string;
+  duration: string;
+  schedule: string;
+  salary: { headline: string; detail: string; source: string };
+  careers: string[];
+  modules: { title: string; subjects: string[] }[];
+};
+
 export type Formacao = {
   slug: string;
+  /** Cursos técnicos (habilitação técnica de nível médio), com grade e informações da turma. */
+  technical?: TechCourse[];
+  /** Selos de credibilidade da instituição. */
+  trust?: string[];
+  testimonial?: { quote: string; name: string; role: string; photo: string };
+  referral?: { title: string; text: string };
   name: string;
   kind: string;
   /** Frase curta para o cartão da página inicial. */
@@ -375,40 +395,40 @@ export const formacoes: Formacao[] = [
   {
     slug: 'tec-mais',
     name: 'TEC Mais',
-    kind: 'Cursos técnicos e livres',
+    kind: 'Cursos técnicos',
     logo: { src: '/img/parceiros/tec-mais.webp', w: 720, h: 203, alt: 'TEC Mais Cursos Técnicos' },
     theme: {
       primary: '#1A1A8C', primaryDark: '#000066', primaryDeep: '#00003D',
       accent: '#F06022', accentInk: '#B8440F', accentBtn: '#E0551A', soft: '#F1F1FA',
     },
-    pitch: 'Cursos de saúde e segurança em Valparaíso: aprenda o que ninguém te ensina, antes de precisar.',
-    badge: 'Primeiros Socorros em 8h',
-    eyebrow: 'Cursos de saúde e segurança · Valparaíso de Goiás',
-    title: 'Numa emergência, ninguém pergunta seu diploma. Pergunta quem sabe o que fazer.',
-    titleAccent: 'quem sabe o que fazer.',
-    lead: 'Na TEC Mais você aprende, com as mãos, o que salva vidas e abre portas no mercado: Primeiros Socorros, APH, Feridas e Curativos, Cuidador de Idoso, Combate a Incêndio e Injetáveis. Cursos diretos, práticos e perto de casa.',
-    primaryCta: 'Quero me inscrever',
+    pitch: 'Técnico em Enfermagem, Segurança do Trabalho e Administração em Valparaíso. Credenciada pelo CEE/MEC, com aulas à noite e diploma válido em todo o país.',
+    badge: 'Enfermagem: o mais procurado',
+    eyebrow: 'Matrículas abertas · Turmas noturnas · Valparaíso de Goiás',
+    title: 'Em 24 meses, à noite, você sai com uma profissão. E com o diploma na mão.',
+    titleAccent: 'E com o diploma na mão.',
+    lead: 'Cursos técnicos de nível médio em Enfermagem, Segurança do Trabalho e Administração, credenciados pelo CEE/MEC e com profissões regulamentadas pelo conselho de classe. Aulas das 18h50 às 22h20, para você estudar sem largar o emprego.',
+    primaryCta: 'Quero minha vaga',
     responseNote: 'Atendimento humano pelo WhatsApp',
     proof: [
-      { value: '6', label: 'cursos de saúde e segurança' },
-      { value: '8h', label: 'para aprender Primeiros Socorros' },
-      { value: '192', label: 'quando e como acionar o socorro' },
-      { value: 'Prática', label: 'protocolos treinados com as mãos' },
+      { value: '97%', label: 'de satisfação dos alunos' },
+      { value: 'CEE/MEC', label: 'instituição credenciada' },
+      { value: '24', label: 'meses para se formar' },
+      { value: '18h50', label: 'aulas à noite, depois do trabalho' },
     ],
-    painsTitle: 'O medo que paralisa não é falta de coragem.',
-    painsAccent: 'É falta de treino.',
+    painsTitle: 'Sem formação, o mercado escolhe por você.',
+    painsAccent: 'Com ela, você escolhe o mercado.',
     pains: [
-      { pain: 'Travar quando alguém passa mal bem na sua frente', fix: 'O protocolo certo, na ordem certa, treinado em aula até virar reflexo' },
-      { pain: 'Ouvir um conselho errado e não ter segurança para discordar', fix: 'Conhecimento para agir com calma até o socorro chegar' },
-      { pain: 'Querer trabalhar na área da saúde sem saber por onde começar', fix: 'Cursos que viram currículo: Cuidador de Idoso, Feridas e Curativos, Injetáveis' },
-      { pain: 'Cursos longos e caros que adiam o seu objetivo', fix: 'Formações diretas ao ponto. Primeiros Socorros em 8 horas' },
+      { pain: 'Trabalhar muito e ganhar pouco, sem uma profissão definida', fix: 'Técnico em Enfermagem com piso nacional de R$ 3.325,00 (Lei 14.434/2022)' },
+      { pain: 'Não poder parar de trabalhar para estudar', fix: 'Aulas à noite, das 18h50 às 22h20' },
+      { pain: 'Medo de fazer um curso que não vale nada', fix: 'Instituição credenciada pelo CEE/MEC, diploma válido em todo o território nacional' },
+      { pain: 'Aprender só teoria e travar na hora da prática', fix: 'Aulas práticas, laboratório e visitas técnicas desde o início' },
     ],
-    factsTitle: 'Por que aprender na TEC Mais',
+    factsTitle: 'Por que estudar na TEC Mais',
     facts: [
-      { title: 'Prática de verdade', text: 'Protocolos treinados com as mãos, não só lidos na apostila.' },
-      { title: 'Cursos rápidos e diretos', text: 'Primeiros Socorros em 8 horas, por exemplo. Sem enrolação.' },
-      { title: 'Saúde e segurança', text: 'Formações que abrem portas no mercado e servem para a vida inteira.' },
-      { title: 'Na mesma casa do Êxito', text: 'O cuidado e o acompanhamento de perto que as famílias de Valparaíso já conhecem.' },
+      { title: 'Credenciada pelo CEE/MEC', text: 'Profissões regulamentadas pelo conselho de classe e diploma válido em todo o país.' },
+      { title: '97% de satisfação', text: 'A avaliação de quem já estudou com a gente.' },
+      { title: 'Aulas práticas e visitas técnicas', text: 'Laboratório, simulações e campo, além da teoria.' },
+      { title: 'Turmas noturnas', text: 'Das 18h50 às 22h20, para quem trabalha durante o dia.' },
     ],
     areas: [
       { title: 'Primeiros Socorros', courses: 'Reconhecer a emergência, ligar para o 192 e agir certo até o socorro chegar. Carga horária de 8h.', icon: 'heart' },
@@ -433,14 +453,15 @@ export const formacoes: Formacao[] = [
       askModality: false,
     },
     faq: [
-      { q: 'Preciso ter experiência na área da saúde?', a: 'Depende do curso. Primeiros Socorros, por exemplo, é para qualquer pessoa que quer saber agir. Os pré-requisitos de cada curso são informados no atendimento.' },
-      { q: 'Quanto tempo dura cada curso?', a: 'Primeiros Socorros tem 8 horas. A duração dos demais é informada no atendimento, junto com as datas das próximas turmas.' },
-      { q: 'As aulas são práticas?', a: 'Sim. Você treina os protocolos com as mãos, com orientação de quem atua na área.' },
-      { q: 'Onde ficam as aulas?', a: 'Em Valparaíso de Goiás. Chame no WhatsApp para receber o endereço e o calendário das turmas.' },
+      { q: 'Quanto tempo dura o curso técnico?', a: 'Os três cursos técnicos duram 24 meses, com aulas à noite, das 18h50 às 22h20. Enfermagem e Segurança do Trabalho têm 1.200 horas; Administração, 800 horas.' },
+      { q: 'O diploma é reconhecido?', a: 'Sim. A TEC Mais é credenciada pelo CEE/MEC e o diploma de habilitação técnica de nível médio é válido em todo o território nacional.' },
+      { q: 'Preciso ter terminado o Ensino Médio?', a: 'Os requisitos de cada curso são informados no atendimento. Fale com a equipe pelo WhatsApp para saber a sua situação.' },
+      { q: 'As aulas são práticas?', a: 'Sim. Há aulas em laboratório, simulações e visitas técnicas, com orientação de quem atua na área.' },
+      { q: 'Também tem cursos rápidos?', a: 'Sim: Primeiros Socorros (8h), APH, Feridas e Curativos, Cuidador de Idoso, Combate a Incêndio e Injetáveis. Pergunte as próximas turmas.' },
     ],
     final: {
-      title: 'A próxima emergência não marca hora.',
-      text: 'Mas a sua inscrição pode ser hoje. Garanta sua vaga e aprenda o que ninguém te ensina, antes de precisar.',
+      title: 'Daqui a 24 meses, você vai agradecer por ter começado hoje.',
+      text: 'As turmas noturnas têm vagas limitadas. Garanta a sua e comece a construir a sua profissão.',
       cta: 'Garantir minha vaga',
     },
     contact: {
@@ -453,7 +474,69 @@ export const formacoes: Formacao[] = [
     },
     externalUrl: 'https://www.instagram.com/tecmais.valparaisodegoias/',
     externalLabel: 'Ver no Instagram',
-    whatsappMessage: 'Olá! Vim pelo site do Colégio Êxito e quero saber sobre os cursos da TEC Mais.',
+    whatsappMessage: 'Olá! Vim pelo site do Colégio Êxito e quero saber sobre os cursos técnicos da TEC Mais.',
+    trust: ['Credenciada pelo CEE/MEC', 'Diploma válido em todo o Brasil', '97% de satisfação', 'Fundada por profissionais com mais de 25 anos em educação'],
+    testimonial: {
+      quote: 'Me formar no curso de Técnico em Enfermagem é um grande passo na minha vida, pois não foi fácil. Não é fácil cuidar de casa, filhos, trabalhar fora e ainda estudar, mas eu consegui. Tive apoio de todos pra não trancar o curso, e assim eu venci, me formei, e em pouco tempo já tinha meu diploma e meu tão sonhado COREN em mãos!',
+      name: 'Daíse Campos',
+      role: 'Técnica em Enfermagem, formada pela TEC Mais',
+      photo: '/img/tec/daise.webp',
+    },
+    referral: { title: 'Indique e ganhe R$ 50', text: 'A cada amigo indicado que se matricular, você ganha R$ 50,00. Mande o nome e o telefone dele para a nossa equipe.' },
+    technical: [
+      {
+        slug: 'enfermagem',
+        name: 'Técnico em Enfermagem',
+        tagline: 'Cuide de vidas com técnica, em hospitais, clínicas e home care.',
+        photo: '/img/tec/enfermagem.webp',
+        featured: true,
+        hours: '1.200 horas',
+        duration: '24 meses',
+        schedule: 'Noturno · 18h50 às 22h20',
+        salary: { headline: 'R$ 3.325,00', detail: 'piso nacional do técnico em enfermagem', source: 'Lei 14.434/2022' },
+        careers: ['Hospitais', 'Clínicas e consultórios', 'Unidades de Saúde da Família', 'Home care', 'Laboratórios de análises clínicas', 'Saúde mental', 'Institutos de reabilitação', 'Vigilância sanitária'],
+        modules: [
+          { title: 'Módulo I', subjects: ['Fundamentos e Técnicas de Procedimentos em Enfermagem', 'Anatomia e Fisiologia Humana', 'Introdução à Assistência de Enfermagem', 'Fundamentos da Saúde Coletiva', 'Comunicação Empresarial (EAD)', 'Biossegurança em Enfermagem'] },
+          { title: 'Módulo II', subjects: ['Enfermagem em Clínica Médica', 'Saúde da Criança e da Mulher', 'Farmacologia Aplicada à Enfermagem', 'Oncologia', 'Psicologia Aplicada à Enfermagem'] },
+          { title: 'Módulo III', subjects: ['Enfermagem em Urgência e Emergência', 'Enfermagem em Saúde Mental', 'Geriatria', 'Hemodiálise', 'Ética Profissional e Administração Hospitalar'] },
+          { title: 'Módulo IV', subjects: ['Enfermagem Cirúrgica', 'Enfermagem na UTI', 'Nutrição e Dietética', 'Apoio ao Diagnóstico', 'Microbiologia e Parasitologia'] },
+        ],
+      },
+      {
+        slug: 'seguranca-do-trabalho',
+        name: 'Técnico em Segurança do Trabalho',
+        tagline: 'Proteja pessoas em obras, indústrias e empresas de todos os setores.',
+        photo: '/img/tec/seguranca.webp',
+        hours: '1.200 horas',
+        duration: '24 meses',
+        schedule: 'Noturno · 18h50 às 22h20',
+        salary: { headline: 'R$ 2.000 a R$ 5.000+', detail: 'do salário inicial aos setores de maior risco', source: 'média salarial no Brasil' },
+        careers: ['Indústrias', 'Construção civil', 'Comércio e serviços', 'Setor público', 'Consultorias', 'Ambientes hospitalares', 'Transporte e logística', 'Treinamentos e palestras'],
+        modules: [
+          { title: 'Módulo I · Parâmetros de Segurança e Saúde', subjects: ['Segurança do Trabalho', 'Metodologia Científica e Relatórios', 'E-Social', 'Análise de Projetos em Segurança', 'Investigação de Acidentes', 'Legislação Trabalhista e Previdenciária'] },
+          { title: 'Módulo II · Administração em Segurança', subjects: ['Gestão de Atividades de Alto Risco', 'Gerenciamento de Risco', 'Auditorias e Perícias', 'Planos de Emergência', 'Gestão de Qualidade', 'Empreendedorismo'] },
+          { title: 'Módulo III · Processos Industriais', subjects: ['Máquinas e Equipamentos', 'Desenho Técnico Industrial', 'Programas de Saúde e Segurança', 'Prevenção e Combate ao Sinistro', 'Técnica de Treinamento', 'Legislação Ambiental'] },
+          { title: 'Módulo IV · Saúde e Segurança Integradas', subjects: ['Medicina do Trabalho', 'Higiene Ocupacional', 'Primeiros Socorros', 'Educação em Saúde e Segurança', 'Psicologia do Trabalho', 'Ergonomia'] },
+        ],
+      },
+      {
+        slug: 'administracao',
+        name: 'Técnico em Administração',
+        tagline: 'Gestão, vendas, RH e finanças: a profissão que toda empresa precisa.',
+        photo: '/img/tec/administracao.webp',
+        hours: '800 horas',
+        duration: '24 meses',
+        schedule: 'Noturno · 18h50 às 22h20',
+        salary: { headline: 'R$ 2.478 a R$ 5.121', detail: 'do piso ao teto da profissão', source: 'Portal Salário' },
+        careers: ['RH', 'Vendas', 'Logística', 'Marketing', 'Financeiro', 'Setor público', 'Contabilidade', 'Empreendedorismo'],
+        modules: [
+          { title: 'Módulo I', subjects: ['Gestão de Vendas e Negociação', 'Marketing', 'Recrutamento e Seleção', 'Matemática Básica', 'Teoria Geral da Administração', 'Comunicação Empresarial'] },
+          { title: 'Módulo II', subjects: ['Liderança e Gestão de Pessoas', 'Legislação Trabalhista e Previdência', 'Matemática Financeira', 'Introdução à Logística', 'ESG', 'Gestão da Qualidade'] },
+          { title: 'Módulo III', subjects: ['Contabilidade Básica', 'Empreendedorismo e Inovação', 'Treinamento e Desenvolvimento de Pessoas', 'Habilidades Pessoais e Crescimento Profissional', 'Saúde e Segurança no Trabalho', 'Ética Profissional'] },
+          { title: 'Módulo IV', subjects: ['Avaliação de Desempenho', 'Contabilidade Tributária', 'Custo e Formação de Preços', 'Gestão de Processos', 'Gestão da Produção', 'Economia e Mercado'] },
+        ],
+      },
+    ],
   },
 ];
 
