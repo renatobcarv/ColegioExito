@@ -1,17 +1,17 @@
 ---
-import { programas } from '../data/site';
+import { programas, school, waLink } from '../data/site';
 import Icon from './Icon.astro';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
-<section id="programas" class="pgm" aria-labelledby="prog-t">
+<section id="programas" class="pgm" aria-labelledby="pgm-t">
   <div class="wrap">
     <div class="pgm__head rv">
       <div>
         <div class="kicker">Programas Êxito</div>
-        <h2 id="prog-t" class="disp h2">O que seu filho leva daqui <span class="serif">vai além do boletim.</span></h2>
+        <h2 id="pgm-t" class="disp h2">O que seu filho leva daqui <span class="serif">vai além do boletim.</span></h2>
       </div>
-      <p class="lead">Inglês para a vida, inteligência emocional, mentalidade de quem chega longe e um jeito próprio de ensinar. Quatro programas que fazem do Êxito uma escola diferente.</p>
+      <p class="lead">Inglês para a vida, inteligência emocional, mentalidade de quem chega longe e um jeito próprio de ensinar. Quatro programas, cada um com base em pesquisa.</p>
     </div>
     <ul class="pgm__grid stagger tri">
       {
@@ -24,43 +24,135 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
             <h3 class="disp">{p.title}</h3>
             <p>{p.text}</p>
             <ul class="pc__pts">{p.points.map((x) => <li><Icon name="check" size={18} />{x}</li>)}</ul>
-            {p.stats && (
-              <dl class="pc__stats">
-                {p.stats.map((x) => <div><dt class="disp">{x.value}</dt><dd>{x.label}</dd></div>)}
-              </dl>
-            )}
-            {p.awards && <p class="mono pc__aw">★ {p.awards}</p>}
+            <dl class="pc__stats">
+              {p.stats.map((x) => <div><dt class="disp">{x.value}</dt><dd>{x.label}</dd></div>)}
+            </dl>
+            <p class="mono pc__src">{p.source}</p>
+            <button type="button" class="pc__more" data-open={`pg-${p.id}`} aria-haspopup="dialog">Saiba mais <Icon name="arrow" size={16} /></button>
           </li>
         ))
       }
     </ul>
   </div>
+
+  {
+    programas.map((p) => (
+      <dialog class="pdlg" id={`pg-${p.id}`} aria-labelledby={`pg-${p.id}-t`}>
+        <div class="pdlg__in">
+          <button type="button" class="pdlg__close" aria-label="Fechar">×</button>
+          <div class="pdlg__top">
+            <p class="mono pdlg__k">{p.title.toUpperCase()}</p>
+            {p.logo && <img src={`${base}${p.logo.src}`} alt={p.logo.alt} width="96" height="47" class="pdlg__logo" />}
+          </div>
+          <h3 id={`pg-${p.id}-t`} class="disp pdlg__t">{p.more.title}</h3>
+          <p class="pdlg__intro">{p.more.intro}</p>
+          <ol class="pdlg__pillars">
+            {p.more.pillars.map((x, i) => (
+              <li><span class="mono">{String(i + 1).padStart(2, '0')}</span><div><strong>{x.title}</strong><span>{x.text}</span></div></li>
+            ))}
+          </ol>
+          {p.more.quote && <blockquote class="disp pdlg__q">“{p.more.quote}”</blockquote>}
+          {p.more.note && <p class="pdlg__note">{p.more.note}</p>}
+          <p class="mono pdlg__src">{p.source}</p>
+          <a href={waLink(school.whatsapp, `Olá! Vim pelo site e quero saber mais sobre o ${p.title} do Colégio Êxito.`)} target="_blank" rel="noopener" class="btn pdlg__btn">Quero conhecer na visita<span class="arr"><Icon name="arrow" /></span></a>
+        </div>
+      </dialog>
+    ))
+  }
 </section>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.pc__more').forEach((b) =>
+    b.addEventListener('click', () => {
+      const d = document.getElementById(b.dataset.open ?? '') as HTMLDialogElement | null;
+      if (!d) return;
+      d.showModal();
+      document.documentElement.style.overflow = 'hidden';
+    }),
+  );
+  document.querySelectorAll<HTMLDialogElement>('dialog.pdlg').forEach((d) => {
+    d.querySelector('.pdlg__close')?.addEventListener('click', () => d.close());
+    d.addEventListener('click', (e) => { if (e.target === d) d.close(); });
+    d.addEventListener('close', () => { document.documentElement.style.overflow = ''; });
+  });
+</script>
 
 <style>
   .pgm { padding: clamp(80px, 10vw, 130px) 0; background: linear-gradient(180deg, var(--ink2), #FFFFFF); }
   .pgm__head { display: grid; grid-template-columns: 1.1fr 1fr; gap: 20px 56px; align-items: end; margin-bottom: 48px; }
   .pgm__head .lead { margin: 0; }
   .pgm__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-  .pc { position: relative; display: grid; gap: 12px; align-content: start; padding: 30px; border-radius: 26px; background: #FFFFFF; border: 1px solid var(--line); border-top: 5px solid var(--c); overflow: hidden; }
+
+  .pc { position: relative; display: flex; flex-direction: column; gap: 12px; padding: 30px; border-radius: 26px; background: #FFFFFF; border: 1px solid var(--line); border-top: 5px solid var(--c); overflow: hidden; }
   .pc:hover { transform: translateY(-5px); box-shadow: 0 34px 70px -46px rgba(11, 31, 92, .55); border-color: var(--c); }
   .pc--hl { background: linear-gradient(160deg, var(--royal), var(--royal-deep)); color: #FFFFFF; border-color: transparent; border-top-color: var(--red); }
-  .pc__top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .pc__top { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 46px; }
+  .pc__tag { padding: 5px 10px; border-radius: 6px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; background: var(--c-soft); color: var(--c-ink); }
+  .pc--hl .pc__tag { background: rgba(255, 255, 255, .14); color: var(--gold); }
   .pc__logo { display: inline-flex; align-items: center; height: 46px; padding: 6px 12px; border-radius: 12px; background: #FFFFFF; }
   .pc__logo img { height: 100%; width: auto; }
-  .pc__stats { margin: 8px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-  .pc__stats div { padding: 12px; border-radius: 14px; background: rgba(255, 255, 255, .1); }
-  .pc__stats dt { font-size: 24px; font-weight: 780; color: #FFFFFF; letter-spacing: -.02em; }
-  .pc__stats dd { margin: 2px 0 0; font-size: 12.5px; color: #D3DCF7; }
-  .pc__aw { margin: 4px 0 0; font-size: 12px !important; letter-spacing: .06em; color: var(--gold) !important; }
-  .pc__tag { justify-self: start; padding: 5px 10px; border-radius: 6px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; background: var(--c-soft); color: var(--c-ink); }
-  .pc--hl .pc__tag { background: rgba(255, 255, 255, .14); color: var(--gold); }
   .pc h3 { margin: 4px 0 0; font-size: clamp(24px, 2.4vw, 30px); font-weight: 750; letter-spacing: -.03em; }
-  .pc p { margin: 0; color: var(--muted); line-height: 1.6; font-size: 16px; }
-  .pc--hl p { color: #D3DCF7; }
-  .pc__pts { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 8px; }
+  .pc > p { margin: 0; color: var(--muted); line-height: 1.6; font-size: 16px; }
+  .pc--hl > p { color: #D3DCF7; }
+  .pc__pts { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 8px; }
   .pc__pts li { display: flex; gap: 10px; align-items: flex-start; font-weight: 600; font-size: 15px; }
   .pc__pts :global(svg) { flex: none; color: var(--c); margin-top: 2px; }
   .pc--hl .pc__pts :global(svg) { color: var(--gold); }
+
+  .pc__stats { margin: 8px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .pc__stats div { padding: 12px; border-radius: 14px; background: var(--c-soft); }
+  .pc__stats dt { font-size: 21px; font-weight: 780; color: var(--c-ink); letter-spacing: -.02em; line-height: 1.1; }
+  .pc__stats dd { margin: 4px 0 0; font-size: 12.5px; line-height: 1.35; color: var(--muted); }
+  .pc--hl .pc__stats div { background: rgba(255, 255, 255, .1); }
+  .pc--hl .pc__stats dt { color: #FFFFFF; }
+  .pc--hl .pc__stats dd { color: #D3DCF7; }
+  .pc__src { margin: 0; font-size: 11.5px !important; letter-spacing: .03em; color: var(--dim) !important; line-height: 1.45 !important; }
+  .pc--hl .pc__src { color: var(--gold) !important; }
+
+  .pc__more {
+    margin-top: auto; align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 18px;
+    border-radius: 999px; border: 1px solid var(--c); background: transparent; color: var(--c-ink); font: inherit; font-weight: 700; font-size: 15px; cursor: pointer;
+    transition: background .25s, color .25s;
+  }
+  .pc__more:hover { background: var(--c); color: #FFFFFF; }
+  .pc--hl .pc__more { border-color: rgba(255, 255, 255, .5); color: #FFFFFF; }
+  .pc--hl .pc__more:hover { background: #FFFFFF; color: var(--royal); }
+  .pc__more :global(svg) { transition: transform .3s var(--ease); }
+  .pc__more:hover :global(svg) { transform: translateX(3px); }
+
+  .pdlg { width: min(760px, calc(100% - 24px)); max-height: calc(100dvh - 32px); padding: 0; border: 0; border-radius: 28px; background: #FFFFFF; color: var(--cream); box-shadow: 0 60px 120px -40px rgba(5, 12, 35, .7); overflow: auto; }
+  .pdlg::backdrop { background: rgba(5, 12, 35, .7); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .pdlg[open] { animation: pdIn .45s var(--ease); }
+  @keyframes pdIn { from { opacity: 0; transform: translateY(24px) scale(.97); } }
+  .pdlg__in { position: relative; padding: 42px 40px 36px; }
+  .pdlg__in::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 6px; background: linear-gradient(90deg, var(--green) 33.3%, var(--red) 33.3% 66.6%, #1B30A3 66.6%); }
+  .pdlg__close { position: absolute; top: 18px; right: 16px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line2); background: #FFFFFF; color: var(--cream); font-size: 26px; line-height: 1; cursor: pointer; }
+  .pdlg__top { display: flex; align-items: center; gap: 14px; padding-right: 52px; }
+  .pdlg__k { margin: 0; font-size: 12px; letter-spacing: .14em; color: var(--red-dark); }
+  .pdlg__logo { height: 34px; width: auto; }
+  .pdlg__t { margin: 12px 0 0; font-size: clamp(26px, 3.4vw, 38px); font-weight: 760; line-height: 1.08; letter-spacing: -.03em; }
+  .pdlg__intro { margin: 14px 0 0; font-size: 17px; line-height: 1.6; color: var(--muted); }
+  .pdlg__pillars { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 10px; }
+  .pdlg__pillars li { display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: start; padding: 14px 16px; border-radius: 16px; background: var(--ink2); }
+  .pdlg__pillars .mono { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 13px; color: #FFFFFF; }
+  .pdlg__pillars li:nth-child(3n + 1) .mono { background: var(--red); }
+  .pdlg__pillars li:nth-child(3n + 2) .mono { background: var(--green); }
+  .pdlg__pillars li:nth-child(3n) .mono { background: #2457D6; }
+  .pdlg__pillars strong { display: block; font-size: 17px; }
+  .pdlg__pillars span:not(.mono) { display: block; margin-top: 2px; color: var(--muted); line-height: 1.5; font-size: 15px; }
+  .pdlg__q { margin: 22px 0 0; padding: 18px 20px; border-radius: 16px; border-left: 4px solid var(--green); background: #F2FAF4; font-size: 19px; font-weight: 650; line-height: 1.35; letter-spacing: -.015em; }
+  .pdlg__note { margin: 18px 0 0; padding: 12px 14px; border-radius: 12px; background: #FFF8E1; color: #5C4600; font-size: 14px; line-height: 1.5; }
+  .pdlg__src { margin: 16px 0 0; font-size: 11.5px; color: var(--dim); }
+  .pdlg__btn { margin-top: 22px; height: 56px; font-size: 16px; }
+  .pdlg__btn :global(.arr) { width: 42px; height: 42px; flex-basis: 42px; }
+
   @media (max-width: 899px) { .pgm__head, .pgm__grid { grid-template-columns: 1fr; } }
+  @media (max-width: 559px) {
+    .pc { padding: 24px 20px; }
+    .pc__stats { grid-template-columns: 1fr; }
+    .pc__stats div { display: flex; align-items: baseline; gap: 10px; }
+    .pc__stats dd { margin: 0; }
+    .pdlg__in { padding: 34px 22px 26px; }
+    .pdlg__btn { width: 100%; justify-content: space-between; }
+  }
 </style>
