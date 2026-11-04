@@ -131,7 +131,10 @@ export const school = {
   /** Links de serviços. `null` = ainda sem endereço; o link fica oculto. */
   services: {
     conexao: null as string | null,
-    unicollege: null as string | null,
+    /** Unicollege: frequência, notas, boletim e anúncios (professores e famílias). */
+    unicollege: 'https://www.unicollege.net/exito/Login.aspx?ReturnUrl=%2fexito%2f' as string | null,
+    /** EADMAX: ambiente virtual de aprendizagem (aulas, materiais EAD e provas). */
+    ead: 'https://www.exito.eadmax.net/' as string | null,
     matricula: null as string | null,
     webmail: null as string | null,
     blog: null as string | null,
@@ -181,15 +184,8 @@ export const units: Unit[] = [
 
 export const segments: Segment[] = [
   {
-    name: 'Berçário',
-    age: null,
-    text: 'Cuidado, segurança e rotina para os primeiros passos, com uma equipe que você conhece pelo nome.',
-    photo: null,
-    accent: 'red',
-  },
-  {
     name: 'Educação Infantil',
-    age: null,
+    age: '3 a 5 anos',
     text: 'Rotina, afeto e as primeiras descobertas num ambiente seguro. Onde a curiosidade vira hábito.',
     photo: null,
     accent: 'gold',
@@ -222,7 +218,15 @@ export const segments: Segment[] = [
     photo: null,
     accent: 'red',
     highlight: true,
+  },  {
+    name: 'TEC Mais',
+    age: 'Cursos técnicos',
+    text: 'Técnico em Enfermagem, Segurança do Trabalho e Administração, à noite, com diploma válido em todo o país.',
+    photo: null,
+    accent: 'red',
+    highlight: true,
   },
+
 ];
 
 export const pillars = [
@@ -252,11 +256,46 @@ export const metodo = {
   ],
 };
 
+/**
+ * Programas e diferenciais do Êxito (seção "Programas Êxito").
+ * TODO: confirmar com a escola as séries atendidas pelo Edify e pelo Mindset.
+ */
+export const programas = [
+  {
+    id: 'bilingue',
+    tag: 'Parceria Edify',
+    title: 'Programa Bilíngue Edify',
+    text: 'Inglês vivido no dia a dia, não decorado. Em parceria com a Edify, o aluno aprende a se comunicar com naturalidade e ganha uma vantagem que o acompanha para a vida toda.',
+    points: ['Inglês integrado à rotina escolar', 'Material e metodologia do programa Edify', 'Comunicação, escuta e confiança para falar'],
+  },
+  {
+    id: 'mindset',
+    tag: 'Ensino Médio',
+    title: 'Mindset Ensino Médio',
+    text: 'Nota alta é consequência de quem sabe aonde quer chegar. O Mindset trabalha projeto de vida, foco e disciplina de estudo para o ENEM e para as escolhas depois da escola.',
+    points: ['Projeto de vida e escolha de carreira', 'Rotina, foco e método de estudo', 'Preparação para ENEM e vestibulares'],
+  },
+  {
+    id: 'socioemocional',
+    tag: 'Todas as fases',
+    title: 'Educação Socioemocional',
+    text: 'Saber lidar com as emoções, respeitar o outro e assumir responsabilidades também se aprende. É o que forma um aluno equilibrado, dentro e fora da sala.',
+    points: ['Autoconhecimento e autocontrole', 'Empatia, respeito e convivência', 'Responsabilidade e tomada de decisão'],
+  },
+  {
+    id: 'metodologias',
+    tag: 'Jeito Êxito',
+    title: 'Metodologias Inovadoras',
+    text: 'Uma forma própria de ensinar, construída em mais de 35 anos: o aluno aprende fazendo, pesquisando e apresentando, com o professor acompanhando de perto cada passo.',
+    points: ['Aprendizagem ativa e por projetos', 'Tecnologia, ambiente virtual e vídeo como linguagem', 'Acompanhamento individual do ritmo de cada aluno'],
+  },
+];
+
 export const steps = [
   { title: 'O professor percebe', text: 'Dúvida e queda de rendimento são registradas na hora.' },
   { title: 'A coordenação age', text: 'Reforço, conversa com o aluno, plano de recuperação.' },
   { title: 'A família fica sabendo', text: 'Contato direto, antes da prova, não depois.' },
-  { title: 'O resultado aparece', text: 'Notas, frequência e evolução no portal Conexão Êxito.' },
+  { title: 'O resultado aparece', text: 'Notas, frequência, boletim e recados no portal Unicollege.' },
 ];
 
 /**
@@ -288,7 +327,7 @@ export const faqs: Faq[] = [
   },
   {
     q: 'Como acompanho notas e frequência?',
-    a: 'Pelo portal Conexão Êxito e pelo contato direto com a coordenação, que avisa a família assim que percebe alguma dificuldade.',
+    a: 'Pelo portal Unicollege (notas, frequência, boletim e recados) e pelo contato direto com a coordenação, que avisa a família assim que percebe alguma dificuldade.',
   },
   {
     q: 'Posso visitar antes de decidir?',
@@ -545,19 +584,9 @@ export const formacoes: Formacao[] = [
  * A chave é o nome do segmento, igual ao do Supabase/site.
  */
 export const segmentDetails: Record<string, { title: string; intro: string; points: string[]; quote?: string }> = {
-  'Berçário': {
-    title: 'Os primeiros passos, com quem você conhece pelo nome',
-    intro: 'No Berçário, a prioridade é que seu filho se sinta seguro e que você saia tranquilo para trabalhar.',
-    points: [
-      'Rotina organizada de cuidado, alimentação e descanso',
-      'Ambiente acolhedor e seguro, pensado para os primeiros anos',
-      'Estímulos respeitando o ritmo e as características de cada criança',
-      'Comunicação próxima com a família sobre o dia a dia',
-    ],
-  },
   'Educação Infantil': {
     title: 'Onde a curiosidade vira hábito de aprender',
-    intro: 'Rotina, afeto e as primeiras descobertas, num ambiente seguro e acolhedor para o desenvolvimento acadêmico e pessoal.',
+    intro: 'Dos 3 aos 5 anos: rotina, afeto e as primeiras descobertas, num ambiente seguro e acolhedor para o desenvolvimento acadêmico e pessoal.',
     points: [
       'Primeiras linguagens: falar, desenhar, brincar, criar e se expressar',
       'Atividades artísticas e de convivência que ensinam a respeitar o outro',
@@ -595,6 +624,7 @@ export const segmentDetails: Record<string, { title: string; intro: string; poin
       'Novo Ensino Médio alinhado à BNCC e à legislação educacional',
       'Preparação para ENEM e vestibulares',
       'Protagonismo: pesquisa, debate e projetos que formam cidadãos críticos',
+      'Programa Mindset: projeto de vida, foco e disciplina de estudo para o ENEM',
       'Ponte direta para a faculdade (Polo Unopar Anhanguera) e para cursos técnicos (TEC Mais)',
     ],
     quote: 'A escola não termina no 3º ano: a faculdade e a profissão continuam na mesma casa.',
@@ -638,7 +668,6 @@ export const photos: {
 } = {
   hero: { src: '/img/fotos/fundamental-i.webp', alt: 'Professora do Colégio Êxito acompanhando de perto uma aluna do Fundamental I', illustrative: true },
   segments: {
-    'Berçário': { src: '/img/fotos/bercario.webp', alt: 'Bebês do Berçário brincando com a professora', illustrative: true },
     'Educação Infantil': { src: '/img/fotos/educacao-infantil.webp', alt: 'Crianças da Educação Infantil pintando com a professora', illustrative: true },
     'Fundamental I': { src: '/img/fotos/fundamental-i.webp', alt: 'Turma do Fundamental I em aula', illustrative: true },
     'Fundamental II': { src: '/img/fotos/fundamental-ii-9ano.webp', alt: 'Aula de matemática do 9º ano', illustrative: true },

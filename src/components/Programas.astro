@@ -1,0 +1,48 @@
+---
+import { programas } from '../data/site';
+import Icon from './Icon.astro';
+---
+
+<section id="programas" class="pgm" aria-labelledby="prog-t">
+  <div class="wrap">
+    <div class="pgm__head rv">
+      <div>
+        <div class="kicker">Programas Êxito</div>
+        <h2 id="prog-t" class="disp h2">O que seu filho leva daqui <span class="serif">vai além do boletim.</span></h2>
+      </div>
+      <p class="lead">Inglês para a vida, inteligência emocional, mentalidade de quem chega longe e um jeito próprio de ensinar. Quatro programas que fazem do Êxito uma escola diferente.</p>
+    </div>
+    <ul class="pgm__grid stagger tri">
+      {
+        programas.map((p, i) => (
+          <li class={`pc rv${i === 0 ? ' pc--hl' : ''}`} id={p.id}>
+            <span class="mono pc__tag">{p.tag}</span>
+            <h3 class="disp">{p.title}</h3>
+            <p>{p.text}</p>
+            <ul class="pc__pts">{p.points.map((x) => <li><Icon name="check" size={18} />{x}</li>)}</ul>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .pgm { padding: clamp(80px, 10vw, 130px) 0; background: linear-gradient(180deg, var(--ink2), #FFFFFF); }
+  .pgm__head { display: grid; grid-template-columns: 1.1fr 1fr; gap: 20px 56px; align-items: end; margin-bottom: 48px; }
+  .pgm__head .lead { margin: 0; }
+  .pgm__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .pc { position: relative; display: grid; gap: 12px; align-content: start; padding: 30px; border-radius: 26px; background: #FFFFFF; border: 1px solid var(--line); border-top: 5px solid var(--c); overflow: hidden; }
+  .pc:hover { transform: translateY(-5px); box-shadow: 0 34px 70px -46px rgba(11, 31, 92, .55); border-color: var(--c); }
+  .pc--hl { background: linear-gradient(160deg, var(--royal), var(--royal-deep)); color: #FFFFFF; border-color: transparent; border-top-color: var(--red); }
+  .pc__tag { justify-self: start; padding: 5px 10px; border-radius: 6px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; background: var(--c-soft); color: var(--c-ink); }
+  .pc--hl .pc__tag { background: rgba(255, 255, 255, .14); color: var(--gold); }
+  .pc h3 { margin: 4px 0 0; font-size: clamp(24px, 2.4vw, 30px); font-weight: 750; letter-spacing: -.03em; }
+  .pc p { margin: 0; color: var(--muted); line-height: 1.6; font-size: 16px; }
+  .pc--hl p { color: #D3DCF7; }
+  .pc__pts { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 8px; }
+  .pc__pts li { display: flex; gap: 10px; align-items: flex-start; font-weight: 600; font-size: 15px; }
+  .pc__pts :global(svg) { flex: none; color: var(--c); margin-top: 2px; }
+  .pc--hl .pc__pts :global(svg) { color: var(--gold); }
+  @media (max-width: 899px) { .pgm__head, .pgm__grid { grid-template-columns: 1fr; } }
+</style>

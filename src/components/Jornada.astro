@@ -42,7 +42,7 @@ const slug = (s: string) =>
               <h3 class="disp">{s.name}</h3>
               <p>{s.text}</p>
               {formacaoBySegment(s.name) ? (
-                <a class="seg__more" href={`${base}/${formacaoBySegment(s.name)!.slug}`}>Conhecer o polo <Icon name="arrow" size={16} /></a>
+                <a class="seg__more" href={`${base}/${formacaoBySegment(s.name)!.slug}`}>{formacaoBySegment(s.name)!.slug === 'unopar' ? 'Conhecer o polo' : 'Conhecer a TEC Mais'} <Icon name="arrow" size={16} /></a>
               ) : segmentDetails[s.name] ? (
                 <button type="button" class="seg__more" data-open={`det-${slug(s.name)}`} aria-haspopup="dialog">Saiba mais <Icon name="arrow" size={16} /></button>
               ) : null}
