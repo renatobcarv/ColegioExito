@@ -57,7 +57,7 @@ const series = segments.filter((s) => !/unopar/i.test(s.name)).map((s) => s.name
       </fieldset>
       <p class="vform__err" role="alert" hidden>Preencha seu nome e a fase do seu filho.</p>
       <button type="submit" class="btn vform__btn">Agendar minha visita<span class="arr"><Arrow /></span></button>
-      <p class="vform__note"><Icon name="whatsapp" size={16} />A mensagem vai pronta para o WhatsApp da secretaria. Resposta no mesmo dia em horário comercial.</p>
+      <p class="vform__note"><Icon name="whatsapp" size={16} />A mensagem vai pronta para o WhatsApp da secretaria. Resposta no mesmo dia em horário comercial. Seus dados seguem a <a href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/privacidade`}>Política de Privacidade</a>.</p>
     </form>
   </div>
 </section>

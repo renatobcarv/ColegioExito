@@ -1,0 +1,37 @@
+---
+import LegalPage from '../components/LegalPage.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<LegalPage title="Política de Cookies" kicker="Cookies e conteúdos de terceiros" description="Quais cookies e armazenamentos o site do Colégio Êxito usa.">
+  <p class="lg__box"><strong>Este site não usa cookies de rastreamento, de análise ou de publicidade.</strong> Conteúdos de outros serviços (vídeos, reel e tour 360°) só são carregados quando você clica neles.</p>
+
+  <h2>1. O que são cookies</h2>
+  <p>Cookies são pequenos arquivos que um site grava no seu navegador para lembrar informações. Também existem formas parecidas de armazenamento, como o armazenamento local (localStorage).</p>
+
+  <h2>2. O que este site usa</h2>
+  <table>
+    <thead><tr><th>Nome</th><th>Tipo</th><th>Para que serve</th><th>Duração</th></tr></thead>
+    <tbody>
+      <tr><td>exito-aviso-cookies</td><td>Armazenamento local, estritamente necessário</td><td>Lembrar que você já viu o aviso de cookies</td><td>Até você limpar os dados do navegador</td></tr>
+    </tbody>
+  </table>
+  <p>As fontes e as imagens do site são servidas pelo próprio site, sem rastreamento.</p>
+
+  <h2>3. Conteúdos de terceiros, só com o seu clique</h2>
+  <table>
+    <thead><tr><th>Serviço</th><th>Onde aparece</th><th>Quando carrega</th></tr></thead>
+    <tbody>
+      <tr><td>YouTube (modo de privacidade aprimorada, youtube-nocookie.com)</td><td>Depoimentos em vídeo</td><td>Ao tocar no play</td></tr>
+      <tr><td>Instagram (Meta)</td><td>Reel em destaque</td><td>Ao tocar para assistir</td></tr>
+      <tr><td>DD360</td><td>Tour 360° das unidades</td><td>Ao tocar em “Entrar no tour”</td></tr>
+    </tbody>
+  </table>
+  <p>Depois do clique, esses serviços podem gravar cookies próprios, conforme as políticas deles. As capas dos vídeos são imagens públicas do YouTube (i.ytimg.com).</p>
+
+  <h2>4. Como gerenciar</h2>
+  <p>Você pode apagar ou bloquear cookies e dados de sites nas configurações do seu navegador (Chrome, Safari, Firefox, Edge). Isso não impede o uso deste site.</p>
+
+  <h2>5. Mais informações</h2>
+  <p>Veja a <a href={`${base}/privacidade`}>Política de Privacidade</a> e os <a href={`${base}/termos`}>Termos de Uso</a>.</p>
+</LegalPage>

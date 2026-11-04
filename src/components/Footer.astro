@@ -1,5 +1,5 @@
 ---
-import { school, formatPhone, telLink, waLink, formacoes } from '../data/site';
+import { school, formatPhone, telLink, waLink, formacoes, legal } from '../data/site';
 import { units } from '../data/content';
 import Icon from './Icon.astro';
 
@@ -82,7 +82,12 @@ const services = [
   </div>
 
   <div class="wrap foot__legal">
-    <span>© {year} {school.name}. Todos os direitos reservados.</span>
+    <span>© {year} {school.name}{legal.cnpj && <> · CNPJ {legal.cnpj}</>} · <a href={`mailto:${school.email}`}>{school.email}</a></span>
+    <nav aria-label="Documentos legais" class="foot__lgl">
+      <a href={`${base}/privacidade`}>Privacidade</a>
+      <a href={`${base}/termos`}>Termos de uso</a>
+      <a href={`${base}/cookies`}>Cookies</a>
+    </nav>
     <em>{school.slogan}</em>
   </div>
 </footer>
@@ -138,6 +143,11 @@ const services = [
 
   .foot__legal { position: relative; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding: 22px 0 30px; border-top: 1px solid var(--line); font-size: 13px; color: var(--dim); }
   .foot__legal em { color: var(--gold); }
+  .foot__legal a { color: var(--dim); }
+  .foot__legal a:hover { color: #FFFFFF; }
+  .foot__lgl { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+  .foot__lgl a { color: var(--dim); text-decoration: none; min-height: 32px; display: inline-flex; align-items: center; }
+  .foot__lgl a:hover { color: #FFFFFF; text-decoration: underline; }
 
   @media (max-width: 1023px) { .foot__grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 559px) {

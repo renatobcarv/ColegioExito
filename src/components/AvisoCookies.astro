@@ -1,0 +1,37 @@
+---
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<div class="ck" id="ck" role="region" aria-label="Aviso de cookies" hidden>
+  <p>Este site <strong>não usa cookies de rastreamento</strong>. Vídeos, reel e tour 360° só carregam quando você clica. <a href={`${base}/cookies`}>Saiba mais</a></p>
+  <button type="button" class="ck__ok">Entendi</button>
+</div>
+
+<script>
+  const KEY = 'exito-aviso-cookies';
+  const el = document.getElementById('ck');
+  let seen = false;
+  try { seen = localStorage.getItem(KEY) === '1'; } catch { seen = false; }
+  if (el && !seen) {
+    el.hidden = false;
+    el.querySelector('.ck__ok')?.addEventListener('click', () => {
+      try { localStorage.setItem(KEY, '1'); } catch { /* navegador sem armazenamento: só esconde */ }
+      el.hidden = true;
+    });
+  }
+</script>
+
+<style>
+  .ck {
+    position: fixed; left: 20px; bottom: 20px; z-index: 85; max-width: 440px; display: flex; align-items: center; gap: 14px;
+    padding: 14px 14px 14px 18px; border-radius: 18px; background: #0B1F5C; color: #FFFFFF; box-shadow: 0 24px 50px -20px rgba(0, 0, 0, .6);
+    animation: ckIn .5s var(--ease) both .8s;
+  }
+  .ck[hidden] { display: none; }
+  .ck p { margin: 0; font-size: 13.5px; line-height: 1.45; color: #D3DCF7; }
+  .ck strong { color: #FFFFFF; }
+  .ck a { color: var(--gold); font-weight: 600; }
+  .ck__ok { flex: none; min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #FFFFFF; color: #0B1F5C; font: inherit; font-weight: 800; font-size: 14px; cursor: pointer; }
+  @keyframes ckIn { from { opacity: 0; transform: translateY(16px); } }
+  @media (max-width: 759px) { .ck { left: 12px; right: 12px; bottom: calc(80px + env(safe-area-inset-bottom)); max-width: none; } }
+</style>

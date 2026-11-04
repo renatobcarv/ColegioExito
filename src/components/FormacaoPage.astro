@@ -198,7 +198,7 @@ const options = [...(f.technical ?? []).map((c) => c.name), ...f.areas.map((a) =
           }
           <p class="lform__err" role="alert" hidden>Preencha seu nome e escolha uma opção.</p>
           <button type="submit" class="fbtn lform__btn">{f.form.cta}<span class="fbtn__arr"><Arrow /></span></button>
-          <p class="lform__note"><Icon name="whatsapp" size={16} />Você será levado ao WhatsApp {formatPhone(f.contact.whatsapp.slice(2))} com a mensagem pronta. Nada fica salvo no site.</p>
+          <p class="lform__note"><Icon name="whatsapp" size={16} />Você será levado ao WhatsApp {formatPhone(f.contact.whatsapp.slice(2))} com a mensagem pronta. Nada fica salvo no site. Veja a <a href={`${base}/privacidade`}>Política de Privacidade</a>.</p>
         </form>
       </div>
     </section>

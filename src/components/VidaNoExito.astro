@@ -28,13 +28,12 @@ import Icon from './Icon.astro';
 
     <div class="vida__reel rv">
       <div class="phone">
-        <iframe
-          src={`https://www.instagram.com/reel/${school.featuredReel}/embed/`}
-          title="Reel do Colégio Êxito no Instagram"
-          loading="lazy"
-          allow="autoplay; encrypted-media; picture-in-picture; clipboard-write"
-          allowfullscreen
-        ></iframe>
+        <button type="button" class="phone__play" data-reel={school.featuredReel} aria-label="Assistir o reel do Colégio Êxito no Instagram">
+          <span class="phone__ig" aria-hidden="true"><Icon name="instagram" size={34} /></span>
+          <span class="phone__btn" aria-hidden="true"><Icon name="play" size={26} /></span>
+          <span class="phone__txt">Toque para assistir o reel</span>
+          <span class="phone__small">O vídeo é carregado do Instagram</span>
+        </button>
       </div>
       <a href={`https://www.instagram.com/reel/${school.featuredReel}/`} target="_blank" rel="noopener" class="mono vida__open">
         Abrir no Instagram <Icon name="external" size={14} />
@@ -45,6 +44,18 @@ import Icon from './Icon.astro';
 </section>
 
 <script>
+  // Reel do Instagram: só carrega no clique (sem cookies de terceiros antes da ação do visitante)
+  document.querySelectorAll<HTMLButtonElement>('.phone__play').forEach((b) =>
+    b.addEventListener('click', () => {
+      const f = document.createElement('iframe');
+      f.src = `https://www.instagram.com/reel/${b.dataset.reel}/embed/`;
+      f.title = 'Reel do Colégio Êxito no Instagram';
+      f.allow = 'autoplay; encrypted-media; picture-in-picture; clipboard-write';
+      f.allowFullscreen = true;
+      b.replaceWith(f);
+    }),
+  );
+
 </script>
 
 <style>
@@ -69,7 +80,18 @@ import Icon from './Icon.astro';
     transition: transform .6s var(--ease);
   }
   .phone:hover { transform: translateY(-6px) rotate(-1deg); }
-  .phone iframe { width: 100%; height: 100%; border: 0; border-radius: 30px; background: #FFFFFF; }
+  .phone__play {
+    width: 100%; height: 100%; border: 0; border-radius: 30px; cursor: pointer; display: grid; place-items: center; align-content: center; gap: 14px; padding: 24px;
+    background: radial-gradient(120% 80% at 80% 0%, rgba(225, 37, 27, .45), transparent 60%), radial-gradient(120% 80% at 0% 100%, rgba(242, 194, 48, .35), transparent 60%), linear-gradient(160deg, var(--royal), #0B1433);
+    color: #FFFFFF; font: inherit; text-align: center;
+  }
+  .phone__ig { opacity: .9; }
+  .phone__btn { width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; background: var(--red); box-shadow: 0 0 0 10px rgba(225, 37, 27, .25); transition: transform .3s var(--ease); }
+  .phone__btn :global(svg) { margin-left: 4px; }
+  .phone__play:hover .phone__btn { transform: scale(1.08); }
+  .phone__txt { font-weight: 800; font-size: 17px; }
+  .phone__small { font-size: 12.5px; color: rgba(255, 255, 255, .7); }
+  .phone :global(iframe) { width: 100%; height: 100%; border: 0; border-radius: 30px; background: #FFFFFF; }
   .vida__open { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: .06em; color: var(--muted); text-decoration: none; }
   .vida__open:hover { color: var(--royal); }
 

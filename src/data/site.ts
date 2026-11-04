@@ -124,6 +124,7 @@ export const school = {
     instagram: 'https://www.instagram.com/colegioexitooficial/',
     facebook: 'https://www.facebook.com/ColegioExitoII',
   },
+  email: 'colegioexitoficial@gmail.com',
   instagramHandle: '@colegioexitooficial',
   instagramReels: 'https://www.instagram.com/colegioexitooficial/reels/',
   /** Reel em destaque na página inicial (o código depois de /reel/ no link). */
@@ -144,6 +145,18 @@ export const school = {
     { value: '77', star: true, label: 'avaliações de famílias no Google' },
     { value: '7,8 mil', label: 'acompanham no Instagram' },
   ],
+};
+
+/**
+ * Dados do controlador (LGPD) e datas das políticas.
+ * TODO: preencher razão social, CNPJ e e-mail do encarregado (DPO). Campos null não aparecem.
+ */
+export const legal = {
+  razaoSocial: null as string | null,
+  cnpj: '63.239.574/0001-37' as string | null,
+  dpoNome: null as string | null,
+  dpoEmail: 'colegioexitoficial@gmail.com' as string | null,
+  atualizadoEm: '4 de novembro de 2026',
 };
 
 export const units: Unit[] = [

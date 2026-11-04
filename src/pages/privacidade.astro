@@ -1,0 +1,61 @@
+---
+import LegalPage from '../components/LegalPage.astro';
+import Controlador from '../components/Controlador.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<LegalPage title="Política de Privacidade" kicker="LGPD · Lei 13.709/2018" description="Como o Colégio Êxito trata dados pessoais no site, de acordo com a Lei Geral de Proteção de Dados (LGPD).">
+  <p>Esta política explica, de forma simples, quais dados pessoais podem ser tratados quando você usa o site do Colégio Êxito, para que servem e quais são os seus direitos, conforme a Lei Geral de Proteção de Dados Pessoais (LGPD).</p>
+
+  <h2>1. Quem é o responsável pelos dados</h2>
+  <p>O controlador dos dados é o Colégio Êxito, com as unidades abaixo:</p>
+  <Controlador />
+
+  <h2>2. Resumo em uma frase</h2>
+  <p class="lg__box"><strong>Este site não tem cadastro, não guarda os dados digitados nos formulários e não usa cookies de rastreamento ou de publicidade.</strong> Os formulários apenas montam uma mensagem e abrem o seu WhatsApp. Você decide se envia.</p>
+
+  <h2>3. Quais dados podem ser tratados</h2>
+  <table>
+    <thead><tr><th>Situação</th><th>Dados</th><th>Finalidade</th><th>Base legal (LGPD)</th></tr></thead>
+    <tbody>
+      <tr><td>Formulários de visita, bolsa ou inscrição</td><td>Nome, fase do filho ou curso de interesse, unidade e período, enviados por você no WhatsApp</td><td>Responder o contato, agendar visita e informar sobre matrícula e cursos</td><td>Procedimentos preliminares a contrato, a pedido do titular (art. 7º, V)</td></tr>
+      <tr><td>Contato por WhatsApp ou telefone</td><td>Nome, telefone e o conteúdo da conversa</td><td>Atendimento</td><td>Art. 7º, V, e legítimo interesse (art. 7º, IX)</td></tr>
+      <tr><td>Navegação no site</td><td>Registros técnicos de acesso (endereço IP, data, hora, navegador), gerados pela hospedagem</td><td>Segurança e funcionamento do site</td><td>Legítimo interesse (art. 7º, IX) e Marco Civil da Internet</td></tr>
+      <tr><td>Fotos, vídeos e depoimentos de alunos</td><td>Imagem e voz</td><td>Divulgação institucional</td><td>Consentimento específico e destacado do responsável legal (art. 14) ou do próprio titular maior de idade</td></tr>
+    </tbody>
+  </table>
+
+  <h2>4. Com quem os dados podem ser compartilhados</h2>
+  <ul>
+    <li><strong>WhatsApp (Meta):</strong> quando você envia a mensagem pelo aplicativo.</li>
+    <li><strong>Vercel:</strong> empresa que hospeda o site e gera os registros técnicos de acesso.</li>
+    <li><strong>Supabase:</strong> serviço que guarda o conteúdo e as fotos do site (não guarda dados de visitantes).</li>
+    <li><strong>YouTube, Instagram e DD360 (tour 360°):</strong> somente se você clicar para assistir ou abrir o conteúdo. Veja a <a href={`${base}/cookies`}>Política de Cookies</a>.</li>
+    <li><strong>Parceiros educacionais</strong> (Unopar Anhanguera, TEC Mais, Edify) e <strong>portais</strong> (Unicollege, Ambiente Virtual EAD): são sites e serviços próprios, com políticas próprias. Ao clicar nos links, você sai deste site.</li>
+  </ul>
+  <p>Não vendemos dados pessoais e não os usamos para publicidade de terceiros.</p>
+
+  <h2>5. Crianças e adolescentes</h2>
+  <p>O tratamento de dados de crianças e adolescentes é feito no seu melhor interesse (art. 14 da LGPD e Estatuto da Criança e do Adolescente). Imagens, vídeos e depoimentos de alunos só são publicados com autorização por escrito do responsável legal, que pode ser revogada a qualquer momento pelo canal do titular.</p>
+
+  <h2>6. Por quanto tempo guardamos</h2>
+  <p>As conversas de atendimento são mantidas pelo tempo necessário para o atendimento e a matrícula. Os registros técnicos de acesso são mantidos pelo prazo previsto no Marco Civil da Internet (Lei 12.965/2014). Dados de alunos matriculados seguem os prazos da legislação educacional.</p>
+
+  <h2>7. Seus direitos</h2>
+  <p>Você pode, a qualquer momento e sem custo (art. 18 da LGPD):</p>
+  <ul>
+    <li>confirmar se tratamos seus dados e ter acesso a eles;</li>
+    <li>corrigir dados incompletos, inexatos ou desatualizados;</li>
+    <li>pedir anonimização, bloqueio ou eliminação de dados desnecessários;</li>
+    <li>pedir a portabilidade dos dados;</li>
+    <li>revogar o consentimento, inclusive o de uso de imagem;</li>
+    <li>saber com quem seus dados foram compartilhados.</li>
+  </ul>
+  <p>Para exercer seus direitos, use o canal do titular indicado no item 1. Você também pode reclamar à Autoridade Nacional de Proteção de Dados (ANPD), em gov.br/anpd.</p>
+
+  <h2>8. Segurança</h2>
+  <p>O site usa conexão criptografada (HTTPS), cabeçalhos de segurança que bloqueiam scripts e janelas não autorizadas, e acesso restrito ao painel de conteúdo. Conteúdos de terceiros só são carregados após a sua ação.</p>
+
+  <h2>9. Alterações</h2>
+  <p>Esta política pode ser atualizada. A data da última atualização fica no topo da página.</p>
+</LegalPage>
