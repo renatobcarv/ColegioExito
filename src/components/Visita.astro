@@ -1,24 +1,131 @@
 ---
-import { school, waLink } from '../data/site';
+import { school } from '../data/site';
+import { segments, units } from '../data/content';
 import Arrow from './Arrow.astro';
+import Icon from './Icon.astro';
+
+const series = segments.filter((s) => !/unopar/i.test(s.name)).map((s) => s.name);
 ---
 
 <section id="visita" class="visita dark" aria-labelledby="visita-t">
   <div class="glow" aria-hidden="true" style="width:900px;height:600px;left:50%;top:50%;translate:-50% -50%;background:radial-gradient(ellipse,rgba(225,37,27,.32),transparent 62%)"></div>
   <div class="gridlines" aria-hidden="true" style="-webkit-mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,#000 10%,transparent 70%);mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,#000 10%,transparent 70%)"></div>
-  <div class="wrap rv visita__in">
-    <div class="eyebrow"><span class="dot"></span>Visitas · {school.visitHours}</div>
-    <h2 id="visita-t" class="disp visita__t">A melhor forma de escolher uma escola é <span class="serif" style="font-size:1.08em">entrar nela.</span></h2>
-    <p class="lead" style="margin:0;max-width:600px">
-      Agende uma visita sem compromisso. Conheça as salas, a equipe e veja de perto como seu filho será acompanhado. As vagas por turma são limitadas.
-    </p>
-    <a href={waLink(school.whatsapp)} target="_blank" rel="noopener" class="btn btn--lg">Agendar pelo WhatsApp<span class="arr"><Arrow /></span></a>
-    <div class="mono" style="font-size:12px;color:var(--dim);letter-spacing:.06em">RESPOSTA NO MESMO DIA EM HORÁRIO COMERCIAL</div>
+
+  <div class="wrap visita__grid">
+    <div class="rv">
+      <div class="eyebrow"><span class="dot"></span>Visitas · {school.visitHours}</div>
+      <h2 id="visita-t" class="disp visita__t">A melhor forma de escolher uma escola é <span class="serif" style="font-size:1.06em">entrar nela.</span></h2>
+      <p class="lead visita__lead">
+        Não é um tour. É uma <strong>visita de diagnóstico</strong>: você conhece as salas e a equipe, e a coordenação
+        conversa com você sobre o seu filho.
+      </p>
+      <ol class="diag">
+        <li><span class="mono">01</span><div><strong>Onde ele está hoje</strong>Série, rotina e as dificuldades que você já percebe.</div></li>
+        <li><span class="mono">02</span><div><strong>Onde ele precisa chegar</strong>Os objetivos da família para os próximos anos.</div></li>
+        <li><span class="mono">03</span><div><strong>Como o Êxito leva até lá</strong>O acompanhamento, a turma e o próximo passo para a matrícula.</div></li>
+      </ol>
+    </div>
+
+    <form class="vform rv" data-wa={school.whatsapp} novalidate>
+      <p class="vform__t disp">Agende sua visita</p>
+      <p class="vform__s">Sem compromisso. As vagas por turma são limitadas.</p>
+      <div class="vform__f">
+        <label for="vf-nome">Seu nome</label>
+        <input id="vf-nome" name="nome" type="text" autocomplete="name" required placeholder="Nome do responsável" />
+      </div>
+      <div class="vform__f">
+        <label for="vf-serie">Fase do seu filho</label>
+        <select id="vf-serie" name="serie" required>
+          <option value="">Selecione…</option>
+          {series.map((s) => <option value={s}>{s}</option>)}
+        </select>
+      </div>
+      <fieldset class="vform__f">
+        <legend>Unidade</legend>
+        <div class="vform__radios">
+          {units.map((u, i) => (
+            <label class="vform__radio"><input type="radio" name="unidade" value={`${u.tag} (${u.city})`} checked={i === 0} /><span>{u.city.replace(' de Goiás', '')}</span></label>
+          ))}
+        </div>
+      </fieldset>
+      <fieldset class="vform__f">
+        <legend>Melhor período</legend>
+        <div class="vform__radios">
+          <label class="vform__radio"><input type="radio" name="periodo" value="manhã" checked /><span>Manhã</span></label>
+          <label class="vform__radio"><input type="radio" name="periodo" value="tarde" /><span>Tarde</span></label>
+        </div>
+      </fieldset>
+      <p class="vform__err" role="alert" hidden>Preencha seu nome e a fase do seu filho.</p>
+      <button type="submit" class="btn vform__btn">Agendar minha visita<span class="arr"><Arrow /></span></button>
+      <p class="vform__note"><Icon name="whatsapp" size={16} />A mensagem vai pronta para o WhatsApp da secretaria. Resposta no mesmo dia em horário comercial.</p>
+    </form>
   </div>
 </section>
 
+<script>
+  document.querySelectorAll<HTMLFormElement>('.vform').forEach((form) =>
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nomeEl = form.elements.namedItem('nome') as HTMLInputElement;
+      const serieEl = form.elements.namedItem('serie') as HTMLSelectElement;
+      const err = form.querySelector<HTMLElement>('.vform__err');
+      if (!nomeEl.value.trim() || !serieEl.value) {
+        if (err) err.hidden = false;
+        (nomeEl.value.trim() ? serieEl : nomeEl).focus();
+        return;
+      }
+      if (err) err.hidden = true;
+      const pick = (n: string) => form.querySelector<HTMLInputElement>(`input[name="${n}"]:checked`)?.value ?? '';
+      const msg =
+        `Olá! Meu nome é ${nomeEl.value.trim()}. Vim pelo site e quero agendar uma visita de diagnóstico ` +
+        `para o ${serieEl.value}, na ${pick('unidade')}, de preferência no período da ${pick('periodo')}.`;
+      const url = `https://wa.me/${form.dataset.wa}?text=${encodeURIComponent(msg)}`;
+      const w = window.open(url, '_blank', 'noopener');
+      if (!w) window.location.href = url;
+    }),
+  );
+</script>
+
 <style>
-  .visita { position: relative; overflow: clip; padding: clamp(110px, 13vw, 180px) 0; background: var(--royal); }
-  .visita__in { position: relative; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 26px; }
-  .visita__t { margin: 0; font-size: clamp(40px, 6.4vw, 96px); font-weight: 760; line-height: .98; max-width: 1050px; text-wrap: balance; }
+  .visita { position: relative; overflow: clip; padding: clamp(100px, 12vw, 160px) 0; background: var(--royal); }
+  .visita__grid { position: relative; display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: center; }
+  .visita__t { margin: 24px 0 0; font-size: clamp(38px, 5.4vw, 76px); font-weight: 760; line-height: 1; text-wrap: balance; }
+  .visita__lead { margin: 22px 0 0; max-width: 560px; }
+
+  .diag { list-style: none; margin: 30px 0 0; padding: 0; display: grid; gap: 10px; }
+  .diag li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: center; padding: 14px 16px; border-radius: 16px; background: rgba(255, 255, 255, .07); border: 1px solid var(--line); }
+  .diag .mono { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 13px; color: #FFFFFF; }
+  .diag li:nth-child(1) .mono { background: var(--red); }
+  .diag li:nth-child(2) .mono { background: var(--green); }
+  .diag li:nth-child(3) .mono { background: #3E6FD8; }
+  .diag strong { display: block; font-size: 17px; }
+  .diag div { color: var(--muted); font-size: 14.5px; line-height: 1.45; }
+
+  .vform {
+    --cream: #0B1F5C; --muted: #4A5878; color: #0B1F5C;
+    position: relative; overflow: hidden; display: grid; gap: 16px; padding: 36px 30px 30px; border-radius: 28px; background: #FFFFFF;
+    box-shadow: 0 50px 100px -40px rgba(0, 0, 0, .6);
+  }
+  .vform::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 6px; background: linear-gradient(90deg, var(--green) 33.3%, var(--red) 33.3% 66.6%, #1B30A3 66.6%); }
+  .vform__t { margin: 0; font-size: 28px; font-weight: 760; letter-spacing: -.03em; }
+  .vform__s { margin: -8px 0 4px; color: #4A5878; font-size: 15px; }
+  .vform__f { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; min-width: 0; }
+  .vform label, .vform legend { font-family: var(--f-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #4A5878; padding: 0; }
+  .vform input[type='text'], .vform select {
+    width: 100%; height: 54px; padding: 0 16px; border-radius: 14px; border: 1px solid #C9D1E0; background: #F7F9FC; font: inherit; font-size: 16px; color: #0B1F5C;
+  }
+  .vform input[type='text']:focus, .vform select:focus { outline: none; border-color: var(--royal); background: #FFFFFF; box-shadow: 0 0 0 4px rgba(18, 55, 166, .18); }
+  .vform__radios { display: flex; flex-wrap: wrap; gap: 8px; }
+  .vform .vform__radio { position: relative; font-family: var(--f-body); text-transform: none; letter-spacing: 0; }
+  .vform__radio input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+  .vform__radio span { display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #C9D1E0; background: #F7F9FC; font-weight: 700; font-size: 14px; color: #4A5878; transition: all .2s; }
+  .vform__radio input:checked + span { background: var(--royal); border-color: var(--royal); color: #FFFFFF; }
+  .vform__radio input:focus-visible + span { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .vform__err { margin: 0; padding: 10px 14px; border-radius: 10px; background: #FDECEC; color: #A30D24; font-size: 14px; font-weight: 600; }
+  .vform__btn { width: 100%; justify-content: space-between; }
+  .vform__note { display: flex; gap: 8px; align-items: flex-start; margin: 0; font-size: 13px; color: #5E6A85; line-height: 1.45; }
+  .vform__note :global(svg) { flex: none; color: var(--green); margin-top: 1px; }
+
+  @media (max-width: 1023px) { .visita__grid { grid-template-columns: 1fr; } }
+  @media (max-width: 559px) { .vform { padding: 24px 20px; } }
 </style>

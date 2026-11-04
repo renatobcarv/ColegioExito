@@ -243,6 +243,18 @@ export const steps = [
 export const testimonials: Testimonial[] = [];
 
 /**
+ * Depoimentos em VÍDEO (YouTube, de preferência "Não listado").
+ * `id` é o código do link: youtube.com/shorts/ESTE_CODIGO
+ * `name`, `role` e `quote` são opcionais: preencha para mostrar quem fala e uma frase de destaque.
+ */
+export type VideoTestimonial = { id: string; name: string | null; role: string | null; quote: string | null };
+
+export const videoTestimonials: VideoTestimonial[] = [
+  { id: 'pWabEb88l9Y', name: null, role: null, quote: null },
+  { id: 'wDKqMi1EUmk', name: null, role: null, quote: null },
+];
+
+/**
  * Perguntas frequentes. Só entram no site as que têm resposta definitiva.
  */
 export const faqs: Faq[] = [
