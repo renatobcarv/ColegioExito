@@ -1,0 +1,607 @@
+---
+/**
+ * Página de apresentação de um curso técnico da TEC Mais (/tec-mais/<slug>).
+ * Dados do curso: formacoes → technical (site.ts). Copy de venda: src/data/cursos.ts.
+ */
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import Icon from './Icon.astro';
+import Arrow from './Arrow.astro';
+import { school, waLink, formatPhone, type Formacao, type TechCourse } from '../data/site';
+import type { CursoCopy } from '../data/cursos';
+
+interface Props { f: Formacao; c: TechCourse; k: CursoCopy }
+const { f, c, k } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const wa = waLink(f.contact.whatsapp, k.whatsappMessage);
+const t = f.theme;
+const vars = `--p:${t.primary};--pd:${t.primaryDark};--pdeep:${t.primaryDeep};--a:${t.accent};--ab:${t.accentBtn};--ai:${t.accentInk};--h:${k.hue};--hs:${k.hueSoft}`;
+const others = (f.technical ?? []).filter((x) => x.slug !== c.slug);
+const short = c.name.replace('Técnico em ', '');
+const salLabel = c.slug === 'enfermagem' ? 'Piso nacional' : c.salary.headline.includes(' a ') ? 'Faixa salarial' : 'Média salarial';
+const totalSubjects = c.modules.reduce((n, m) => n + m.subjects.length, 0);
+type IconName = 'clock' | 'tool' | 'book' | 'cap' | 'whatsapp' | 'heart';
+const included: { title: string; text: string; icon: IconName }[] = [
+  { title: 'Aulas à noite', text: c.schedule.replace('Noturno · ', 'Das ').replace(' às ', ' às ') + ', para estudar sem largar o emprego.', icon: 'clock' },
+  { title: 'Prática desde o início', text: 'Aulas em laboratório, simulações e visitas técnicas, com quem atua na área.', icon: 'tool' },
+  { title: `${totalSubjects} disciplinas em 4 módulos`, text: `${c.hours} de formação completa, do básico ao avançado.`, icon: 'book' },
+  { title: 'Diploma válido no Brasil todo', text: 'Instituição credenciada pelo CEE/MEC: habilitação técnica de nível médio.', icon: 'cap' },
+  { title: 'Atendimento humano', text: 'Gente de verdade no WhatsApp, da primeira dúvida à formatura.', icon: 'whatsapp' },
+  { title: 'Indique e ganhe R$ 50', text: 'A cada amigo indicado que se matricular, você ganha R$ 50,00.', icon: 'heart' },
+];
+const compare = [
+  ['Tempo até a profissão', '24 meses, à noite', '4 a 5 anos', 'Semanas'],
+  ['Habilita para exercer a profissão', 'Sim, com diploma técnico', 'Sim, como bacharel', 'Não'],
+  ['Foco', 'Prática do dia a dia', 'Teoria e gestão', 'Um tema pontual'],
+  ['Dá para trabalhar enquanto estuda', 'Sim, aulas noturnas', 'Depende', 'Sim'],
+];
+---
+
+<Base title={`${c.name} em Valparaíso de Goiás | TEC Mais · ${school.name}`} description={`${c.name} na TEC Mais, Valparaíso de Goiás: ${c.hours}, ${c.duration}, aulas à noite e diploma válido em todo o Brasil. ${k.oneLiner}`}>
+  <Header />
+  <main id="conteudo" class="ct" style={vars}>
+
+    <!-- 1 · Promessa -->
+    <section class="ch">
+      <div class="ch__glow" aria-hidden="true"></div>
+      <div class="ch__grid-bg" aria-hidden="true"></div>
+      <div class="wrap ch__g">
+        <div>
+          <nav aria-label="Você está em" class="mono ch__crumb fade">
+            <a href={`${base}/`}>Início</a> <span aria-hidden="true">/</span> <a href={`${base}/tec-mais`}>TEC Mais</a> <span aria-hidden="true">/</span> <span aria-current="page">{short}</span>
+          </nav>
+          <div class="ch__eb fade" style="animation-delay:.08s"><span class="ch__dot"></span>{k.heroKicker}</div>
+          <h1 class="disp ch__t fade" style="animation-delay:.16s">{k.heroTitle} <span class="serif ch__acc">{k.heroAccent}</span></h1>
+          <p class="ch__lead fade" style="animation-delay:.28s">{k.heroLead}</p>
+          <div class="ch__ctas fade" style="animation-delay:.4s">
+            <a href="#inscricao" class="cbtn">Quero minha vaga<span class="cbtn__a"><Arrow /></span></a>
+            <a href="#grade" class="cghost">Ver a grade completa</a>
+          </div>
+          <ul class="ch__facts fade" style="animation-delay:.5s">
+            <li><Icon name="clock" size={18} />{c.hours}</li>
+            <li><Icon name="cap" size={18} />{c.duration}</li>
+            <li><Icon name="check" size={18} />{c.schedule.replace('Noturno · ', 'À noite, ')}</li>
+          </ul>
+        </div>
+        <figure class="ch__media fade" style="animation-delay:.3s">
+          <img src={`${base}${c.photo}`} alt={`Alunos do curso ${c.name} da TEC Mais`} width="720" height="720" decoding="async" fetchpriority="high" />
+          <figcaption class="ch__sal">
+            <span class="mono">{salLabel}</span>
+            <strong class="disp">{c.salary.headline}</strong>
+            <small>{c.salary.detail} · {c.salary.source}</small>
+          </figcaption>
+          <div class="ch__badge"><img src={`${base}${f.logo.src}`} alt="TEC Mais" width={f.logo.w} height={f.logo.h} /></div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- autoridade -->
+    <section class="auth">
+      <div class="wrap auth__in rv">
+        <span class="auth__i"><Icon name="check" size={26} /></span>
+        <div><strong>{k.authority.title}.</strong> {k.authority.text}</div>
+        <span class="mono auth__s">Fonte: {k.authority.source}</span>
+      </div>
+    </section>
+
+    <!-- 2 · Para quem é -->
+    <section class="cs">
+      <div class="wrap">
+        <div class="cs__head rv">
+          <div class="kicker ck">Para quem é</div>
+          <h2 class="disp h2">Este curso foi feito <span class="serif acc">para você se…</span></h2>
+        </div>
+        <div class="per stagger">
+          {k.personas.map((p, i) => (
+            <article class="per__c rv">
+              <span class="per__n disp">0{i + 1}</span>
+              <h3>{p.title}</h3>
+              <p>{p.text}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · Antes × depois -->
+    <section class="cs cs--dark">
+      <div class="ch__glow ch__glow--b" aria-hidden="true"></div>
+      <div class="wrap">
+        <div class="cs__head rv">
+          <div class="kicker ck ck--l">A virada</div>
+          <h2 class="disp h2">Sem formação, o mercado escolhe por você. <span class="serif acc">Com ela, você escolhe o mercado.</span></h2>
+        </div>
+        <div class="ba rv">
+          <div class="ba__col ba__col--no">
+            <span class="mono ba__k">Hoje</span>
+            <ul>{k.before.map((x) => <li><span class="ba__x" aria-hidden="true">×</span>{x}</li>)}</ul>
+          </div>
+          <div class="ba__arrow" aria-hidden="true"><Arrow /></div>
+          <div class="ba__col ba__col--yes">
+            <span class="mono ba__k">Daqui a {c.duration}</span>
+            <ul>{k.after.map((x) => <li><span class="ba__v"><Icon name="check" size={16} /></span>{x}</li>)}</ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 · A profissão por dentro -->
+    <section class="cs cs--soft">
+      <div class="wrap day">
+        <div class="cs__head rv day__head">
+          <div class="kicker ck">A profissão por dentro</div>
+          <h2 class="disp h2">Um dia na vida de <span class="serif acc">um(a) técnico(a) em {short.toLowerCase()}.</span></h2>
+          <p class="lead">{k.oneLiner} Veja como é a rotina, para você se enxergar nela antes de decidir.</p>
+        </div>
+        <ol class="tl stagger">
+          {k.day.map((d) => (
+            <li class="rv">
+              <span class="tl__time mono">{d.time}</span>
+              <div class="tl__card"><h3>{d.title}</h3><p>{d.text}</p></div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- 5 · O que você vai saber fazer -->
+    <section class="cs">
+      <div class="wrap">
+        <div class="cs__head rv">
+          <div class="kicker ck">O que você vai saber fazer</div>
+          <h2 class="disp h2">Você não sai com um certificado. <span class="serif acc">Sai com uma profissão.</span></h2>
+        </div>
+        <div class="sk stagger">
+          {k.skills.map((s) => (
+            <article class="sk__c rv">
+              <span class="sk__i"><Icon name={s.icon} size={24} /></span>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 · Grade -->
+    <section id="grade" class="cs cs--soft">
+      <div class="wrap">
+        <div class="cs__head rv">
+          <div class="kicker ck">Grade curricular</div>
+          <h2 class="disp h2">{c.modules.length} módulos. {totalSubjects} disciplinas. <span class="serif acc">Do zero à profissão.</span></h2>
+          <p class="lead">{c.hours} em {c.duration}, com aulas {c.schedule.replace('Noturno · ', 'das ')}.</p>
+        </div>
+        <div class="gr stagger">
+          {c.modules.map((m, i) => (
+            <article class="gr__c rv">
+              <header><span class="gr__n disp">{i + 1}</span><h3>{m.title}</h3></header>
+              <ul>{m.subjects.map((s) => <li>{s}</li>)}</ul>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 · Mercado e salário -->
+    <section class="cs">
+      <div class="wrap mk">
+        <div class="rv">
+          <div class="kicker ck">Mercado de trabalho</div>
+          <h2 class="disp h2">Onde você pode <span class="serif acc">trabalhar.</span></h2>
+          <ul class="mk__list">{c.careers.map((x) => <li><Icon name="check" size={16} />{x}</li>)}</ul>
+        </div>
+        <div class="mk__sal rv">
+          <span class="mono">{c.slug === 'enfermagem' ? 'Piso salarial nacional' : 'Quanto ganha'}</span>
+          <strong class="disp">{c.salary.headline}</strong>
+          <p>{c.salary.detail}</p>
+          <small class="mono">Fonte: {c.salary.source}</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 · Tudo incluso (equação de valor) -->
+    <section class="cs cs--dark">
+      <div class="ch__glow" aria-hidden="true"></div>
+      <div class="wrap">
+        <div class="cs__head rv">
+          <div class="kicker ck ck--l">Tudo o que está incluso</div>
+          <h2 class="disp h2">Menos tempo, menos esforço. <span class="serif acc">Mais chance de dar certo.</span></h2>
+        </div>
+        <div class="inc stagger">
+          {included.map((x) => (
+            <article class="inc__c rv">
+              <span class="inc__i"><Icon name={x.icon} size={22} /></span>
+              <div><h3>{x.title}</h3><p>{x.text}</p></div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 · Prova social -->
+    {f.testimonial && c.slug === 'enfermagem' && (
+      <section class="cs">
+        <div class="wrap tst rv">
+          <img src={`${base}${f.testimonial.photo}`} alt={f.testimonial.name} width="480" height="600" loading="lazy" decoding="async" />
+          <blockquote>
+            <p class="serif">“{f.testimonial.quote}”</p>
+            <footer><strong>{f.testimonial.name}</strong><span>{f.testimonial.role}</span></footer>
+          </blockquote>
+        </div>
+      </section>
+    )}
+    <section class="trust">
+      <ul class="wrap trust__in stagger">
+        {(f.trust ?? []).map((x) => <li class="rv"><Icon name="check" size={18} />{x}</li>)}
+      </ul>
+    </section>
+
+    <!-- 10 · Comparativo -->
+    <section class="cs cs--soft">
+      <div class="wrap">
+        <div class="cs__head rv">
+          <div class="kicker ck">Compare</div>
+          <h2 class="disp h2">Por que o curso técnico é <span class="serif acc">o caminho mais curto.</span></h2>
+        </div>
+        <div class="cmp rv" role="table" aria-label="Comparativo entre curso técnico, faculdade e curso livre">
+          <div class="cmp__r cmp__r--h" role="row">
+            <span role="columnheader"></span>
+            <span role="columnheader" class="cmp__us">{c.name}</span>
+            <span role="columnheader">Faculdade</span>
+            <span role="columnheader">Curso livre</span>
+          </div>
+          {compare.map((r) => (
+            <div class="cmp__r" role="row">
+              <span role="rowheader">{r[0]}</span>
+              <span role="cell" class="cmp__us"><Icon name="check" size={16} />{r[1]}</span>
+              <span role="cell">{r[2]}</span>
+              <span role="cell">{r[3]}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 · Objeções -->
+    <section class="cs">
+      <div class="wrap faq">
+        <div class="cs__head rv">
+          <div class="kicker ck">Dúvidas</div>
+          <h2 class="disp h2">O que você está pensando <span class="serif acc">agora.</span></h2>
+          <p class="lead">Respondemos antes de você perguntar. Se ficou alguma, chame a equipe no WhatsApp.</p>
+          <a href={wa} target="_blank" rel="noopener" class="cbtn cbtn--sm" data-wa>Tirar dúvida no WhatsApp<span class="cbtn__a"><Icon name="whatsapp" size={18} /></span></a>
+        </div>
+        <div class="faq__list rv">
+          {k.objections.map((o, i) => (
+            <details open={i === 0}>
+              <summary>{o.q}<span aria-hidden="true">+</span></summary>
+              <p>{o.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 · Inscrição -->
+    <section id="inscricao" class="cs cs--soft">
+      <div class="wrap ins">
+        <div class="rv">
+          <div class="kicker ck">Inscrição</div>
+          <h2 class="disp h2">Garanta sua vaga em <span class="serif acc">{short}.</span></h2>
+          <p class="lead">Preencha e fale direto com a equipe da TEC Mais. Você recebe valores, condições e a data da próxima turma.</p>
+          <ol class="ins__steps">
+            <li><b>1</b>Você manda seu nome</li>
+            <li><b>2</b>A equipe responde no WhatsApp</li>
+            <li><b>3</b>Você garante a vaga na turma</li>
+          </ol>
+          {f.contact.address && <p class="ins__addr"><Icon name="map" size={18} /><span>{f.contact.address.join(' · ')}</span></p>}
+        </div>
+        <form class="cform rv" data-wa={f.contact.whatsapp} data-course={c.name} novalidate>
+          <div class="cform__f">
+            <label for="cf-nome">Seu nome</label>
+            <input id="cf-nome" name="nome" type="text" autocomplete="name" required placeholder="Como podemos te chamar?" />
+          </div>
+          <fieldset class="cform__f">
+            <legend>Melhor turno para contato</legend>
+            <div class="cform__r">
+              {['Manhã', 'Tarde', 'Noite'].map((x, i) => (
+                <label><input type="radio" name="turno" value={x} checked={i === 0} /><span>{x}</span></label>
+              ))}
+            </div>
+          </fieldset>
+          <p class="cform__err" role="alert" hidden>Escreva seu nome para continuar.</p>
+          <button type="submit" class="cbtn cform__btn">Quero minha vaga<span class="cbtn__a"><Arrow /></span></button>
+          <p class="cform__note"><Icon name="whatsapp" size={16} />Você vai para o WhatsApp {formatPhone(f.contact.whatsapp.slice(2))} com a mensagem pronta. Nada fica salvo no site. Veja a <a href={`${base}/privacidade`}>Política de Privacidade</a>.</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- outros cursos -->
+    <section class="cs">
+      <div class="wrap">
+        <div class="cs__head rv"><div class="kicker ck">Outros cursos técnicos</div><h2 class="disp h2">Ainda em dúvida? <span class="serif acc">Compare as profissões.</span></h2></div>
+        <div class="oth stagger">
+          {others.map((o) => (
+            <a class="oth__c rv" href={`${base}/tec-mais/${o.slug}`}>
+              <img src={`${base}${o.photo}`} alt="" width="640" height="400" loading="lazy" decoding="async" />
+              <div><h3 class="disp">{o.name}</h3><p>{o.tagline}</p><span class="oth__l">Conhecer o curso <Arrow /></span></div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 · Fechamento -->
+    <section class="fin">
+      <div class="ch__glow" aria-hidden="true"></div>
+      <div class="wrap fin__in rv">
+        <h2 class="disp">{k.finalTitle}</h2>
+        <p>{k.finalText}</p>
+        <div class="ch__ctas" style="justify-content:center">
+          <a href="#inscricao" class="cbtn cbtn--lg">Garantir minha vaga<span class="cbtn__a"><Arrow /></span></a>
+          <a href={wa} target="_blank" rel="noopener" class="cghost" data-wa><Icon name="whatsapp" size={18} />Falar agora no WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
+    <a href="#inscricao" class="sticky" aria-label={`Quero minha vaga em ${short}`}>Quero minha vaga <Arrow /></a>
+  </main>
+  <Footer cta={false} wa={wa} waLabel="Falar com a TEC Mais" />
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('.cform').forEach((form) =>
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nomeEl = form.elements.namedItem('nome') as HTMLInputElement;
+      const nome = nomeEl.value.trim();
+      const err = form.querySelector<HTMLElement>('.cform__err');
+      if (!nome) { if (err) err.hidden = false; nomeEl.focus(); return; }
+      if (err) err.hidden = true;
+      const turno = (form.querySelector<HTMLInputElement>('input[name="turno"]:checked')?.value ?? '').toLowerCase();
+      const msg = `Olá! Meu nome é ${nome}. Vi a página do curso ${form.dataset.course} da TEC Mais e quero saber valores, condições e a data da próxima turma. Prefiro contato de ${turno}.`;
+      const raw = `https://wa.me/${form.dataset.wa}?text=${encodeURIComponent(msg)}`;
+      const W = window as unknown as { exitoWa?: (u: string) => string; exitoTrack?: (n: string, p?: object) => void };
+      const url = W.exitoWa ? W.exitoWa(raw) : raw;
+      W.exitoTrack?.('generate_lead', { form: 'curso_tecnico', course: form.dataset.course, page: location.pathname });
+      const w = window.open(url, '_blank', 'noopener');
+      if (!w) window.location.href = url;
+    }),
+  );
+  // botão fixo no celular: some quando o formulário aparece
+  const sticky = document.querySelector<HTMLElement>('.sticky');
+  const ins = document.getElementById('inscricao');
+  if (sticky && ins && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([en]) => sticky.classList.toggle('off', en.isIntersecting), { threshold: 0.1 }).observe(ins);
+  }
+</script>
+
+<style>
+  .ct { --ink: #0B1F5C; --mu: #4A5878; }
+  .ck { color: var(--ai); }
+  .ck--l { color: var(--h); }
+  .acc { color: var(--ai); }
+  .cs--dark .acc, .ch .acc { color: var(--h); }
+
+  /* botões */
+  .cbtn { position: relative; display: inline-flex; align-items: center; gap: 14px; height: 60px; padding: 0 8px 0 26px; border: 0; border-radius: 999px; background: linear-gradient(180deg, var(--a), var(--ab)); color: #FFF; font: inherit; font-weight: 800; font-size: 17px; text-decoration: none; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 16px 36px -12px color-mix(in srgb, var(--a) 75%, transparent); transition: transform .35s var(--ease), box-shadow .35s var(--ease); }
+  .cbtn:hover { color: #FFF; transform: translateY(-2px); }
+  .cbtn__a { width: 44px; height: 44px; flex: 0 0 44px; border-radius: 50%; display: grid; place-items: center; background: var(--pdeep); color: #FFF; transition: transform .45s var(--ease); }
+  .cbtn:hover .cbtn__a { transform: rotate(-45deg); }
+  .cbtn--lg { height: 68px; font-size: 19px; padding-left: 30px; }
+  .cbtn--sm { height: 52px; font-size: 15px; margin-top: 22px; }
+  .cbtn--sm .cbtn__a { width: 38px; height: 38px; flex-basis: 38px; }
+  .cbtn--sm:hover .cbtn__a { transform: none; }
+  .cghost { display: inline-flex; align-items: center; gap: 8px; height: 60px; padding: 0 24px; border-radius: 999px; border: 1px solid rgba(255,255,255,.35); color: #FFF; font-weight: 700; text-decoration: none; transition: background .25s; }
+  .cghost:hover { background: rgba(255,255,255,.1); color: #FFF; }
+
+  /* hero */
+  .ch { position: relative; overflow: clip; padding: 56px 0 110px; color: #FFF; background: linear-gradient(160deg, var(--pd), var(--pdeep) 70%); }
+  .ch__glow { position: absolute; width: 820px; height: 820px; right: -260px; top: -300px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--h) 42%, transparent), transparent 62%); pointer-events: none; }
+  .ch__glow--b { right: auto; left: -300px; top: auto; bottom: -400px; }
+  .ch__grid-bg { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 64px 64px; -webkit-mask-image: radial-gradient(ellipse 70% 70% at 30% 40%, #000 20%, transparent 75%); mask-image: radial-gradient(ellipse 70% 70% at 30% 40%, #000 20%, transparent 75%); }
+  .ch__g { position: relative; display: grid; grid-template-columns: 1.15fr .85fr; gap: 56px; align-items: center; }
+  .ch__crumb { font-size: 12px; color: rgba(255,255,255,.75); margin-bottom: 20px; }
+  .ch__crumb a { color: #FFF; }
+  .ch__eb { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px 8px 11px; border-radius: 999px; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.06); font-family: var(--f-mono); font-size: 12px; }
+  .ch__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--h); box-shadow: 0 0 0 4px color-mix(in srgb, var(--h) 30%, transparent); animation: pulse 2s infinite; }
+  .ch__t { margin: 22px 0 0; font-size: clamp(36px, 5vw, 66px); font-weight: 760; line-height: 1.03; text-wrap: balance; }
+  .ch__acc { display: block; margin-top: 6px; color: var(--h); font-size: 1.04em; line-height: 1.05; }
+  .ch__lead { margin: 22px 0 0; max-width: 600px; font-size: clamp(17px, 1.35vw, 19px); line-height: 1.6; color: rgba(255,255,255,.88); }
+  .ch__ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+  .ch__facts { list-style: none; padding: 0; margin: 26px 0 0; display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14.5px; color: rgba(255,255,255,.85); }
+  .ch__facts li { display: inline-flex; align-items: center; gap: 8px; }
+  .ch__facts :global(svg) { color: var(--h); }
+  .ch__media { position: relative; margin: 0; }
+  .ch__media > img { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: 32px; box-shadow: 0 50px 90px -40px rgba(0,0,0,.7); border: 1px solid rgba(255,255,255,.15); }
+  .ch__sal { position: absolute; left: -28px; bottom: 32px; display: grid; gap: 2px; padding: 16px 20px; border-radius: 20px; background: #FFF; color: var(--ink); box-shadow: 0 30px 60px -20px rgba(0,0,30,.6); border-top: 4px solid var(--h); max-width: 280px; }
+  .ch__sal span { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ai); }
+  .ch__sal strong { font-size: 32px; font-weight: 800; letter-spacing: -.03em; line-height: 1.05; color: var(--pd); }
+  .ch__sal small { color: var(--mu); font-size: 12.5px; line-height: 1.35; }
+  .ch__badge { position: absolute; right: -14px; top: 26px; padding: 12px 16px; border-radius: 18px; background: #FFF; box-shadow: 0 20px 40px -20px rgba(0,0,30,.6); }
+  .ch__badge img { width: 116px; height: auto; }
+
+  /* autoridade */
+  .auth { position: relative; z-index: 2; margin-top: -52px; }
+  .auth__in { display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; padding: 22px 26px; border-radius: 24px; background: #FFF; border: 1px solid #E8ECF5; box-shadow: 0 30px 70px -40px rgba(11,31,92,.55); color: var(--mu); font-size: 16px; line-height: 1.55; }
+  .auth__in strong { color: var(--ink); }
+  .auth__i { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: var(--hs); color: var(--ai); }
+  .auth__s { font-size: 11.5px; color: var(--ai); white-space: nowrap; }
+
+  /* seções */
+  .cs { position: relative; overflow: clip; padding: clamp(76px, 8.5vw, 116px) 0; }
+  .cs--soft { background: #F4F6FC; }
+  .cs--dark { background: linear-gradient(170deg, var(--pd), var(--pdeep)); color: #FFF; }
+  .cs--dark .lead, .cs--dark p { color: rgba(255,255,255,.8); }
+  .cs__head { max-width: 780px; margin-bottom: 44px; position: relative; }
+  .cs__head .lead { margin: 16px 0 0; }
+  .h2 { text-wrap: balance; }
+
+  .per { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .per__c { position: relative; padding: 30px 28px; border-radius: 26px; background: #FFF; border: 1px solid #E5E9F3; box-shadow: 0 30px 60px -45px rgba(11,31,92,.5); overflow: hidden; transition: transform .4s var(--ease); }
+  .per__c:hover { transform: translateY(-4px); }
+  .per__c::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: linear-gradient(90deg, var(--a), var(--h)); }
+  .per__n { font-size: 56px; font-weight: 800; letter-spacing: -.05em; line-height: 1; background: linear-gradient(135deg, var(--a), var(--h)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .per__c h3 { margin: 14px 0 8px; font-size: 20px; line-height: 1.25; color: var(--ink); }
+  .per__c p { margin: 0; color: var(--mu); line-height: 1.6; }
+
+  .ba { display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: stretch; }
+  .ba__col { padding: 30px; border-radius: 26px; }
+  .ba__col ul { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 14px; }
+  .ba__col li { display: flex; gap: 12px; align-items: flex-start; font-size: 16.5px; line-height: 1.45; }
+  .ba__k { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+  .ba__col--no { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.7); }
+  .ba__col--no .ba__k { color: rgba(255,255,255,.55); }
+  .ba__x { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,90,90,.18); color: #FF8A8A; font-weight: 700; }
+  .ba__col--yes { background: #FFF; color: var(--ink); box-shadow: 0 40px 80px -30px color-mix(in srgb, var(--h) 60%, transparent); }
+  .ba__col--yes .ba__k { color: var(--ai); }
+  .ba__v { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: #1E8B3A; color: #FFF; }
+  .ba__arrow { align-self: center; width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--a); color: #FFF; box-shadow: 0 0 0 8px rgba(255,255,255,.06); }
+
+  .day { display: grid; grid-template-columns: .85fr 1.15fr; gap: 56px; align-items: start; }
+  .day__head { position: sticky; top: 110px; margin: 0; }
+  .tl { list-style: none; margin: 0; padding: 0 0 0 28px; position: relative; display: grid; gap: 16px; }
+  .tl::before { content: ""; position: absolute; left: 7px; top: 8px; bottom: 8px; width: 2px; background: linear-gradient(var(--a), var(--h)); border-radius: 2px; }
+  .tl li { position: relative; display: grid; gap: 8px; }
+  .tl li::before { content: ""; position: absolute; left: -28px; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: #FFF; border: 4px solid var(--a); }
+  .tl__time { font-size: 13px; color: var(--ai); font-weight: 600; }
+  .tl__card { padding: 20px 22px; border-radius: 20px; background: #FFF; border: 1px solid #E5E9F3; }
+  .tl__card h3 { margin: 0 0 4px; font-size: 18px; color: var(--ink); }
+  .tl__card p { margin: 0; color: var(--mu); line-height: 1.55; }
+
+  .sk { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .sk__c { padding: 26px; border-radius: 24px; border: 1px solid #E5E9F3; background: #FFF; transition: border-color .3s, transform .4s var(--ease); }
+  .sk__c:hover { border-color: var(--a); transform: translateY(-3px); }
+  .sk__i { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; color: #FFF; background: linear-gradient(135deg, var(--pd), var(--p)); margin-bottom: 16px; }
+  .sk__c:nth-child(3n+2) .sk__i { background: linear-gradient(135deg, var(--ab), var(--a)); }
+  .sk__c:nth-child(3n) .sk__i { background: linear-gradient(135deg, color-mix(in srgb, var(--h) 80%, #000), var(--h)); }
+  .sk__c h3 { margin: 0 0 6px; font-size: 18.5px; color: var(--ink); }
+  .sk__c p { margin: 0; color: var(--mu); line-height: 1.55; }
+
+  .gr { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .gr__c { padding: 24px; border-radius: 24px; background: #FFF; border: 1px solid #E5E9F3; }
+  .gr__c header { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; }
+  .gr__n { width: 44px; height: 44px; flex: none; border-radius: 14px; display: grid; place-items: center; background: var(--pd); color: #FFF; font-size: 20px; font-weight: 800; }
+  .gr__c:nth-child(even) .gr__n { background: var(--a); }
+  .gr__c h3 { margin: 0; font-size: 15.5px; line-height: 1.3; color: var(--ink); }
+  .gr__c ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+  .gr__c li { position: relative; padding-left: 16px; font-size: 14.5px; color: var(--mu); line-height: 1.45; }
+  .gr__c li::before { content: ""; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--a); }
+
+  .mk { display: grid; grid-template-columns: 1.3fr .7fr; gap: 40px; align-items: center; }
+  .mk__list { list-style: none; margin: 28px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+  .mk__list li { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: #F1F3FA; font-weight: 600; color: var(--ink); }
+  .mk__list :global(svg) { color: #1E8B3A; }
+  .mk__sal { padding: 32px; border-radius: 28px; color: #FFF; background: radial-gradient(80% 80% at 100% 0%, color-mix(in srgb, var(--h) 55%, transparent), transparent 70%), linear-gradient(150deg, var(--pd), var(--pdeep)); box-shadow: 0 40px 80px -40px rgba(0,0,40,.7); }
+  .mk__sal span { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--h); }
+  .mk__sal strong { display: block; margin: 10px 0 6px; font-size: clamp(36px, 4vw, 52px); font-weight: 800; letter-spacing: -.04em; line-height: 1; }
+  .mk__sal p { margin: 0 0 14px; color: rgba(255,255,255,.85); }
+  .mk__sal small { color: rgba(255,255,255,.6); font-size: 12px; }
+
+  .inc { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; position: relative; }
+  .inc__c { display: flex; gap: 16px; align-items: flex-start; padding: 22px; border-radius: 22px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); }
+  .inc__i { width: 46px; height: 46px; flex: none; border-radius: 14px; display: grid; place-items: center; background: var(--a); color: #FFF; }
+  .inc__c h3 { margin: 0 0 4px; font-size: 17px; }
+  .inc__c p { margin: 0; font-size: 14.5px; line-height: 1.5; }
+
+  .tst { display: grid; grid-template-columns: 320px 1fr; gap: 48px; align-items: center; }
+  .tst img { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: 28px; box-shadow: 0 40px 70px -40px rgba(11,31,92,.6); }
+  .tst blockquote { margin: 0; }
+  .tst p { margin: 0; font-size: clamp(22px, 2.4vw, 32px); line-height: 1.3; color: var(--ink); }
+  .tst footer { margin-top: 22px; display: grid; gap: 2px; }
+  .tst footer strong { font-size: 17px; color: var(--ink); }
+  .tst footer span { color: var(--ai); font-size: 14px; }
+  .trust { padding: 0 0 clamp(60px, 7vw, 90px); }
+  .trust__in { list-style: none; margin-block: 0; padding: 22px 26px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 28px; border-radius: 24px; background: #F4F6FC; font-weight: 700; color: var(--ink); }
+  .trust__in li { display: inline-flex; gap: 8px; align-items: center; }
+  .trust__in :global(svg) { color: #1E8B3A; }
+
+  .cmp { border-radius: 26px; overflow: hidden; background: #FFF; border: 1px solid #E5E9F3; }
+  .cmp__r { display: grid; grid-template-columns: 1.1fr 1.2fr 1fr 1fr; }
+  .cmp__r > span { padding: 18px 20px; border-top: 1px solid #EEF1F7; color: var(--mu); font-size: 15px; display: flex; gap: 8px; align-items: center; }
+  .cmp__r > span:first-child { font-weight: 700; color: var(--ink); }
+  .cmp__r--h > span { border-top: 0; font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+  .cmp__us { background: color-mix(in srgb, var(--a) 8%, #FFF); color: var(--ink) !important; font-weight: 700; }
+  .cmp__r--h .cmp__us { background: var(--pd); color: #FFF !important; }
+  .cmp__us :global(svg) { color: #1E8B3A; flex: none; }
+
+  .faq { display: grid; grid-template-columns: .8fr 1.2fr; gap: 56px; align-items: start; }
+  .faq .cs__head { position: sticky; top: 110px; margin: 0; }
+  .faq__list { display: grid; gap: 10px; }
+  .faq__list details { border: 1px solid #E5E9F3; border-radius: 20px; background: #FFF; transition: border-color .3s, box-shadow .3s; }
+  .faq__list details[open] { border-color: var(--a); box-shadow: 0 20px 40px -30px color-mix(in srgb, var(--a) 70%, transparent); }
+  .faq__list summary { list-style: none; cursor: pointer; padding: 20px 22px; font-weight: 700; font-size: 17px; color: var(--ink); display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+  .faq__list summary::-webkit-details-marker { display: none; }
+  .faq__list summary span { color: var(--a); font-size: 24px; transition: transform .3s var(--ease); }
+  .faq__list details[open] summary span { transform: rotate(45deg); }
+  .faq__list p { margin: 0; padding: 0 22px 22px; color: var(--mu); line-height: 1.6; }
+
+  .ins { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+  .ins .lead { margin: 16px 0 0; max-width: 480px; }
+  .ins__steps { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 12px; }
+  .ins__steps li { display: flex; gap: 14px; align-items: center; font-weight: 600; color: var(--ink); }
+  .ins__steps b { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--pd); color: #FFF; font-family: var(--f-mono); }
+  .ins__addr { display: flex; gap: 10px; margin: 26px 0 0; color: var(--mu); font-size: 14.5px; }
+  .ins__addr :global(svg) { color: var(--ai); flex: none; margin-top: 2px; }
+  .cform { display: grid; gap: 18px; padding: 32px; border-radius: 28px; background: #FFF; border: 1px solid #E3E8F2; box-shadow: 0 40px 80px -50px rgba(11,31,92,.6); border-top: 5px solid var(--a); }
+  .cform__f { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; min-width: 0; }
+  .cform label, .cform legend { font-family: var(--f-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--mu); padding: 0; }
+  .cform input[type='text'] { height: 56px; padding: 0 18px; border-radius: 16px; border: 1px solid #C9D1E0; background: #F7F9FC; font: inherit; font-size: 16px; color: var(--ink); }
+  .cform input[type='text']:focus { outline: none; border-color: var(--a); background: #FFF; box-shadow: 0 0 0 4px color-mix(in srgb, var(--a) 22%, transparent); }
+  .cform__r { display: flex; flex-wrap: wrap; gap: 8px; }
+  .cform__r label { position: relative; font-family: var(--f-body); text-transform: none; letter-spacing: 0; }
+  .cform__r input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .cform__r span { display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #C9D1E0; background: #F7F9FC; font-weight: 700; font-size: 14px; color: var(--mu); transition: all .2s; }
+  .cform__r input:checked + span { background: var(--pd); border-color: var(--pd); color: #FFF; }
+  .cform__r input:focus-visible + span { outline: 3px solid var(--a); outline-offset: 2px; }
+  .cform__err { margin: 0; padding: 10px 14px; border-radius: 10px; background: #FDECEC; color: #A30D24; font-size: 14px; font-weight: 600; }
+  .cform__btn { width: 100%; justify-content: space-between; }
+  .cform__note { display: flex; gap: 8px; margin: 0; font-size: 13px; color: #5E6A85; line-height: 1.45; }
+  .cform__note :global(svg) { flex: none; color: #1E8B3A; margin-top: 1px; }
+
+  .oth { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .oth__c { display: grid; grid-template-columns: 180px 1fr; gap: 20px; align-items: center; padding: 14px; border-radius: 26px; border: 1px solid #E5E9F3; text-decoration: none; color: inherit; transition: border-color .3s, transform .4s var(--ease); }
+  .oth__c:hover { border-color: var(--a); transform: translateY(-3px); color: inherit; }
+  .oth__c img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 18px; }
+  .oth__c h3 { margin: 0 0 6px; font-size: 21px; color: var(--ink); }
+  .oth__c p { margin: 0 0 12px; color: var(--mu); line-height: 1.5; }
+  .oth__l { display: inline-flex; gap: 8px; align-items: center; font-weight: 800; color: var(--ai); }
+
+  .fin { position: relative; overflow: clip; padding: clamp(90px, 10vw, 140px) 0; text-align: center; color: #FFF; background: linear-gradient(160deg, var(--pd), var(--pdeep)); }
+  .fin__in { position: relative; max-width: 860px; }
+  .fin h2 { margin: 0; font-size: clamp(32px, 4.6vw, 60px); line-height: 1.05; text-wrap: balance; }
+  .fin p { margin: 20px auto 0; max-width: 620px; font-size: 18px; color: rgba(255,255,255,.85); }
+
+  .sticky { display: none; }
+
+  @media (max-width: 1100px) {
+    .gr { grid-template-columns: 1fr 1fr; }
+    .inc, .sk { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 900px) {
+    .ch { padding: 32px 0 96px; }
+    .ch__g, .day, .mk, .faq, .ins, .tst { grid-template-columns: 1fr; }
+    .ch__media { max-width: 460px; margin-inline: auto; width: 100%; }
+    .ch__sal { left: 12px; bottom: 16px; }
+    .ch__badge { right: 12px; }
+    .day__head, .faq .cs__head { position: static; }
+    .per { grid-template-columns: 1fr; }
+    .ba { grid-template-columns: 1fr; }
+    .ba__arrow { transform: rotate(90deg); justify-self: center; }
+    .tst img { max-width: 280px; }
+    .oth { grid-template-columns: 1fr; }
+    .auth__in { grid-template-columns: auto 1fr; }
+    .auth__s { grid-column: 2; }
+    .sticky { display: inline-flex; position: fixed; left: 16px; right: 16px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 40; height: 56px; justify-content: center; align-items: center; gap: 10px; border-radius: 999px; background: linear-gradient(180deg, var(--a), var(--ab)); color: #FFF; font-weight: 800; text-decoration: none; box-shadow: 0 18px 40px -12px rgba(0,0,0,.45); transition: transform .3s var(--ease), opacity .3s; }
+    .sticky.off { transform: translateY(120%); opacity: 0; pointer-events: none; }
+  }
+  @media (max-width: 640px) {
+    .gr, .inc, .sk { grid-template-columns: 1fr; }
+    .cmp { overflow-x: auto; }
+    .cmp__r { min-width: 640px; }
+    .oth__c { grid-template-columns: 110px 1fr; }
+    .ch__ctas a { width: 100%; justify-content: center; }
+    .cbtn { justify-content: space-between; }
+  }
+</style>
