@@ -187,6 +187,12 @@ img{max-width:100%;display:block}
 .li.is-done .li__s .ic{width:15px;height:15px;stroke-width:2.6}
 .li small{display:block;font-family:var(--f-mono);font-size:11px;color:var(--dim);margin-top:2px;font-weight:400}
 .mods-p{display:grid;gap:14px}
+/* folha com a página original do kit (iframe) */
+.sheet{position:relative;border-radius:28px;overflow:hidden;background:#F5F3FB;box-shadow:0 0 0 1px rgba(255,255,255,.12),0 40px 90px -40px rgba(0,0,0,.9),0 0 60px -20px rgba(255,106,43,.25)}
+.sheet__f{display:block;width:100%;border:0;background:transparent;opacity:0;transition:opacity .4s var(--ease)}
+.sheet.on .sheet__f{opacity:1}
+.sheet__l{position:absolute;inset:0;display:grid;place-items:center;color:#5B6188;font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;transition:opacity .3s}
+.sheet.on .sheet__l{opacity:0;pointer-events:none}
 @media (min-width:1181px){.lesson--wide{grid-template-columns:1fr}.lesson--wide .list{position:static}.lesson--wide .list ol{display:grid;grid-template-columns:repeat(3,1fr);max-height:none}}
 
 /* ---------- blocos de conteúdo ---------- */
@@ -369,6 +375,7 @@ textarea.in{min-height:92px;resize:vertical}
   .tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0;border-radius:18px;text-decoration:none;color:var(--dim);font-size:11.5px;font-weight:600}
   .tab[aria-current=page]{color:#fff;background:linear-gradient(180deg,rgba(255,106,43,.35),rgba(255,106,43,.12));box-shadow:inset 0 0 0 1px rgba(255,140,90,.35)}
   .page{padding:20px 16px 130px}
+  .sheet{border-radius:22px;margin:0 -6px}
   .lnav{bottom:96px}
   .mods{grid-template-columns:1fr 1fr}
   .g4{grid-template-columns:repeat(2,1fr)}
