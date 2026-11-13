@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import academy from './integrations/academy.mjs';
 
 // Domínio final do site. Ajuste aqui ou defina SITE_URL no ambiente de deploy.
 const SITE_URL = process.env.SITE_URL ?? 'https://colegioexito.com.br';
@@ -11,7 +12,7 @@ export default defineConfig({
   site: SITE_URL,
   base: BASE_PATH,
   trailingSlash: 'ignore',
-  integrations: [sitemap()],
+  integrations: [sitemap({ filter: (page) => !page.includes('/tec-mais/academy') }), academy()],
   build: { inlineStylesheets: 'auto' },
   compressHTML: true,
 });
