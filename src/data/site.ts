@@ -662,7 +662,7 @@ export const formacoes: Formacao[] = [
         hours: '1.200 horas',
         duration: '24 meses',
         schedule: 'Noturno · 18h50 às 22h20',
-        salary: { headline: 'R$ 2.000 a R$ 5.000+', detail: 'do salário inicial aos setores de maior risco', source: 'média salarial no Brasil' },
+        salary: { headline: 'R$ 3.909', detail: 'média salarial nacional da profissão (dados do CAGED)', source: 'Salario.com.br, 2026' },
         careers: ['Indústrias', 'Construção civil', 'Comércio e serviços', 'Setor público', 'Consultorias', 'Ambientes hospitalares', 'Transporte e logística', 'Treinamentos e palestras'],
         modules: [
           { title: 'Módulo I · Parâmetros de Segurança e Saúde', subjects: ['Segurança do Trabalho', 'Metodologia Científica e Relatórios', 'E-Social', 'Análise de Projetos em Segurança', 'Investigação de Acidentes', 'Legislação Trabalhista e Previdenciária'] },

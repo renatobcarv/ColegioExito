@@ -50,6 +50,8 @@ const courses = f.technical ?? [];
                   <ul>{c.careers.map((x) => <li>{x}</li>)}</ul>
                 </div>
 
+                <a class="tcard__more" href={`${base}/tec-mais/${c.slug}`}>Conhecer o curso completo <span aria-hidden="true">→</span></a>
+
                 <details class="tcard__grade">
                   <summary>Ver a grade curricular <span aria-hidden="true">+</span></summary>
                   <div class="tcard__mods">
@@ -104,6 +106,8 @@ const courses = f.technical ?? [];
 }
 
 <style>
+  .tcard__more { display: inline-flex; align-items: center; gap: 8px; margin: 4px 0 14px; padding: 12px 18px; border-radius: 999px; background: var(--pd, #1A1A8C); color: #FFF; font-weight: 800; text-decoration: none; transition: transform .3s; }
+  .tcard__more:hover { color: #FFF; transform: translateX(3px); }
   .tc { padding: clamp(80px, 9vw, 120px) 0; background: var(--soft); }
   .tc__head { max-width: 820px; margin-bottom: 44px; }
   .tc__trust { list-style: none; margin: 22px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }

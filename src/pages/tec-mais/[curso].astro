@@ -1,0 +1,16 @@
+---
+import CursoTecnico from '../../components/CursoTecnico.astro';
+import { formacoes } from '../../data/site';
+import { cursos } from '../../data/cursos';
+
+export function getStaticPaths() {
+  const f = formacoes.find((x) => x.slug === 'tec-mais')!;
+  return (f.technical ?? [])
+    .map((c) => ({ c, k: cursos.find((k) => k.slug === c.slug) }))
+    .filter((x) => x.k)
+    .map(({ c, k }) => ({ params: { curso: c.slug }, props: { f, c, k: k! } }));
+}
+const { f, c, k } = Astro.props;
+---
+
+<CursoTecnico f={f} c={c} k={k} />
