@@ -1,5 +1,5 @@
 // Portal do Aluno TEC Mais (TEC Mais Academy): área de membros criptografada no build.
-// Fonte: academy-src/app (área de membros), academy-src/paginas (páginas do kit) e academy-src/guia-calculos.pdf.
+// Fonte: academy-src/app (shell.html + app.css + conteudo.js + app.js) e academy-src/guia-calculos.pdf.
 // Senha: variável ACADEMY_PASSWORD (Vercel → Settings → Environment Variables).
 // No ar vão só a tela de senha + o app e o PDF cifrados (AES-256-GCM, chave PBKDF2-SHA-256).
 // Sem a variável, publica apenas um aviso de "portal indisponível" (nenhum conteúdo vai ao ar).
@@ -106,14 +106,10 @@ export default function academy() {
         const safe = (js) => js.replaceAll('</script', '<\\/script');
         const cfg = `window.TMA_CFG=${JSON.stringify({ salt: b64(salt), pdfIv: pdf.iv, iter: ITER })};`;
         const [shell, css, conteudo, app] = await Promise.all(['shell.html', 'app.css', 'conteudo.js', 'app.js'].map(read));
-        // páginas originais do kit (visual completo), mostradas por seção dentro das aulas
-        const paginas = {};
-        for (const nome of ['calculo', 'visual', 'carreira']) paginas[nome] = await readFile(path.join(src, 'paginas', nome + '.html'), 'utf8');
         const page = shell
           .replace('<head>', `<head><base href="${BASE}">`)
           .replace('/*__CSS__*/', () => css)
           .replace('/*__CFG__*/', () => cfg)
-          .replace('/*__PAGINAS__*/', () => safe('window.TMA_PAGINAS=' + JSON.stringify(paginas) + ';'))
           .replace('/*__CONTEUDO__*/', () => safe(conteudo))
           .replace('/*__APP__*/', () => safe(app));
         const enc = await encrypt(new TextEncoder().encode(page), pw, salt);
