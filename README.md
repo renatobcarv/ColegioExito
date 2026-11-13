@@ -91,9 +91,19 @@ As UTMs (`utm_source`, `utm_medium`, `utm_campaign`) entram no fim da mensagem d
 ## Portal do Aluno TEC Mais (área restrita)
 
 Endereço: `/tec-mais/academy`. Sem link no site, fora do sitemap e com `noindex`.
-Os arquivos originais ficam em `academy-src/`. No build, eles são **criptografados** (AES-256) com a senha da variável
-**`ACADEMY_PASSWORD`** (Vercel → Settings → Environment Variables) e só uma tela de senha vai ao ar.
-Sem a variável, o portal aparece como "indisponível". Para trocar a senha: altere a variável e faça um novo deploy.
+É uma área de membros (estilo Kiwify): 3 módulos, 20 aulas, progresso salvo, "continuar de onde parou" e ferramentas
+(checklist, currículo, mensagens, plano de 7 dias, controle de contatos).
+
+| O que | Onde |
+| --- | --- |
+| Textos, módulos, aulas, checklist, mensagens | `academy-src/app/conteudo.js` |
+| Visual | `academy-src/app/app.css` |
+| Funcionamento | `academy-src/app/app.js` |
+| Guia de cálculo (PDF) | `academy-src/guia-calculos.pdf` |
+
+No build, o app e o PDF são **criptografados** (AES-256) com a senha da variável **`ACADEMY_PASSWORD`**
+(Vercel → Settings → Environment Variables) e só a tela de senha vai ao ar. Sem a variável, o portal aparece como
+"indisponível". Para trocar a senha: altere a variável e faça um novo deploy.
 
 ## Publicar (Vercel)
 
