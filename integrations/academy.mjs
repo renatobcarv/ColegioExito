@@ -7,6 +7,11 @@ import { webcrypto as crypto } from 'node:crypto';
 import path from 'node:path';
 
 const ITER = 250000;
+// Base fixa: na Vercel o portal abre em /tec-mais/academy (sem barra final) e links relativos quebravam.
+const BASE = '/tec-mais/academy/';
+// Com <base>, links "#secao" virariam outra URL e recarregariam: aqui eles só rolam a página.
+const HASH_FIX = `<script>document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest('a[href^="#"]');if(!a)return;var id=a.getAttribute("href").slice(1),t=id&&document.getElementById(id);e.preventDefault();if(t)t.scrollIntoView({behavior:"smooth"});})</script>`;
+const withBase = (html) => html.replace(/<head([^>]*)>/i, `<head$1><base href="${BASE}">${HASH_FIX}`);
 const b64 = (u8) => Buffer.from(u8).toString('base64');
 
 async function encrypt(bytes, password, salt) {
@@ -19,7 +24,7 @@ async function encrypt(bytes, password, salt) {
 
 function gate({ title, kind, payload, salt, iv, locked }) {
   return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex, nofollow, noarchive"><title>${title} · Portal do Aluno TEC Mais</title>
+<base href="${BASE}"><meta name="robots" content="noindex, nofollow, noarchive"><title>${title} · Portal do Aluno TEC Mais</title>
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
 *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;font-family:Geist,system-ui,sans-serif;color:#0D1240;
@@ -79,7 +84,7 @@ export default function academy() {
         }
         for (const f of files) {
           let html = await readFile(path.join(src, f), 'utf8');
-          html = html.replaceAll('href="guia-calculos.pdf"', 'href="guia-calculos.html"');
+          html = withBase(html.replaceAll('href="guia-calculos.pdf"', 'href="guia-calculos.html"'));
           const { iv, ct } = await encrypt(new TextEncoder().encode(html), pw, salt);
           await writeFile(path.join(out, f), gate({ title: 'Portal do Aluno', kind: 'html', payload: b64(ct), salt: b64(salt), iv }));
         }
