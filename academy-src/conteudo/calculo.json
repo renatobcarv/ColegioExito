@@ -1,0 +1,71 @@
+{
+ "pdfTopicos": [
+  "Conversões de unidades",
+  "Regra de três",
+  "Reconstituição de pó",
+  "Diluição",
+  "Gotejamento",
+  "UI e insulina",
+  "Exercícios com gabarito comentado"
+ ],
+ "formulas": [
+  {
+   "t": "Conversões",
+   "f": [
+    "1 g = 1.000 mg",
+    "1 mg = 1.000 mcg",
+    "1 L = 1.000 mL"
+   ],
+   "n": "Para unidade menor, multiplique. Para maior, divida."
+  },
+  {
+   "t": "Volume a aspirar",
+   "f": [
+    "(dose × mL do frasco) ÷ mg do frasco"
+   ],
+   "n": "Ou: dose ÷ concentração (mg/mL)."
+  },
+  {
+   "t": "Concentração",
+   "f": [
+    "mg ÷ mL = mg/mL"
+   ],
+   "n": "250 mg/5 mL = 50 mg/mL."
+  },
+  {
+   "t": "Diluição",
+   "f": [
+    "C1 × V1 = C2 × V2"
+   ],
+   "n": "Diluente = V2 − V1."
+  },
+  {
+   "t": "Porcentagem",
+   "f": [
+    "% × 10 = mg/mL"
+   ],
+   "n": "Vale para solução em g/100 mL."
+  },
+  {
+   "t": "Gotejamento",
+   "f": [
+    "gotas/min = (mL × fator) ÷ min",
+    "microgotas/min = mL ÷ h"
+   ],
+   "n": "Confira o fator na embalagem do equipo."
+  }
+ ],
+ "checklist": [
+  "Li a prescrição completa: medicamento, dose, via, horário e tempo.",
+  "Li o rótulo do frasco que está na minha mão: concentração, apresentação e validade.",
+  "Prescrição e frasco estão na mesma unidade (ou converti antes).",
+  "Se for UI, trabalhei só com UI. Não converti para mg.",
+  "Se for pó: conferi o diluente, a quantidade a adicionar e o volume final no rótulo ou bula.",
+  "Se for diluição: confirmei se o volume da prescrição é volume final ou de diluente.",
+  "Se for gotejamento: conferi o fator de gotas do equipo e converti o tempo para minutos.",
+  "Se usei IA: refiz a conta com o método dos 5 passos e o resultado bate.",
+  "O resultado faz sentido comparado ao tamanho do frasco e à proporção pedida.",
+  "O volume cabe na escala da seringa e está de acordo com o protocolo.",
+  "Algo ausente, ambíguo ou estranho? Parei e confirmei com o responsável."
+ ]
+}

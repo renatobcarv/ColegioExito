@@ -1,0 +1,14 @@
+{
+ "curAreas": ["Brigada de incêndio", "Segurança do trabalho", "Eventos e shows", "Escolas e creches", "Academias", "Condomínios", "Cuidador de idosos", "Guarda-vidas", "Concursos (bombeiro, socorrista)"],
+ "curTexto": "Capacitação em Atendimento Pré-Hospitalar (APH) – TEC Mais – carga horária [X] h\n· Suporte básico de vida e RCP\n· Controle de hemorragias\n· Imobilização",
+ "curLinkedin": "Concluí a capacitação em Atendimento Pré-Hospitalar (APH) na TEC Mais, em Valparaíso de Goiás. Aprendi suporte básico de vida, RCP, controle de hemorragias e imobilização, com aulas práticas. Saber agir nos primeiros minutos de uma emergência faz diferença em qualquer ambiente de trabalho. #APH #PrimeirosSocorros #TECMais",
+ "curStar": [
+  { "k": "Situação", "d": "O que aconteceu? Ex.: na aula prática, um colega simulou uma parada cardíaca." },
+  { "k": "Ação", "d": "O que você fez? Ex.: verifiquei a resposta, pedi para ligar 192 e iniciei as compressões." },
+  { "k": "Resultado", "d": "Como terminou? Ex.: mantive o ritmo de 100 a 120 por minuto até a troca, como manda o protocolo." }
+ ],
+ "curTrilhas": [
+  { "t": "Técnico em Enfermagem", "d": "O próximo passo natural para quem gostou de cuidar de pessoas.", "u": "/tec-mais/enfermagem" },
+  { "t": "Técnico em Segurança do Trabalho", "d": "Para quem quer trabalhar com prevenção, brigada e treinamentos.", "u": "/tec-mais/seguranca-do-trabalho" }
+ ]
+}

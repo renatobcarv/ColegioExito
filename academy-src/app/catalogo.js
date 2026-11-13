@@ -1,0 +1,201 @@
+/* ==========================================================
+   TEC Mais Academy · catálogo PÚBLICO do Portal do Aluno
+   Aqui ficam só nomes de produtos, módulos e aulas (aparecem com cadeado para quem não tem acesso).
+   O conteúdo de cada módulo fica em academy-src/conteudo/<módulo>.json e vai ao ar criptografado
+   com a chave do módulo (tabela academy_chaves do Supabase).
+   "nota" é recado interno para a professora/instrutor: não aparece para o aluno.
+   ========================================================== */
+var TMA_CURSO = {
+  nome: 'TEC Mais Academy',
+  kit: 'Área do aluno · TEC Mais Academy',
+  whatsapp: '5561998200367',
+  rodape: 'Material educacional de apoio. Não substitui prescrição, bula, protocolo institucional, treinamento prático ou supervisão profissional.',
+};
+
+var TMA_PRODUTOS = [
+  {
+    id: 'injetaveis',
+    titulo: 'Administração de Medicamentos Injetáveis',
+    resumo: 'Os bônus do curso: guia de cálculo, guia visual da prática e guia de oportunidades.',
+    cor: 'orange',
+  },
+  {
+    id: 'aph',
+    titulo: 'APH · Atendimento Pré-Hospitalar',
+    resumo: 'Os 4 bônus do curso: peçonhentos, RCP por fase da vida, emergências domésticas e APH no currículo.',
+    cor: 'red',
+    aviso: 'Conteúdo educativo. Não substitui atendimento médico. Em emergência, ligue 192.',
+  },
+];
+
+var TMA_MODULOS = [
+  {
+    id: 'calculo',
+    produto: 'injetaveis',
+    titulo: 'Cálculo de Medicamentos',
+    resumo: 'Conversões, regra de três, reconstituição, diluição, gotejamento, UI e insulina.',
+    cor: 'orange',
+    icone: 'calc',
+    aulas: [
+      { id: 'guia', titulo: 'O guia completo em PDF', h: ['O guia completo,', 'no seu bolso.'], kk: 'Guia de cálculo', tipo: 'pdf', min: 'Leitura · 31 páginas' },
+      { id: 'consulta', titulo: 'Consulta rápida', h: ['As contas da aula,', 'numa olhada.'], kk: 'Consulta rápida', tipo: 'formulas', min: '5 min' },
+      { id: 'checklist', titulo: 'Checklist de conferência', h: ['Antes de preparar,', 'marque cada item.'], kk: 'Checklist de conferência', tipo: 'checklist', min: 'Ferramenta' },
+    ],
+  },
+  {
+    id: 'visual',
+    produto: 'injetaveis',
+    titulo: 'Guia Visual da Prática',
+    resumo: 'Materiais, biossegurança, etapas, erros de atenção e descarte, em pranchas com pouco texto.',
+    cor: 'blue',
+    icone: 'eye',
+    previa: 'O conteúdo técnico deste módulo está em validação pela professora do curso.',
+    aulas: [
+      { id: 'materiais', titulo: 'Conheça os materiais', h: ['Conheça os', 'materiais.'], kk: 'Prancha 1', num: '01', tipo: 'materiais', min: '3 min', nota: 'Confirmar lista e trocar ícones por fotos dos materiais da aula' },
+      { id: 'biosseguranca', titulo: 'Biossegurança em 5 regras', h: ['Biossegurança', 'em 5 regras.'], kk: 'Prancha 2', num: '02', tipo: 'regras', min: '2 min', nota: 'Confirmar as 5 regras que mais repete em sala' },
+      { id: 'etapas', titulo: 'Antes, durante e depois', h: ['Antes, durante', 'e depois.'], kk: 'Prancha 3', num: '03', tipo: 'etapas', min: '4 min', nota: 'Ajustar os pontos de cada etapa ao que foi ensinado' },
+      { id: 'erros', titulo: 'Erros de atenção', h: ['Erros de atenção', 'que você vai evitar.'], kk: 'Prancha 4', num: '04', tipo: 'erros', min: '3 min', nota: 'Incluir os erros que mais vê nas turmas' },
+      { id: 'descarte', titulo: 'Descarte no lugar certo', h: ['Descarte', 'no lugar certo.'], kk: 'Prancha 5', num: '05', tipo: 'descarte', min: '2 min', nota: 'Confirmar a classificação usada em sala' },
+      { id: 'duvida', titulo: 'Na dúvida, pare', h: ['Na dúvida,', 'pare.'], kk: 'Prancha 6', num: '06', tipo: 'duvida', min: '1 min' },
+    ],
+  },
+  {
+    id: 'carreira',
+    produto: 'injetaveis',
+    titulo: 'Oportunidades Profissionais',
+    resumo: 'Sua trilha, currículo pronto, mensagens, plano de 7 dias e controle de contatos.',
+    cor: 'green',
+    icone: 'briefcase',
+    aulas: [
+      { id: 'antes', titulo: 'Do curso à primeira oportunidade', h: ['Do curso à', 'primeira oportunidade.'], kk: '01 · Antes de começar', tipo: 'antes', min: '3 min' },
+      { id: 'trilha', titulo: 'Escolha sua trilha', h: ['Escolha sua trilha.', 'O portal se ajusta a você.'], kk: '02 · Em qual trilha você está?', tipo: 'trilhas', min: '2 min' },
+      { id: 'onde', titulo: 'Onde procurar', h: ['A melhor vaga quase nunca', 'vira anúncio.'], kk: '03 · Onde procurar', tipo: 'onde', min: '5 min' },
+      { id: 'curriculo', titulo: 'Seu currículo', h: ['Uma página, honesta,', 'pronta em 10 minutos.'], kk: '04 · Seu currículo', tipo: 'curriculo', min: 'Ferramenta' },
+      { id: 'mensagens', titulo: 'Mensagens prontas', h: ['Curta, educada e', 'com um pedido claro.'], kk: '05 · Mensagens prontas', tipo: 'mensagens', min: 'Ferramenta' },
+      { id: 'plano', titulo: 'Plano de 7 dias', h: ['7 dias. Uma hora por dia.', 'Marque cada passo.'], kk: '06 · Plano de ação', tipo: 'plano', min: 'Ferramenta' },
+      { id: 'contatos', titulo: 'Controle de contatos', h: ['O que não é anotado', 'é esquecido.'], kk: '07 · Controle de contatos', tipo: 'contatos', min: 'Ferramenta' },
+      { id: 'entrevista', titulo: 'A entrevista', h: ['A entrevista se ganha', 'antes de começar.'], kk: '08 · Quando chamarem para conversar', tipo: 'entrevista', min: '6 min' },
+      { id: 'perfil', titulo: 'Perfil e golpes', h: ['Antes de responder,', 'eles olham seu perfil.'], kk: '09 · Seu perfil · 10 · Cuidado com golpes', tipo: 'perfil', min: '4 min' },
+      { id: 'proximo', titulo: 'Próximo passo', h: ['O curso abriu uma porta.', 'A formação faz você atravessar.'], kk: '11 · Próximo passo', tipo: 'proximo', min: '2 min' },
+    ],
+  },
+  {
+    id: 'aph-peconhentos',
+    produto: 'aph',
+    titulo: 'Acidentes com Animais Peçonhentos',
+    resumo: 'O que fazer, e o que nunca fazer, numa picada de escorpião, cobra, aranha, abelha, água-viva ou taturana.',
+    cor: 'orange',
+    icone: 'alert',
+    valor: 'R$ 97',
+    previa: 'Protocolos em validação pelo instrutor de APH.',
+    aulas: [
+      { id: 'pec-intro', titulo: 'Por que o escorpião é o nº 1', h: ['O acidente nº 1 do Brasil', 'mora no seu quintal.'], kk: 'Bônus 1 · Peçonhentos', tipo: 'pecIntro', min: '5 min' },
+      { id: 'pec-fichas', titulo: 'Ficha de cada animal', h: ['O que fazer', 'e o que nunca fazer.'], kk: 'Bônus 1 · Fichas por animal', tipo: 'pecFichas', min: '8 min' },
+      { id: 'pec-prevencao', titulo: 'Prevenção e mitos', h: ['Prevenir em casa', 'e desmentir os mitos.'], kk: 'Bônus 1 · Prevenção', tipo: 'pecPrev', min: '4 min' },
+      { id: 'pec-card', titulo: 'Card de bolso', h: ['Salve no celular.', 'Tenha na hora H.'], kk: 'Bônus 1 · Card de bolso', tipo: 'pecCard', min: 'Ferramenta' },
+    ],
+  },
+  {
+    id: 'aph-rcp',
+    produto: 'aph',
+    titulo: 'RCP por Fase da Vida',
+    resumo: 'Bebê, criança, adulto e idoso: como comprimir, profundidade, ritmo e engasgo, num quadro só.',
+    cor: 'red',
+    icone: 'heart',
+    valor: 'R$ 127',
+    previa: 'Parâmetros em validação pelo instrutor de APH.',
+    aulas: [
+      { id: 'rcp-reconhecer', titulo: 'Reconhecer a parada', h: ['Reconhecer a parada', 'em 10 segundos.'], kk: 'Bônus 2 · RCP', tipo: 'rcpRec', min: '4 min' },
+      { id: 'rcp-bebe', titulo: 'RCP e engasgo no bebê', h: ['Bebê:', 'RCP e engasgo.'], kk: 'Bônus 2 · Menos de 1 ano', tipo: 'rcpFase', fase: 0, min: '6 a 8 min' },
+      { id: 'rcp-crianca', titulo: 'RCP e engasgo na criança', h: ['Criança:', 'RCP e engasgo.'], kk: 'Bônus 2 · 1 ano à puberdade', tipo: 'rcpFase', fase: 1, min: '6 a 8 min' },
+      { id: 'rcp-adulto', titulo: 'RCP no adulto e uso do DEA', h: ['Adulto:', 'RCP e DEA.'], kk: 'Bônus 2 · Adulto', tipo: 'rcpFase', fase: 2, min: '6 a 8 min' },
+      { id: 'rcp-idoso', titulo: 'RCP no idoso', h: ['Idoso:', 'sem medo de agir.'], kk: 'Bônus 2 · Idoso', tipo: 'rcpFase', fase: 3, min: '6 a 8 min' },
+      { id: 'rcp-quadro', titulo: 'Quadro comparativo', h: ['As 4 fases', 'num quadro só.'], kk: 'Bônus 2 · Para imprimir', tipo: 'rcpQuadro', min: 'Ferramenta' },
+    ],
+  },
+  {
+    id: 'aph-domesticas',
+    produto: 'aph',
+    titulo: 'Emergências Domésticas',
+    resumo: 'Queimadura, convulsão, desmaio, intoxicação, choque elétrico, sangramento: o que fazer e o erro que todo mundo comete.',
+    cor: 'blue',
+    icone: 'home',
+    valor: 'R$ 97',
+    previa: 'Condutas em validação pelo instrutor de APH.',
+    aulas: [
+      { id: 'dom-situacoes', titulo: '7 emergências dentro de casa', h: ['Situação →', 'o que fazer.'], kk: 'Bônus 3 · Emergências domésticas', tipo: 'domSit', min: '10 min' },
+      { id: 'dom-telefones', titulo: 'Telefones da geladeira', h: ['Imprima e cole', 'na geladeira.'], kk: 'Bônus 3 · Telefones de emergência', tipo: 'domTel', min: 'Ferramenta' },
+    ],
+  },
+  {
+    id: 'aph-curriculo',
+    produto: 'aph',
+    titulo: 'APH no Currículo',
+    resumo: 'Onde o APH é diferencial, como escrever no currículo e no LinkedIn e como contar na entrevista.',
+    cor: 'green',
+    icone: 'briefcase',
+    valor: 'R$ 67',
+    aulas: [
+      { id: 'cur-onde', titulo: 'Onde o APH abre portas', h: ['Onde o APH', 'faz diferença.'], kk: 'Bônus 4 · Carreira', tipo: 'curOnde', min: '5 min' },
+      { id: 'cur-texto', titulo: 'Currículo e LinkedIn', h: ['Pronto para', 'copiar e colar.'], kk: 'Bônus 4 · Textos prontos', tipo: 'curTexto', min: 'Ferramenta' },
+      { id: 'cur-entrevista', titulo: 'Entrevista e próximo passo', h: ['Conte o que você fez,', 'não o que você sabe.'], kk: 'Bônus 4 · Entrevista', tipo: 'curEntrev', min: '5 min' },
+    ],
+  },
+];
+/* atalhos da tela inicial */
+var TMA_FERRAMENTAS = [
+  { aula: 'checklist', titulo: 'Checklist de conferência', texto: 'Marque item por item antes de preparar.', icone: 'clipboard' },
+  { aula: 'consulta', titulo: 'Consulta rápida', texto: 'As fórmulas da aula, numa olhada.', icone: 'calc' },
+  { aula: 'curriculo', titulo: 'Montar currículo', texto: 'Preencha e copie, pronto em 10 minutos.', icone: 'file' },
+  { aula: 'mensagens', titulo: 'Mensagens prontas', texto: 'WhatsApp, e-mail, visita e follow-up.', icone: 'chat' },
+  { aula: 'plano', titulo: 'Plano de 7 dias', texto: 'Uma hora por dia, passo a passo.', icone: 'calendar' },
+  { aula: 'contatos', titulo: 'Controle de contatos', texto: 'Quem você procurou e o próximo passo.', icone: 'list' },
+  { aula: 'pec-card', titulo: 'Card de bolso: peçonhentos', texto: 'Baixe e deixe salvo no celular.', icone: 'phone' },
+  { aula: 'rcp-reconhecer', titulo: 'Metrônomo da RCP', texto: 'Treine o ritmo de 100 a 120 por minuto.', icone: 'heart' },
+  { aula: 'rcp-quadro', titulo: 'Quadro da RCP', texto: 'Bebê, criança, adulto e idoso. Para imprimir.', icone: 'file' },
+  { aula: 'dom-telefones', titulo: 'Telefones da geladeira', texto: 'Preencha, imprima e cole.', icone: 'phone' },
+];
+
+/* Ilustrações originais do kit (traço). Chave → conteúdo do <svg>; "v" = viewBox 64 ou 24. */
+var TMA_ILUS = {
+  seringa: [64, '<path d="M14 50 44 20"/><path d="m38 14 12 12"/><path d="m41 17 6 6"/><path d="M20 36l8 8"/><path d="M26 30l8 8"/><path d="m14 50-4 4"/><path d="M50 8l6 6"/>'],
+  agulha: [64, '<path d="M32 6v34"/><rect x="25" y="40" width="14" height="10" rx="2"/><path d="M28 50v6h8v-6"/>'],
+  ampola: [64, '<path d="M26 6h12v8l4 6v34a4 4 0 0 1-4 4H26a4 4 0 0 1-4-4V20l4-6z"/><path d="M26 14h12"/><path d="M22 32h20"/>'],
+  frasco: [64, '<rect x="22" y="6" width="20" height="8" rx="2"/><path d="M24 14h16v4l4 4v32a4 4 0 0 1-4 4H24a4 4 0 0 1-4-4V22l4-4z"/><path d="M20 36h24"/>'],
+  alcool: [64, '<path d="M24 8h16v8H24z"/><path d="M22 16h20l2 8v28a4 4 0 0 1-4 4H24a4 4 0 0 1-4-4V24z"/><path d="M26 34h12M32 28v12"/>'],
+  algodao: [64, '<circle cx="24" cy="32" r="10"/><circle cx="36" cy="28" r="10"/><circle cx="40" cy="40" r="9"/>'],
+  luva: [64, '<path d="M22 56V28l-6-8a3 3 0 0 1 5-3l5 6V12a3 3 0 0 1 6 0v12-16a3 3 0 0 1 6 0v16-12a3 3 0 0 1 6 0v28c0 8-5 16-14 16"/>'],
+  caixa: [64, '<path d="M12 22h40v30a4 4 0 0 1-4 4H16a4 4 0 0 1-4-4z"/><path d="M8 22h48l-6-10H14z"/><path d="M12 34h40" stroke-dasharray="4 4"/><path d="m26 44 4 4 8-8"/>'],
+  caixa2: [64, '<path d="M12 22h40v30a4 4 0 0 1-4 4H16a4 4 0 0 1-4-4z"/><path d="M8 22h48l-6-10H14z"/><path d="M12 34h40" stroke-dasharray="4 4"/>'],
+  infectante: [64, '<path d="M16 18h32l-3 38H19z"/><path d="M12 18h40"/><path d="M26 12h12v6H26z"/><circle cx="32" cy="36" r="6"/>'],
+  comum: [64, '<path d="M16 18h32l-3 38H19z"/><path d="M12 18h40"/><path d="M26 12h12v6H26z"/><path d="M26 36h12"/>'],
+  maos: [24, '<path d="M7 11V6a2 2 0 0 1 4 0v4-6a2 2 0 0 1 4 0v6-4a2 2 0 0 1 4 0v8c0 4-3 8-8 8-3 0-5-2-6-4l-2-4a2 2 0 0 1 3-2z"/>'],
+  epi: [24, '<path d="M12 3 5 6v6c0 4 3 7 7 9 4-2 7-5 7-9V6z"/>'],
+  reencape: [24, '<path d="M5 19 19 5"/><path d="m3 3 18 18"/>'],
+  descartar: [24, '<rect x="4" y="8" width="16" height="12" rx="2"/><path d="M4 12h16"/>'],
+  acidente: [24, '<circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16v.5"/>'],
+  casa: [24, '<path d="M4 19V8l8-4 8 4v11"/><path d="M9 19v-6h6v6"/>'],
+  escudo: [24, '<path d="M12 3 5 6v6c0 4 3 7 7 9 4-2 7-5 7-9V6z"/><path d="m9 12 2 2 4-4"/>'],
+  relogio: [24, '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>'],
+  maleta: [24, '<rect x="4" y="7" width="16" height="13" rx="2"/><path d="M9 7V5h6v2"/>'],
+  pessoa: [24, '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>'],
+  capelo: [24, '<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>'],
+  // bônus do APH (mesmo traço das ilustrações do kit)
+  escorpiao: [64, '<ellipse cx="32" cy="42" rx="7" ry="9"/><circle cx="32" cy="29" r="4.5"/><path d="M32 24c0-9 7-15 14-12 6 3 4 11-2 11"/><path d="m44 23 5-4"/><path d="M25 38 15 33l-3-8M39 38l10-5 3-8M25 44l-9 4-3 6M39 44l9 4 3 6M26 49l-6 7M38 49l6 7"/><path d="M12 25l-4-4 6 0M52 25l4-4-6 0"/>'],
+  cobra: [64, '<path d="M8 50c8 0 10-7 18-7s10 7 18 7 10-6 10-12-6-10-14-10H26c-6 0-9-4-9-8s3-8 9-8h14"/><path d="M40 12h6l4 3-4 3h-6"/><circle cx="44" cy="14" r=".6"/>'],
+  aranha: [64, '<circle cx="32" cy="38" r="9"/><circle cx="32" cy="25" r="5"/><path d="M24 33 12 24l-4 5M23 38H9l-2 7M25 44l-9 9v5M40 33l12-9 4 5M41 38h14l2 7M39 44l9 9v5"/>'],
+  abelha: [64, '<ellipse cx="32" cy="38" rx="11" ry="14"/><path d="M21.5 33h21M21.5 41h21"/><path d="M27 25c-6-11-18-9-18-2s9 9 18 6M37 25c6-11 18-9 18-2s-9 9-18 6"/><path d="M32 52v6"/><path d="M28 24l-3-6M36 24l3-6"/>'],
+  aguaviva: [64, '<path d="M12 32a20 20 0 0 1 40 0z"/><path d="M18 32c0 8-4 11-2 20M26 32c0 10-2 14 0 24M38 32c0 10 2 14 0 24M46 32c0 8 4 11 2 20"/><path d="M22 24h.5M32 20h.5M42 24h.5"/>'],
+  taturana: [64, '<circle cx="12" cy="40" r="5"/><circle cx="22" cy="38" r="6"/><circle cx="33" cy="38" r="6"/><circle cx="44" cy="38" r="6"/><circle cx="54" cy="35" r="5"/><path d="M10 34l-2-6M14 34l2-6M20 31l-2-7M24 31l2-7M31 31l-2-7M35 31l2-7M42 31l-2-7M46 31l2-7M53 29l-1-6M57 30l2-5"/>'],
+  bebe: [64, '<circle cx="32" cy="24" r="12"/><path d="M28 23h.5M36 23h.5M29 29c2 2 4 2 6 0"/><path d="M30 12c0-4 4-4 4 0"/><path d="M18 56c0-8 6-14 14-14s14 6 14 14"/>'],
+  crianca: [64, '<circle cx="32" cy="18" r="8"/><path d="M32 26v16M32 32l-10 6M32 32l10 6M32 42l-7 14M32 42l7 14"/>'],
+  adulto: [64, '<circle cx="32" cy="12" r="6"/><path d="M32 18v22M32 24l-12 10M32 24l12 10M32 40l-8 18M32 40l8 18"/>'],
+  idoso: [64, '<circle cx="28" cy="12" r="6"/><path d="M28 18c2 8 2 14 0 22M28 25l-10 9M28 25l10 6v10M28 40l-7 18M28 40l6 18"/><path d="M38 41h6v17"/>'],
+  fogo: [64, '<path d="M32 58c-10 0-17-7-17-16 0-10 8-14 9-24 6 4 8 10 8 14 2-3 3-6 3-10 7 5 14 12 14 20 0 9-7 16-17 16z"/><path d="M32 58c-4 0-7-3-7-7 0-5 4-7 5-11 3 2 9 6 9 11 0 4-3 7-7 7z"/>'],
+  raio: [64, '<path d="M36 6 14 36h16l-4 22 22-30H32z"/>'],
+  desmaio: [64, '<circle cx="14" cy="44" r="6"/><path d="M20 46h24l12-2M28 46v8M40 46v8"/><path d="M44 30l4-8 4 8M50 18l3-6 3 6"/>'],
+  tomada: [64, '<rect x="14" y="14" width="36" height="36" rx="8"/><circle cx="32" cy="32" r="11"/><path d="M28 30v4M36 30v4"/>'],
+  nariz: [64, '<path d="M30 10c0 14-10 22-10 30 0 6 5 8 10 8h6c4 0 6-3 6-6"/><path d="M40 52c2 4 2 6 0 8M46 50c2 3 2 5 0 7"/>'],
+  gota: [64, '<path d="M32 8s16 18 16 30a16 16 0 0 1-32 0C16 26 32 8 32 8z"/><path d="M26 40a7 7 0 0 0 6 7"/>'],
+  frasco2: [64, '<path d="M26 6h12v10l8 10v26a4 4 0 0 1-4 4H22a4 4 0 0 1-4-4V26l8-10z"/><path d="M18 36h28"/><path d="M27 44h10"/>'],
+};

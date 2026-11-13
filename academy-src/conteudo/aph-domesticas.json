@@ -1,0 +1,18 @@
+{
+ "domSituacoes": [
+  { "t": "Queimadura", "il": "fogo", "c": "orange", "fazer": "Água corrente em temperatura ambiente por cerca de 20 minutos. Cubra com pano limpo.", "erro": "Pasta de dente, manteiga, gelo ou estourar bolhas." },
+  { "t": "Convulsão", "il": "raio", "c": "violet", "fazer": "Proteja a cabeça, afaste objetos e marque o tempo. Depois, deite a pessoa de lado. Mais de 5 minutos: ligue 192.", "erro": "Colocar a mão ou objetos na boca, \"puxar a língua\" ou segurar a pessoa." },
+  { "t": "Desmaio", "il": "desmaio", "c": "blue", "fazer": "Deite a pessoa e eleve as pernas. Verifique se respira.", "erro": "Jogar água no rosto ou dar álcool para cheirar." },
+  { "t": "Intoxicação", "sub": "produto de limpeza, remédio", "il": "frasco2", "c": "teal", "fazer": "Ligue 0800 722 6001 e leve a embalagem ao hospital.", "erro": "Provocar vômito ou dar leite." },
+  { "t": "Choque elétrico", "il": "tomada", "c": "yellow", "fazer": "Desligue a energia ANTES de tocar na vítima. Depois avalie a respiração e ligue 192.", "erro": "Tocar na vítima com a energia ligada." },
+  { "t": "Sangramento nasal", "il": "nariz", "c": "pink", "fazer": "Cabeça levemente para a frente e aperte as narinas por 10 minutos.", "erro": "Inclinar a cabeça para trás." },
+  { "t": "Corte e hemorragia", "il": "gota", "c": "red", "fazer": "Pressão direta com pano limpo e eleve o membro.", "erro": "Tirar o pano encharcado. Coloque outro por cima." }
+ ],
+ "domTelefones": [
+  { "n": "192", "t": "SAMU" },
+  { "n": "193", "t": "Bombeiros" },
+  { "n": "190", "t": "Polícia" },
+  { "n": "0800 722 6001", "t": "Disque-Intoxicação" }
+ ],
+ "domVideos": "6 vídeos curtos de 3 a 5 min no formato situação → o que fazer"
+}

@@ -1,0 +1,178 @@
+{
+ "pecDados": [
+  {
+   "n": "+65%",
+   "t": "dos acidentes com animais peçonhentos no Brasil em 2025 foram com escorpião.",
+   "f": "Painel Epidemiológico · Ministério da Saúde"
+  },
+  {
+   "n": "200+",
+   "t": "mortes por escorpião no país em 2025. A letalidade subiu de 0,06% para 0,12% em um ano.",
+   "f": "Ministério da Saúde"
+  },
+  {
+   "n": "+6,41%",
+   "t": "de casos no DF no 1º semestre de 2026, em relação a 2025. Valparaíso e o Entorno estão na mesma região de risco.",
+   "f": "Metrópoles"
+  }
+ ],
+ "pecTelefones": [
+  {
+   "n": "192",
+   "t": "SAMU"
+  },
+  {
+   "n": "193",
+   "t": "Bombeiros"
+  },
+  {
+   "n": "0800 722 6001",
+   "t": "Disque-Intoxicação (Anvisa)"
+  }
+ ],
+ "pecRegra": [
+  "Ligue 192 (SAMU) ou 193 (Bombeiros).",
+  "Disque-Intoxicação: 0800 722 6001.",
+  "Leve a vítima ao hospital de referência com soro.",
+  "Se for possível e seguro, fotografe o animal. Nunca tente capturá-lo com a mão."
+ ],
+ "pecAnimais": [
+  {
+   "t": "Escorpião",
+   "il": "escorpiao",
+   "c": "orange",
+   "fazer": [
+    "Lavar o local com água e sabão",
+    "Compressa morna pode aliviar a dor",
+    "Ir ao hospital"
+   ],
+   "nunca": [
+    "Torniquete",
+    "Cortar ou chupar o local",
+    "Aplicar produtos caseiros"
+   ],
+   "alerta": "Criança e idoso: é emergência sempre.",
+   "foto": "Tityus serrulatus"
+  },
+  {
+   "t": "Cobra",
+   "il": "cobra",
+   "c": "green",
+   "fazer": [
+    "Manter a vítima deitada, calma e em repouso",
+    "Retirar anéis e pulseiras",
+    "Levar ao hospital imediatamente"
+   ],
+   "nunca": [
+    "Torniquete",
+    "Cortar ou chupar o local",
+    "Dar bebida alcoólica",
+    "Fazer a vítima andar ou correr"
+   ],
+   "alerta": "Repouso total até o hospital: movimento espalha o veneno.",
+   "foto": "Bothrops jararaca"
+  },
+  {
+   "t": "Aranha",
+   "sub": "armadeira, marrom, viúva-negra",
+   "il": "aranha",
+   "c": "violet",
+   "fazer": [
+    "Lavar com água e sabão",
+    "Compressa",
+    "Ir ao hospital"
+   ],
+   "nunca": [
+    "Espremer",
+    "Cortar",
+    "Receitas caseiras"
+   ],
+   "alerta": "A aranha-marrom pode não doer na hora: observe a lesão nas horas seguintes.",
+   "foto": "Phoneutria nigriventer"
+  },
+  {
+   "t": "Abelha e marimbondo",
+   "il": "abelha",
+   "c": "yellow",
+   "fazer": [
+    "Retirar o ferrão raspando com cartão ou unha",
+    "Compressa fria"
+   ],
+   "nunca": [
+    "Retirar o ferrão com pinça ou apertando: injeta mais veneno"
+   ],
+   "alerta": "Muitas picadas, falta de ar ou inchaço no rosto: emergência (anafilaxia).",
+   "foto": "Apis mellifera"
+  },
+  {
+   "t": "Água-viva e caravela",
+   "il": "aguaviva",
+   "c": "blue",
+   "fazer": [
+    "Lavar com água do mar ou vinagre",
+    "Compressa fria",
+    "Retirar tentáculos com pinça ou luva"
+   ],
+   "nunca": [
+    "Água doce",
+    "Esfregar areia ou toalha",
+    "Urina"
+   ],
+   "alerta": "Dor forte, falta de ar ou mal-estar: procure atendimento.",
+   "foto": "Physalia physalis"
+  },
+  {
+   "t": "Taturana e lagarta",
+   "il": "taturana",
+   "c": "pink",
+   "fazer": [
+    "Lavar com água corrente",
+    "Compressa fria",
+    "Ir ao hospital"
+   ],
+   "nunca": [
+    "Espremer ou coçar",
+    "Ignorar sangramento nas gengivas ou na urina"
+   ],
+   "alerta": "A Lonomia pode causar sangramentos: hospital sempre.",
+   "foto": "Lonomia obliqua"
+  }
+ ],
+ "pecPrevencao": [
+  "Limpe entulho e restos de construção do quintal.",
+  "Vede ralos, frestas e rodapés.",
+  "Sacuda sapatos e roupas antes de usar.",
+  "Controle as baratas: são o alimento do escorpião.",
+  "Afaste camas e berços da parede."
+ ],
+ "pecMitos": [
+  [
+   "Torniquete segura o veneno.",
+   "Não segura e piora a lesão. Nunca faça torniquete."
+  ],
+  [
+   "Cortar e chupar tira o veneno.",
+   "Não tira o veneno e ainda abre caminho para infecção."
+  ],
+  [
+   "Urina alivia a queimadura de água-viva.",
+   "Não funciona. Use água do mar ou vinagre."
+  ],
+  [
+   "Tirar o ferrão com pinça é o certo.",
+   "Apertar o ferrão injeta mais veneno. Raspe com um cartão."
+  ],
+  [
+   "Picada de escorpião em adulto não precisa de hospital.",
+   "Toda picada deve ser avaliada. Em criança e idoso, é emergência."
+  ],
+  [
+   "Bebida alcoólica acalma quem foi picado por cobra.",
+   "Não dê bebida. Mantenha a vítima deitada e calma."
+  ]
+ ],
+ "pecVideo": {
+  "t": "Videoaula: o que fazer em cada acidente",
+  "d": "12 a 15 min"
+ }
+}

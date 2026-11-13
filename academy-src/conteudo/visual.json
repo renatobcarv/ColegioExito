@@ -1,0 +1,203 @@
+{
+ "materiais": [
+  {
+   "t": "Seringa",
+   "il": "seringa",
+   "d": "Graduada em mL. O volume escolhido deve combinar com a dose calculada.",
+   "i": "syringe",
+   "foto": "hypodermic syringe"
+  },
+  {
+   "t": "Agulha",
+   "il": "agulha",
+   "d": "Vem com protetor. Calibre e comprimento seguem o protocolo e a via prescrita.",
+   "i": "needle",
+   "foto": "hypodermic needle"
+  },
+  {
+   "t": "Ampola",
+   "il": "ampola",
+   "d": "Frasco de vidro de dose única. Abertura com proteção para evitar cortes.",
+   "i": "ampoule",
+   "foto": "glass ampoule"
+  },
+  {
+   "t": "Frasco-ampola",
+   "il": "frasco",
+   "d": "Tampa de borracha. Pode conter pó que precisa de reconstituição.",
+   "i": "vial",
+   "foto": "medicine vial"
+  },
+  {
+   "t": "Álcool 70%",
+   "il": "alcool",
+   "d": "Para antissepsia, conforme o protocolo da instituição.",
+   "i": "droplet",
+   "foto": "isopropyl alcohol bottle"
+  },
+  {
+   "t": "Algodão ou gaze",
+   "il": "algodao",
+   "d": "Para a antissepsia e a compressão após o procedimento.",
+   "i": "gauze",
+   "foto": "gauze pad"
+  },
+  {
+   "t": "Luvas de procedimento",
+   "il": "luva",
+   "d": "Barreira de proteção. Trocar a cada atendimento.",
+   "i": "hand",
+   "foto": "nitrile gloves"
+  },
+  {
+   "t": "Caixa de perfurocortante",
+   "il": "caixa",
+   "d": "Coletor rígido para agulhas, seringas com agulha e ampolas.",
+   "i": "box",
+   "foto": "sharps container"
+  }
+ ],
+ "regras": [
+  {
+   "t": "Higienize as mãos",
+   "il": "maos",
+   "d": "Antes e depois de cada contato com o paciente.",
+   "i": "wash"
+  },
+  {
+   "t": "Use EPI",
+   "il": "epi",
+   "d": "Luvas de procedimento, trocadas a cada atendimento.",
+   "i": "shield"
+  },
+  {
+   "t": "Nunca reencape agulhas",
+   "il": "reencape",
+   "d": "É a causa mais comum de acidente com perfurocortante.",
+   "i": "ban"
+  },
+  {
+   "t": "Descarte na hora",
+   "il": "descartar",
+   "d": "Direto na caixa de perfurocortante, ao alcance da mão.",
+   "i": "box"
+  },
+  {
+   "t": "Acidente? Comunique",
+   "il": "acidente",
+   "d": "Lave o local e avise o responsável imediatamente.",
+   "i": "megaphone"
+  }
+ ],
+ "etapas": [
+  {
+   "t": "Antes",
+   "k": "Conferir",
+   "l": [
+    "Prescrição completa e legível",
+    "Medicamento, dose e via batem com a prescrição",
+    "Rótulo, concentração e validade conferidos",
+    "Cálculo refeito e com sentido",
+    "Paciente identificado e orientado"
+   ]
+  },
+  {
+   "t": "Durante",
+   "k": "Atenção",
+   "l": [
+    "Técnica asséptica do início ao fim",
+    "Material ao alcance, caixa de descarte próxima",
+    "Observar as reações do paciente",
+    "Algo estranho? Parar antes de continuar"
+   ]
+  },
+  {
+   "t": "Depois",
+   "k": "Registrar",
+   "l": [
+    "Descarte imediato e correto",
+    "Higienizar as mãos",
+    "Registrar o que foi feito",
+    "Observar e orientar o paciente",
+    "Comunicar qualquer intercorrência"
+   ]
+  }
+ ],
+ "noveCertos": [
+  "Paciente certo",
+  "Medicamento certo",
+  "Dose certa",
+  "Via certa",
+  "Hora certa",
+  "Registro certo",
+  "Orientação certa",
+  "Forma certa",
+  "Resposta certa"
+ ],
+ "erros": [
+  [
+   "Confiar na memória sobre a concentração do frasco",
+   "Ler o rótulo do frasco que está na sua mão, toda vez"
+  ],
+  [
+   "Calcular com unidades diferentes (g com mg, mcg com mg)",
+   "Converter tudo para a mesma unidade antes da conta"
+  ],
+  [
+   "Usar o volume de diluente como volume final no pó",
+   "Conferir o volume final no rótulo ou na bula"
+  ],
+  [
+   "Reencapar a agulha depois de usar",
+   "Descartar seringa e agulha juntas, direto na caixa"
+  ],
+  [
+   "Seguir em frente quando algo parece estranho",
+   "Parar e confirmar com o responsável"
+  ]
+ ],
+ "descarte": [
+  {
+   "t": "Caixa de perfurocortante",
+   "c": "orange",
+   "il": "caixa2",
+   "l": [
+    "Agulhas e seringas com agulha, sem desconectar",
+    "Ampolas de vidro",
+    "Nunca encha além da linha indicada na caixa"
+   ]
+  },
+  {
+   "t": "Lixo infectante",
+   "c": "pink",
+   "il": "infectante",
+   "l": [
+    "Algodão, gaze e luvas com material biológico",
+    "Saco identificado, conforme o protocolo"
+   ]
+  },
+  {
+   "t": "Lixo comum",
+   "c": "teal",
+   "il": "comum",
+   "l": [
+    "Embalagens e papéis sem contato com material biológico",
+    "Na dúvida, siga a orientação do serviço"
+   ]
+  }
+ ],
+ "duvida": [
+  {
+   "t": "Pare",
+   "d": "Não continue o preparo nem a administração."
+  },
+  {
+   "t": "Confira",
+   "d": "Prescrição, rótulo, bula e protocolo da instituição."
+  },
+  {
+   "t": "Pergunte",
+   "d": "Enfermeiro responsável, prescritor ou farmacêutico."
+  }
+ ]
+}
