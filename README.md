@@ -96,9 +96,9 @@ Endereço: `/tec-mais/academy`. Sem link no site, fora do sitemap e com `noindex
 
 | O que | Onde |
 | --- | --- |
-| Conteúdo das aulas (textos, ilustrações, checklist, currículo, mensagens) | páginas originais em `academy-src/paginas/` (`calculo.html`, `visual.html`, `carreira.html`) |
-| Módulos, aulas e qual seção da página cada aula mostra | `academy-src/app/conteudo.js` |
-| Visual e funcionamento da área de membros | `academy-src/app/app.css` e `app.js` |
+| Módulos, aulas, textos, checklist, mensagens e ilustrações do kit | `academy-src/app/conteudo.js` |
+| Visual (pranchas, cards, mockups) | `academy-src/app/app.css` |
+| Funcionamento | `academy-src/app/app.js` |
 | Guia de cálculo (PDF) | `academy-src/guia-calculos.pdf` |
 
 No build, o app e o PDF são **criptografados** (AES-256) com a senha da variável **`ACADEMY_PASSWORD`**

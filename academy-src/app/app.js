@@ -149,11 +149,12 @@
     return '<div class="lh"><span class="k">Ferramentas</span><h1 class="disp">Para usar na prática</h1><p class="lh__m">Checklist, fórmulas, currículo, mensagens e controle da sua busca.</p></div>' + toolCards() + foot();
   }
 
+  var WIDE = { curriculo: 1, contatos: 1, materiais: 1, etapas: 1, regras: 1, onde: 1, mensagens: 1, antes: 1, entrevista: 1, perfil: 1 };
   function pageAula(a) {
     var m = a.mod, idx = LESSONS.indexOf(a), prev = LESSONS[idx - 1], next = LESSONS[idx + 1], c = modCount(m);
     LS.set('tma-last', a.id);
-    var h = '<nav class="crumb" aria-label="Você está em"><a href="#/">Início</a>/<a href="#/modulos">Módulo 0' + m.n + '</a>/<span>' + esc(m.titulo) + '</span></nav><div class="lesson' + (a.secoes ? ' lesson--wide' : '') + '"><div><header class="lh"><span class="k">Aula ' + (a.i + 1) + ' de ' + m.aulas.length + '</span><h1 class="disp">' + esc(a.titulo) + '</h1><div class="lh__m"><span class="chip chip--' + (m.cor === 'orange' ? 'or' : m.cor === 'blue' ? 'bl' : 'gr') + '">' + esc(a.min) + '</span>' + (m.previa ? '<span class="chip chip--or">Prévia · em validação</span>' : '') + (isDone(a.id) ? '<span class="chip chip--gr">' + ic('check') + ' Concluída</span>' : '') + '</div></header>';
-    h += '<div class="lbody" id="lbody">' + (a.secoes ? '<div class="sheet" id="sheet"><div class="sheet__l">Carregando a aula…</div></div>' : R[a.tipo] ? R[a.tipo].html(a) : '') + '</div>';
+    var h = '<nav class="crumb" aria-label="Você está em"><a href="#/">Início</a>/<a href="#/modulos">Módulo 0' + m.n + '</a>/<span>' + esc(m.titulo) + '</span></nav><div class="lesson' + (WIDE[a.tipo] ? ' lesson--wide' : '') + '"><div><header class="lh' + (a.num ? ' lh--num' : '') + '"><div><span class="kk">' + esc(a.kk || ('Aula ' + (a.i + 1))) + '</span><h1 class="disp">' + (a.h ? esc(a.h[0]) + ' <span class="serif grad">' + esc(a.h[1]) + '</span>' : esc(a.titulo)) + '</h1><div class="lh__m"><span class="chip chip--w2">Aula ' + (a.i + 1) + ' de ' + m.aulas.length + '</span><span class="chip chip--' + (m.cor === 'orange' ? 'or' : m.cor === 'blue' ? 'bl' : 'gr') + '">' + esc(a.min) + '</span>' + (m.previa ? '<span class="chip chip--or">Prévia · em validação</span>' : '') + (isDone(a.id) ? '<span class="chip chip--gr">' + ic('check') + ' Concluída</span>' : '') + '</div></div>' + (a.num ? '<span class="bignum" aria-hidden="true">' + a.num + '</span>' : '') + '</header>';
+    h += '<div class="lbody" id="lbody">' + (R[a.tipo] ? R[a.tipo].html(a) : '') + '</div>';
     h += '<div class="lnav">' + (prev ? '<a class="btn btn--gh" href="#/aula/' + prev.id + '" aria-label="Aula anterior">' + ic('left') + '<span class="lbl">Anterior</span></a>' : '<span></span>') +
       '<button class="btn done-btn ' + (isDone(a.id) ? '' : 'btn--gh') + '" type="button" aria-pressed="' + isDone(a.id) + '" id="donebtn">' + ic('check') + '<span>' + (isDone(a.id) ? 'Concluída' : 'Concluir aula') + '</span></button>' +
       (next ? '<a class="btn btn--or" href="#/aula/' + next.id + '" aria-label="Próxima aula"><span class="lbl">Próxima</span><span class="btn__a">' + ic('right') + '</span></a>' : '<a class="btn btn--or" href="#/"><span class="lbl">Início</span><span class="btn__a">' + ic('home') + '</span></a>') + '</div></div>';
@@ -164,18 +165,28 @@
   }
 
   /* ---------- renderizadores de aula ---------- */
-  function boxes(list, cls, iconCls) {
-    var tone = { 'ibox--or': '', 'ibox--gr': 'gr' }[iconCls] ?? 'bl';
-    return '<div class="' + cls + '">' + list.map(function (x, i) { return '<article class="card box">' + gic(x.i, tone) + '<span class="num">' + String(i + 1).padStart(2, '0') + '</span><h3>' + esc(x.t) + '</h3><p>' + esc(x.d) + '</p></article>'; }).join('') + '</div>';
+  /* ---------- peças visuais do kit ---------- */
+  // ilustração original do kit (traço), em academy-src/app/conteudo.js → TMA_ILUS
+  function ilus(k, cls) {
+    var x = TMA_ILUS[k]; if (!x) return '';
+    return '<svg class="il' + (cls ? ' ' + cls : '') + '" viewBox="0 0 ' + x[0] + ' ' + x[0] + '" aria-hidden="true" style="stroke-width:' + (x[0] > 30 ? 2.6 : 1.9) + '">' + x[1] + '</svg>';
   }
-  function ckList(items, state, prefix) {
-    return items.map(function (t, i) { return '<label class="ck"><input type="checkbox" data-i="' + i + '" id="' + prefix + i + '"' + (state[i] ? ' checked' : '') + '><span class="bx">' + ic('check') + '</span><span>' + esc(t) + '</span></label>'; }).join('');
+  function ckList(items, state, prefix, keyAttr) {
+    return items.map(function (t, i) { return '<label class="ck"><input type="checkbox" ' + (keyAttr || 'data-i') + '="' + (keyAttr ? prefix + i : i) + '"' + (state[keyAttr ? prefix + i : i] ? ' checked' : '') + '><span class="bx">' + ic('check') + '</span><span>' + esc(t) + '</span></label>'; }).join('');
   }
+  function alertBox(kind, strong, text, icon) { return '<div class="alert' + (kind ? ' alert--' + kind : '') + '">' + ic(icon || 'alert') + '<span>' + (strong ? '<b>' + esc(strong) + '</b> ' : '') + text + '</span></div>'; }
+  var AVISO = alertBox('rd', 'Este guia é revisão, não protocolo.', 'Ele não substitui o protocolo da instituição, a prescrição, a bula nem a supervisão profissional. Aplicar injetáveis é atividade de profissionais legalmente habilitados.');
+  var TONES = ['bl', 'or', 'te', 'pk', 'vi'];
+
+  var trilha = OP.get('trilha', '');
+  var cv = OP.get('cv', {});
+  function v(k) { return String(cv[k] || '').trim(); }
+
   var R = {
     pdf: {
       html: function () {
         return '<p class="lead">O passo a passo completo, com exemplos e exercícios. Abra no celular para estudar ou baixe para consultar offline.</p><article class="card pdf"><div class="pdf__c"><span>TEC Mais Academy</span><b>Guia de Cálculo de Medicamentos</b><span>31 páginas · PDF</span></div><div><span class="k">O que tem no guia</span><ul class="pills">' + D.pdfTopicos.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul><div class="pdf__a" id="pdfa"><button class="btn btn--gh" type="button" disabled>Preparando o guia…</button></div><p class="note" id="pdfn" style="margin-top:12px"></p></div></article>' +
-          '<div class="alert">' + ic('alert') + '<span><b>UI não vira mg.</b> Pedido em UI, frasco em UI. Na insulina U-100, use sempre a seringa de insulina.</span></div>';
+          alertBox('', 'UI não vira mg.', 'Pedido em UI, frasco em UI. Na insulina U-100, use sempre a seringa de insulina.');
       },
       init: function () {
         loadPdf().then(function (url) {
@@ -186,58 +197,251 @@
         });
       },
     },
+
+    formulas: {
+      html: function () {
+        return '<p class="lead">Resumo do Guia de Cálculo. Para o passo a passo completo, com exemplos e exercícios, <a href="#/aula/guia">abra o guia</a>.</p><div class="fms">' + D.formulas.map(function (f, i) { return '<article class="card fm fm--' + TONES[i % 5] + '"><h3>' + esc(f.t) + '</h3>' + f.f.map(function (x) { return '<code>' + esc(x) + '</code>'; }).join('') + '<p>' + esc(f.n) + '</p></article>'; }).join('') + '</div>' +
+          alertBox('rd', 'UI não vira mg.', 'Pedido em UI, frasco em UI. Na insulina U-100, use sempre a seringa de insulina.');
+      },
+    },
+
+    checklist: {
+      html: function () {
+        return '<p class="lead">As marcações ficam salvas só neste aparelho. Limpe a lista a cada novo preparo.</p><div class="bar bar--g ckbar"><i id="ckb" style="width:0"></i></div><article class="card ckwrap" id="ck">' + ckList(D.checklist, LS.get('tecmais-checklist-v1', []), 'ck-') + '</article>' +
+          '<div class="ckfoot"><span><b id="ckc">0 de ' + D.checklist.length + '</b> itens conferidos</span><button class="btn btn--gh btn--sm" type="button" id="ckr">Limpar marcações</button></div>' +
+          alertBox('rd', 'Cálculo certo não é autorização para administrar.', 'Dose, concentração, diluente e velocidade vêm da prescrição, do rótulo, da bula e do protocolo da instituição. Na dúvida, pare e confirme com o enfermeiro responsável, o prescritor ou o farmacêutico.');
+      },
+      init: function () {
+        var st = LS.get('tecmais-checklist-v1', []);
+        function upd(celebrate) { var n = st.filter(Boolean).length; $('#ckc').textContent = n + ' de ' + D.checklist.length; $('#ckb').style.width = pct(n, D.checklist.length) + '%'; if (celebrate && n === D.checklist.length) toast('Tudo conferido. Siga o protocolo.'); }
+        $('#ck').addEventListener('change', function (e) { st[+e.target.dataset.i] = e.target.checked; LS.set('tecmais-checklist-v1', st); upd(true); });
+        $('#ckr').addEventListener('click', function () { st = []; LS.set('tecmais-checklist-v1', st); $$('#ck input').forEach(function (x) { x.checked = false; }); upd(); });
+        upd();
+      },
+    },
+
+    /* ----- Guia Visual ----- */
+    materiais: {
+      html: function () {
+        var pr = byId.materiais.mod.aulas;
+        return '<section class="intro"><span class="ast">Guia visual de apoio à prática</span><h2 class="disp">Reveja a aula <span class="serif grad">em poucos segundos.</span></h2><p>Pranchas visuais para relembrar os materiais, os cuidados de biossegurança e os pontos de atenção que você viu presencialmente. Pouco texto, muita clareza.</p><nav class="pnav" aria-label="Pranchas">' + pr.map(function (x, i) { return '<a href="#/aula/' + x.id + '"' + (i === 0 ? ' aria-current="page"' : '') + '>' + (i + 1) + ' · ' + ['Materiais', 'Biossegurança', 'Antes, durante e depois', 'Erros de atenção', 'Descarte', 'Na dúvida'][i] + '</a>'; }).join('') + '</nav></section>' + AVISO +
+          '<p class="lead" style="margin-top:8px">Os itens que você manuseou na aula. Reconhecer cada um pelo nome é o primeiro passo da segurança.</p><div class="mats">' +
+          D.materiais.map(function (x, i) { return '<article class="card mat mat--' + TONES[i % 4] + '"><div class="mat__art">' + ilus(x.il) + '</div><span class="num">' + String(i + 1).padStart(2, '0') + '</span><h3>' + esc(x.t) + '</h3><p>' + esc(x.d) + '</p></article>'; }).join('') + '</div>';
+      },
+    },
+    regras: {
+      html: function () {
+        return '<p class="lead">As cinco regras que protegem você e o paciente em todo atendimento.</p><div class="rules">' + D.regras.map(function (x, i) { return '<article class="rule rule--' + (i + 1) + '"><span class="rule__i">' + ilus(x.il) + '</span><span class="rule__n">' + String(i + 1).padStart(2, '0') + '</span><h3>' + esc(x.t) + '</h3><p>' + esc(x.d) + '</p></article>'; }).join('') + '</div>' + AVISO;
+      },
+    },
+    etapas: {
+      html: function () {
+        var st = LS.get('tma-etapas', {});
+        return '<p class="lead">Os pontos de conferência de cada etapa. A técnica em si é a que a professora ensinou em sala e o protocolo da instituição define.</p><div class="stages" id="stg">' +
+          D.etapas.map(function (e, i) { return '<article class="card stage stage--' + (i + 1) + '"><header><h3>' + esc(e.t) + '</h3><span>' + esc(e.k) + '</span></header><div class="stage__b">' + ckList(e.l, st, 'e' + i + '-', 'data-k') + '</div></article>'; }).join('') + '</div>' +
+          '<h3 class="subh">Os 9 certos da administração de medicamentos</h3><div class="nove">' + D.noveCertos.map(function (x, i) { return '<div><b>' + (i + 1) + '</b>' + esc(x) + '</div>'; }).join('') + '</div>' + AVISO;
+      },
+      init: function () {
+        var st = LS.get('tma-etapas', {});
+        $('#stg').addEventListener('change', function (e) { st[e.target.dataset.k] = e.target.checked; LS.set('tma-etapas', st); });
+      },
+    },
+    erros: {
+      html: function () {
+        return '<p class="lead">Os deslizes mais comuns não são de técnica, são de atenção. Troque o hábito da esquerda pelo da direita.</p><div class="evs">' + D.erros.map(function (e) { return '<article class="ev"><div class="ev__no"><span class="tag tag--no">Evite</span><span>' + esc(e[0]) + '</span></div><span class="ev__ar" aria-hidden="true">' + ic('right') + '</span><div class="ev__yes"><span class="tag tag--yes">Faça</span><span>' + esc(e[1]) + '</span></div></article>'; }).join('') + '</div>' + AVISO;
+      },
+    },
+    descarte: {
+      html: function () {
+        return '<p class="lead">Cada resíduo tem um destino. Descarte na hora, sem desconectar seringa e agulha.</p><div class="discs">' + D.descarte.map(function (x) { return '<article class="card disc disc--' + x.c + '"><div class="mat__art">' + ilus(x.il) + '</div><h3>' + esc(x.t) + '</h3><ul>' + x.l.map(function (y) { return '<li>' + esc(y) + '</li>'; }).join('') + '</ul></article>'; }).join('') + '</div>' + AVISO;
+      },
+    },
+    duvida: {
+      html: function () {
+        return '<section class="stop"><h2 class="disp">Parar nunca é erro.<br><span class="serif">Seguir na dúvida é.</span></h2><div class="stop__g">' + D.duvida.map(function (x, i) { return '<div class="stop__s"><b>' + (i + 1) + ' · ' + esc(x.t) + '</b><p>' + esc(x.d) + '</p></div>'; }).join('') + '</div></section>' + AVISO;
+      },
+    },
+
+    /* ----- Oportunidades ----- */
+    antes: {
+      html: function () {
+        var mq = D.marquee.concat(D.marquee).map(function (x) { return '<span>' + esc(x) + '</span><i>✦</i>'; }).join('');
+        return '<section class="oph"><div class="oph__t"><span class="ast">Guia de oportunidades</span><p style="margin-top:16px">Saia do curso de Medicamentos Injetáveis sabendo onde procurar, como se apresentar e o que fazer em cada um dos próximos 7 dias.</p>' +
+          '<div class="oph__cta"><a class="btn btn--or" href="#/aula/trilha">Escolher minha trilha<span class="btn__a">' + ic('right') + '</span></a><a class="btn btn--gh" href="#/aula/plano">Ver o plano de 7 dias</a></div>' +
+          '<dl class="oph__st"><div><dt>3</dt><dd>trilhas de carreira</dd></div><div><dt>7</dt><dd>mensagens prontas</dd></div><div><dt>7 dias</dt><dd>de plano de ação</dd></div></dl></div>' +
+          '<div class="mock" aria-hidden="true"><div class="mock__wa"><div class="mock__h"><span>WhatsApp</span><span>09:12</span></div><p>Bom dia! Sou técnica de enfermagem com COREN ativo aqui em Valparaíso. A clínica está recebendo currículos?</p><small>09:12 ✓✓</small></div>' +
+          '<div class="mock__pl"><div class="mock__h"><span>Plano de 7 dias</span><span>Dia 3</span></div><b>3 de 7</b><small>Primeiros contatos enviados</small><div class="bar"><i style="width:43%"></i></div></div>' +
+          '<div class="mock__ct"><div class="mock__h"><span>Controle</span><span>Semana 1</span></div><p><span>Clínica Vida</span><em class="s-gr">Entrevista</em></p><p><span>Lab. Central</span><em class="s-or">Respondeu</em></p><p><span>Vacina+</span><em class="s-bl">Visitado</em></p></div></div></section>' +
+          '<div class="marq" aria-hidden="true"><div class="marq__t">' + mq + '</div></div>' +
+          '<h2 class="disp h2" style="margin-top:20px">O certificado abre portas. <span class="serif grad">O registro profissional é o que autoriza.</span></h2><p class="lead">Profissionais sérios se destacam porque conhecem os limites da própria formação e trabalham dentro deles. Leia isto antes de mandar qualquer mensagem.</p>' +
+          '<div class="g3">' + D.antes.map(function (x, i) { return '<article class="card box"><span class="sq sq--' + ['vi', 'or', 'te'][i] + '">' + ilus(x.il) + '</span><h3>' + esc(x.t) + '</h3><p>' + esc(x.d) + '</p></article>'; }).join('') + '</div>' +
+          alertBox('rd', 'Desconfie de quem oferece trabalho aplicando injetáveis sem exigir registro profissional.', 'Esse tipo de proposta coloca o paciente em risco e expõe você a responsabilidade legal.');
+      },
+    },
+    trilhas: {
+      html: function () {
+        return '<p class="lead">As mensagens prontas, o objetivo do currículo e os destaques de onde procurar mudam conforme a sua escolha.</p><div class="g3 trails">' + D.trilhas.map(function (t, i) { return '<button class="trail" type="button" data-t="' + t.id + '" aria-pressed="' + (trilha === t.id) + '"><span class="trail__l trail__l--' + (i + 1) + '">' + t.id + '</span><h3>' + esc(t.t) + '</h3><p>' + esc(t.p) + '</p><dl><div><dt>O que buscar</dt><dd>' + esc(t.b) + '</dd></div><div><dt>Como o curso entra</dt><dd>' + esc(t.c) + '</dd></div></dl><span class="trail__s"><span class="radio"></span>Esta é a minha trilha</span></button>'; }).join('') + '</div>' +
+          '<div class="alert alert--yl" id="trc"' + (trilha === 'C' ? '' : ' hidden') + '>' + ic('route') + '<span><b>Trilha C:</b> o caminho para aplicar injetáveis profissionalmente passa por uma formação regulamentada, como o Técnico em Enfermagem. Use este guia para entrar no ambiente de saúde por funções de apoio enquanto decide esse passo.</span></div>';
+      },
+      init: function (a) {
+        $$('.trail').forEach(function (b) {
+          b.addEventListener('click', function () {
+            trilha = trilha === b.dataset.t ? '' : b.dataset.t; OP.set('trilha', trilha);
+            if (trilha) toast('Trilha ' + trilha + ' escolhida');
+            $('#lbody').innerHTML = R.trilhas.html(a); R.trilhas.init(a);
+          });
+        });
+      },
+    },
+    onde: {
+      html: function () {
+        var hl = trilha === 'A' ? ' hl-a' : trilha ? ' hl-bc' : '';
+        return '<p class="lead">Em clínicas pequenas, a oportunidade fica com quem aparece primeiro, com educação e currículo em mãos. Mapeie estes lugares na sua região.' + (trilha ? ' Destacamos o que vale para a <b>Trilha ' + trilha + '</b>.' : ' <a href="#/aula/trilha">Escolha sua trilha</a> para ver os destaques.') + '</p>' +
+          '<div class="places' + hl + '">' + D.lugares.map(function (l) { return '<article class="card place"><h3>' + esc(l.t) + '</h3><p class="pa"><b>A</b><span>' + esc(l.a) + '</span></p><p class="pbc"><b>B·C</b><span>' + esc(l.bc) + '</span></p></article>'; }).join('') + '</div>' +
+          '<div class="chans">' + D.canais.map(function (x) { return '<article class="card chan"><span class="tag tag--or">' + esc(x.tag) + '</span><p><b>' + esc(x.t) + '.</b> ' + esc(x.d) + '</p></article>'; }).join('') + '</div>' +
+          '<article class="goal"><b>20</b><span><strong>Sua meta dos dois primeiros dias:</strong> mapear 20 estabelecimentos. Quantidade gera opções; opções geram conversa. <a href="#/aula/contatos">Anote no controle de contatos →</a></span></article>';
+      },
+    },
+    curriculo: {
+      html: function () {
+        return '<p class="lead">Preencha os campos e veja o currículo se montar ao lado. Depois copie o texto, cole no Word ou no Google Docs e salve em PDF. Seus dados ficam só neste aparelho.</p>' +
+          '<div class="cv"><form class="card form" id="cvf" onsubmit="return false">' + D.cvCampos.map(function (f) {
+            var id = 'cv-' + f.k, val = esc(cv[f.k] || '');
+            return '<div class="fld' + (f.full ? ' fld--full' : '') + '"><label for="' + id + '">' + esc(f.l) + '</label>' + (f.area ? '<textarea class="in" id="' + id + '" data-k="' + f.k + '" placeholder="' + esc(f.ph) + '">' + val + '</textarea>' : '<input class="in" id="' + id + '" data-k="' + f.k + '" type="' + (f.type || 'text') + '" placeholder="' + esc(f.ph) + '" value="' + val + '">') + (f.h ? '<small>' + esc(f.h) + '</small>' : '') + '</div>';
+          }).join('') + '<div class="form__a"><button class="btn btn--or btn--sm" type="button" id="cvc">' + ic('copy') + ' Copiar currículo</button><button class="btn btn--gh btn--sm" type="button" id="cvx">Preencher com exemplo</button><button class="btn btn--gh btn--sm" type="button" id="cvl">Limpar</button></div></form><article class="paper" id="cvp" aria-live="polite"></article></div>' +
+          '<ul class="dots">' + D.cvDicas.map(function (d) { return '<li>' + esc(d) + '</li>'; }).join('') + '</ul>';
+      },
+      init: function () {
+        function draw() {
+          var ph = function (t, p) { return t ? esc(t) : '<span class="ph">' + esc(p) + '</span>'; };
+          var ct = [v('cidade'), v('whats'), v('email')].filter(Boolean).join(' · ');
+          var h = '<h4>' + ph(v('nome').toUpperCase(), '[SEU NOME COMPLETO]') + '</h4><div class="ct">' + ph(ct, '[Cidade – UF] · [WhatsApp] · [e-mail]') + '</div>';
+          h += '<div class="s"><b>OBJETIVO</b>' + esc(objText()) + '</div>';
+          if (v('reg')) h += '<div class="s"><b>REGISTRO PROFISSIONAL</b>' + esc(v('reg')) + '</div>';
+          h += '<div class="s"><b>FORMAÇÃO</b>' + ph(v('form'), '[Curso técnico / graduação] – [Instituição] – [ano]\nEnsino médio – [Escola] – [ano]') + '</div>';
+          h += '<div class="s"><b>CURSOS COMPLEMENTARES</b>' + esc(cursoText()) + '</div>';
+          h += '<div class="s"><b>EXPERIÊNCIA</b>' + ph(v('exp'), '[Cargo] – [Empresa] – [período]\n· [Uma realização concreta, com verbo de ação]') + '</div>';
+          h += '<div class="s"><b>COMPETÊNCIAS</b>' + ph(v('comp'), 'Atendimento ao público · Organização · Atenção a detalhes · Trabalho em equipe') + '</div>';
+          h += '<div class="s"><b>DISPONIBILIDADE</b>' + ph(v('disp'), '[Turnos e dias] · [Início imediato]') + '</div>';
+          $('#cvp').innerHTML = h;
+        }
+        $('#cvf').addEventListener('input', function (e) { var k = e.target.dataset.k; if (!k) return; cv[k] = e.target.value; OP.set('cv', cv); draw(); });
+        $('#cvc').addEventListener('click', function () { copy(cvPlain(), this); });
+        $('#cvx').addEventListener('click', function () { cv = Object.assign({}, D.cvExemplo); OP.set('cv', cv); $$('#cvf [data-k]').forEach(function (x) { x.value = cv[x.dataset.k] || ''; }); draw(); toast('Exemplo preenchido. Troque pelos seus dados.'); });
+        $('#cvl').addEventListener('click', function () { cv = {}; OP.set('cv', cv); $$('#cvf [data-k]').forEach(function (x) { x.value = ''; }); draw(); });
+        draw();
+      },
+    },
+    mensagens: {
+      html: function () {
+        var list = D.mensagens.filter(function (m) { return m.k !== 'Depois da entrevista' && (m.t === 'all' || !trilha || (m.t === 'A' && trilha === 'A') || (m.t === 'BC' && trilha !== 'A')); });
+        return '<p class="lead">"Tem vaga?" sozinho é ignorado. Estas mensagens já usam o nome e a cidade que você preencheu no <a href="#/aula/curriculo">currículo</a>. O que ficou destacado em <mark class="mk">amarelo</mark>, você completa.' + (trilha ? '' : ' <a href="#/aula/trilha">Escolha sua trilha</a> para ver só as que servem para você.') + '</p>' +
+          '<div class="msgs">' + list.map(function (m, i) { return msgCard(m, i + 1); }).join('') + '</div>';
+      },
+      init: bindCopy,
+    },
+    plano: {
+      html: function () {
+        var plan = OP.get('plan', {});
+        var h = '<p class="lead">Uma hora por dia, durante 7 dias, rende mais que um dia inteiro de ansiedade. Seu progresso fica salvo neste aparelho.</p><div class="phead"><div class="bar bar--g"><i id="pb"></i></div><b id="pc"></b></div><div class="days" id="tl">';
+        D.plano.forEach(function (d, i) {
+          h += '<article class="card day"><div class="day__n"><span>Dia</span><b>' + (i + 1) + '</b></div><div><h3>' + esc(d[0]) + '</h3>';
+          d[1].forEach(function (t, j) { var id = 'd' + i + '-' + j; h += '<label class="ck"><input type="checkbox" data-id="' + id + '"' + (plan[id] ? ' checked' : '') + '><span class="bx">' + ic('check') + '</span><span>' + esc(t) + '</span></label>'; });
+          h += '</div></article>';
+        });
+        return h + '</div><p class="closing">Busca de trabalho é colheita: vem de semear com constância, <span class="serif grad">não de um único dia bom.</span></p>';
+      },
+      init: function () {
+        var plan = OP.get('plan', {});
+        function upd() { var ins = $$('#tl input'), n = ins.filter(function (x) { return x.checked; }).length; $('#pc').textContent = n + ' de ' + ins.length; $('#pb').style.width = pct(n, ins.length) + '%'; $$('#tl .day').forEach(function (d) { d.classList.toggle('done', $$('input', d).every(function (x) { return x.checked; })); }); }
+        $('#tl').addEventListener('change', function (e) { plan[e.target.dataset.id] = e.target.checked; OP.set('plan', plan); upd(); var d = e.target.closest('.day'); if (e.target.checked && $$('input', d).every(function (x) { return x.checked; })) toast('Dia concluído!'); });
+        upd();
+      },
+    },
+    contatos: {
+      html: function () {
+        return '<p class="lead">Registre cada estabelecimento e atualize o status a cada passo. O placar se calcula sozinho.</p><div class="score">' + ['Contatos feitos', 'Visitas', 'Respostas', 'Entrevistas'].map(function (t, i) { return '<div class="card"><span>' + t + '</span><b class="sc sc--' + ['bl', 'vi', 'or', 'te'][i] + '" id="s' + i + '">0</b></div>'; }).join('') + '</div>' +
+          '<div class="row__h"><span>Estabelecimento</span><span>Tipo</span><span>Contato</span><span>1º contato</span><span>Status</span><span>Próximo passo</span><span></span></div><div class="rows" id="rows"></div><div class="radd"><button class="btn btn--or btn--sm" type="button" id="radd">' + ic('plus') + ' Adicionar contato</button><span class="note">Salvo automaticamente neste aparelho. A primeira linha é um exemplo; apague quando quiser.</span></div>';
+      },
+      init: function () {
+        var rows = OP.get('rows', null);
+        if (!rows) rows = [{ ex: 1, nome: 'Ex.: Clínica Vida', tipo: 'Clínica', contato: '(61) 9 0000-0000', data: '14/10', status: 'Visitado', prox: 'Ligar dia 18, falar com Joana' }, { nome: '', tipo: '', contato: '', data: '', status: 'A contatar', prox: '' }, { nome: '', tipo: '', contato: '', data: '', status: 'A contatar', prox: '' }];
+        var ST = D.status;
+        function save() { OP.set('rows', rows); score(); }
+        function score() {
+          var real = rows.filter(function (r) { return !r.ex && String(r.nome || '').trim(); });
+          var c = function (arr) { return real.filter(function (r) { return arr.indexOf(r.status) > -1; }).length; };
+          $('#s0').textContent = c(ST.slice(1)); $('#s1').textContent = c(['Visitado', 'Respondeu', 'Entrevista']); $('#s2').textContent = c(['Respondeu', 'Entrevista']); $('#s3').textContent = c(['Entrevista']);
+        }
+        function draw() {
+          var box = $('#rows'); box.innerHTML = '';
+          rows.forEach(function (r, i) {
+            var el = document.createElement('div'); el.className = 'card row' + (r.ex ? ' ex' : '');
+            var f = function (k, lab, ph) { return '<input class="in r-' + k + '" data-k="' + k + '" aria-label="' + lab + '" placeholder="' + ph + '" value="' + esc(r[k] || '') + '">'; };
+            el.innerHTML = f('nome', 'Estabelecimento', 'Estabelecimento') + f('tipo', 'Tipo', 'Tipo') + f('contato', 'Contato', 'Telefone ou @') + f('data', '1º contato', 'dd/mm') +
+              '<select class="in" data-k="status" aria-label="Status">' + ST.map(function (s) { return '<option' + (s === r.status ? ' selected' : '') + '>' + s + '</option>'; }).join('') + '</select>' + f('prox', 'Próximo passo', 'Próximo passo') +
+              '<button class="del" type="button" aria-label="Remover contato">' + ic('x') + '</button>';
+            el.addEventListener('input', function (e) { var k = e.target.dataset.k; if (!k) return; r[k] = e.target.value; if (r.ex) { delete r.ex; el.classList.remove('ex'); } save(); });
+            el.addEventListener('change', function (e) { if (e.target.dataset.k === 'status') { r.status = e.target.value; save(); } });
+            $('.del', el).addEventListener('click', function () { rows.splice(i, 1); save(); draw(); });
+            box.appendChild(el);
+          });
+        }
+        $('#radd').addEventListener('click', function () { rows.push({ nome: '', tipo: '', contato: '', data: '', status: 'A contatar', prox: '' }); save(); draw(); var ins = $$('#rows .r-nome'); ins[ins.length - 1].focus(); });
+        draw(); score();
+      },
+    },
+    entrevista: {
+      html: function () {
+        var lv = OP.get('lv', {}), after = D.mensagens.filter(function (m) { return m.k === 'Depois da entrevista'; })[0];
+        return '<div class="g2"><article class="card box"><span class="sq sq--vi">' + ilus('maleta') + '</span><h3>O que levar</h3><div id="lv" class="lv">' + D.levar.map(function (t, i) { return '<label class="ck"><input type="checkbox" data-k="l' + i + '"' + (lv['l' + i] ? ' checked' : '') + '><span class="bx">' + ic('check') + '</span><span>' + esc(t) + '</span></label>'; }).join('') + '</div></article>' +
+          '<article class="card box"><span class="sq sq--or">' + ilus('pessoa') + '</span><h3>Como se apresentar</h3><ul class="arrows">' + D.apresentar.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></article></div>' +
+          '<h3 class="subh">Perguntas comuns e como pensar a resposta</h3><div class="qa">' + D.perguntas.map(function (q, i) { return '<details' + (i === 0 ? ' open' : '') + '><summary>' + esc(q[0]) + ic('plus') + '</summary><p>' + esc(q[1]) + '</p></details>'; }).join('') + '</div>' +
+          '<div class="g2"><article class="card box"><h3>Perguntas que você pode fazer</h3><ul class="arrows">' + D.vocePergunta.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></article>' + (after ? msgCard(after, 7, 'Mensagem 7 do kit.') : '') + '</div>';
+      },
+      init: function () { var lv = OP.get('lv', {}); $('#lv').addEventListener('change', function (e) { lv[e.target.dataset.k] = e.target.checked; OP.set('lv', lv); }); bindCopy(); },
+    },
+    perfil: {
+      html: function () {
+        return '<div class="g2 pg"><section><p class="lead">Recrutadores olham seu WhatsApp, LinkedIn e Instagram antes de responder. Ajuste estes pontos hoje.</p><article class="card box"><ul class="arrows">' + D.perfil.map(function (x) { return '<li><b>' + esc(x.t) + ':</b> ' + esc(x.d) + '</li>'; }).join('') + '</ul></article></section>' +
+          '<section><h2 class="disp h2">Quem busca trabalho <span class="serif grad">é alvo fácil.</span></h2><article class="card box scam"><p><b>Não avance quando a proposta:</b></p><ul class="xs">' + D.golpes.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul><p class="note">Na dúvida, pesquise a empresa no Google e no Reclame Aqui, e confirme o endereço no Maps.</p></article></section></div>';
+      },
+    },
+    proximo: {
+      html: function () {
+        return '<section class="fin"><p>Capacitação contínua é o que faz você ser lembrado na hora de uma vaga, e formação regulamentada é o que permite atuar com procedimentos.</p></section>' +
+          '<div class="g2"><article class="card box"><span class="sq sq--vi">' + ilus('epi') + '</span><h3>Trilha A</h3><p>Mantenha o registro em dia e siga se atualizando. É o que diferencia quem é chamado primeiro.</p></article><article class="card box"><span class="sq sq--or">' + ilus('capelo') + '</span><h3>Trilhas B e C</h3><p>O caminho é uma formação técnica ou superior, como o <b>Técnico em Enfermagem</b>. Fale com a equipe da TEC Mais para conhecer turmas, duração e formas de pagamento.</p><a class="btn btn--or btn--sm" style="margin-top:16px" target="_blank" rel="noopener" href="https://wa.me/' + C.whatsapp + '?text=' + encodeURIComponent('Olá! Sou aluno(a) da TEC Mais Academy e quero saber sobre o Técnico em Enfermagem.') + '">Falar com a TEC Mais</a></article></div>' +
+          '<div class="links" style="justify-content:center">' + D.conselhos.map(function (c) { return '<a class="btn btn--gh btn--sm" href="' + c.u + '" target="_blank" rel="noopener">' + esc(c.t) + ' ' + ic('external') + '</a>'; }).join('') + '</div>';
+      },
+    },
   };
 
-  /* ---------- aulas que mostram um pedaço das páginas originais (academy-src/paginas) ---------- */
-  var PAG = window.TMA_PAGINAS || {};
-  // roda DENTRO do iframe: mostra só as seções da aula, informa a altura e repassa links e avisos
-  function frameScript(show) {
-    var keep = [];
-    show.forEach(function (s) { var e = document.querySelector(s); if (e) keep.push(e); });
-    Array.prototype.forEach.call(document.body.children, function (el) {
-      if (/^(SCRIPT|STYLE|TEMPLATE)$/.test(el.tagName) || el.id === 'toast') return;
-      if (keep.indexOf(el) < 0) el.style.display = 'none';
-    });
-    function h() { var b = document.body, cs = getComputedStyle(b); parent.postMessage({ tma: 'h', h: Math.ceil(b.getBoundingClientRect().height + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom)) }, '*'); }
-    try { new ResizeObserver(h).observe(document.body); } catch (e) {}
-    addEventListener('load', h); h();
-    document.addEventListener('click', function (e) {
-      var a = e.target.closest && e.target.closest('a[href]'); if (!a) return;
-      var href = a.getAttribute('href');
-      if (/^https?:/i.test(href)) { a.target = '_blank'; a.rel = 'noopener'; return; }
-      if (/^(mailto|tel):/i.test(href)) return;
-      e.preventDefault();
-      if (href.charAt(0) === '#') { var t = document.querySelector(href); if (t && t.offsetParent !== null) { parent.postMessage({ tma: 'y', y: t.getBoundingClientRect().top }, '*'); return; } }
-      parent.postMessage({ tma: 'go', href: href }, '*');
-    }, true);
-    var t = document.getElementById('toast');
-    if (t) new MutationObserver(function () { if (t.classList.contains('on')) parent.postMessage({ tma: 'toast', m: t.textContent }, '*'); }).observe(t, { attributes: true, attributeFilter: ['class'] });
+  function msgCard(m, n, note) {
+    var f = fill(m.b);
+    return '<article class="card msg"><header><div><span class="k">' + esc(m.c) + '</span><h3>' + n + ' · ' + esc(m.k) + '</h3></div>' + (m.t && m.t !== 'all' ? '<span class="chip ' + (m.t === 'A' ? 'chip--bl' : 'chip--or') + '">' + (m.t === 'A' ? 'Trilha A' : 'Trilhas B e C') + '</span>' : '') + '</header><div class="body">' + f.html + '</div><footer><small>' + esc(note || m.n || '') + '</small><button class="btn btn--gh btn--sm" type="button" data-cp="' + D.mensagens.indexOf(m) + '">' + ic('copy') + ' Copiar</button></footer></article>';
   }
-  function frameDoc(a) {
-    var src = PAG[a.mod.pagina] || '<p>Conteúdo indisponível.</p>';
-    var head = '<base href="/tec-mais/academy/"><style>.toast{display:none!important}</style>';
-    var tail = '<script>(' + frameScript.toString() + ')(' + JSON.stringify(a.secoes) + ')<\/script>';
-    return src.replace(/<head([^>]*)>/i, function (m) { return m + head; }).replace(/<\/body>/i, function () { return tail + '</body>'; });
+  function bindCopy() { $$('[data-cp]').forEach(function (b) { b.addEventListener('click', function () { copy(fill(D.mensagens[+b.dataset.cp].b).plain, b); }); }); }
+
+  /* currículo e mensagens: mesma lógica do kit original */
+  function objText() {
+    var o = v('obj');
+    if (trilha === 'A' || (!trilha && v('reg'))) return 'Atuar como ' + (o || '[função]') + ', com foco em segurança do paciente e atendimento humanizado.';
+    return 'Atuar em ' + (o || '[recepção / apoio]') + ' de clínica ou serviço de saúde, contribuindo com atendimento organizado e humanizado.';
   }
-  var curFrame = null;
-  function mountFrame(a) {
-    var f = document.createElement('iframe');
-    f.className = 'sheet__f'; f.title = a.titulo; f.style.height = '70vh';
-    f.srcdoc = frameDoc(a);
-    $('#sheet').appendChild(f); curFrame = f;
+  function cursoText() { return 'Administração de Medicamentos Injetáveis (curso livre) – TEC Mais Academy – ' + (v('mes') || '[mês/ano]') + '\n· Cálculo de medicamentos, reconstituição e diluição\n· Biossegurança, preparo e descarte de materiais\n· Cuidados antes, durante e após a administração'; }
+  function cvPlain() {
+    var L = [(v('nome') || '[SEU NOME COMPLETO]').toUpperCase(), [v('cidade') || '[Cidade – UF]', v('whats') || '[WhatsApp]', v('email') || '[e-mail]'].join(' · '), '', 'OBJETIVO', objText()];
+    if (v('reg')) L.push('', 'REGISTRO PROFISSIONAL', v('reg'));
+    L.push('', 'FORMAÇÃO', v('form') || '[Formação]', '', 'CURSOS COMPLEMENTARES', cursoText(), '', 'EXPERIÊNCIA', v('exp') || '[Experiência]', '', 'COMPETÊNCIAS', v('comp') || '[Competências]', '', 'DISPONIBILIDADE', v('disp') || '[Disponibilidade]');
+    return L.join('\n');
   }
-  window.addEventListener('message', function (e) {
-    if (!curFrame || e.source !== curFrame.contentWindow) return;
-    var d = e.data || {};
-    if (d.tma === 'h' && d.h > 50) { curFrame.style.height = d.h + 'px'; $('#sheet').classList.add('on'); }
-    else if (d.tma === 'toast') toast(d.m);
-    else if (d.tma === 'y') scrollTo({ top: curFrame.getBoundingClientRect().top + scrollY + d.y - 80, behavior: 'smooth' });
-    else if (d.tma === 'go') {
-      var k = d.href, id = TMA_LINKS[k];
-      if (id === undefined && k.indexOf('#') > 0) id = TMA_LINKS[k.slice(k.indexOf('#'))];
-      if (id !== undefined) location.hash = id ? '#/aula/' + id : '#/';
-    }
-  });
+  function fill(body) {
+    var c = v('cidade'), map = { nome: v('nome').split(' ').slice(0, 2).join(' '), cidade: c ? c.split(/[–-]/)[0].trim() : '', whats: v('whats'), funcao: v('obj') ? v('obj').split(' em ')[0] : '' };
+    var ph = { nome: '[Nome]', cidade: '[cidade]', whats: '[WhatsApp]', funcao: '[técnico(a) de enfermagem]' };
+    var plain = body.replace(/\{(\w+)\}/g, function (_, k) { return map[k] || ph[k]; });
+    var html = esc(body).replace(/\{(\w+)\}/g, function (_, k) { return map[k] ? '<span class="fill">' + esc(map[k]) + '</span>' : '<mark>' + ph[k] + '</mark>'; }).replace(/\[([^\]]+)\]/g, '<mark>[$1]</mark>');
+    return { plain: plain, html: html };
+  }
 
   /* ---------- PDF criptografado (mesma senha do portal) ---------- */
   var pdfUrl = null;
@@ -284,7 +488,7 @@
     page.innerHTML = r.name === 'aula' ? pageAula(r.lesson) : r.name === 'modulos' ? pageModulos() : r.name === 'ferramentas' ? pageFerramentas() : pageHome();
     document.title = (r.lesson ? r.lesson.titulo : TITLES[r.name]) + ' · TEC Mais Academy';
     if (r.lesson) {
-      if (r.lesson.secoes) mountFrame(r.lesson); else { var R0 = R[r.lesson.tipo]; if (R0 && R0.init) R0.init(r.lesson); }
+      var R0 = R[r.lesson.tipo]; if (R0 && R0.init) R0.init(r.lesson);
       $('#donebtn').addEventListener('click', function () { var on = !isDone(r.lesson.id); setDone(r.lesson.id, on); var y = scrollY; route(); scrollTo(0, y); });
     }
     if (key !== lastKey) { scrollTo(0, 0); var h1 = $('h1', page); if (h1 && lastKey) { h1.setAttribute('tabindex', '-1'); h1.focus({ preventScroll: true }); } }
