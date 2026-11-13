@@ -43,7 +43,7 @@ O site lê o Supabase **na publicação**. Com o webhook abaixo configurado, cad
    - Supabase → Database → **Webhooks** → Create: tabelas `unidades`, `segmentos`, `depoimentos`, `perguntas`; eventos Insert/Update/Delete; tipo HTTP Request, método POST, URL = a do Deploy Hook. Um webhook por tabela.
 
 Segurança: a chave pública só consegue **ler** o que está publicado (regras RLS no SQL). Editar, só pelo painel do Supabase.
-Se o Supabase estiver fora do ar na hora da publicação, o build falha e a Vercel mantém a versão anterior no ar.
+Se o Supabase estiver fora do ar (ou o projeto estiver pausado), o build tenta 3 vezes e publica com o conteúdo de `src/data/site.ts`; procure "Supabase inacessível" no log do build.
 
 ### No código (muda raramente)
 

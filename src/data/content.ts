@@ -3,8 +3,8 @@
  *
  * - Sem as variáveis do Supabase → usa o conteúdo local de `site.ts`.
  * - Tabelas ainda não criadas → usa o conteúdo local e avisa no log.
- * - Supabase fora do ar → o build FALHA de propósito; a Vercel mantém
- *   a versão anterior no ar em vez de publicar um site vazio.
+ * - Supabase fora do ar (ou projeto pausado) → tenta 3 vezes e, se não der,
+ *   publica com o conteúdo local e avisa no log (o site nunca sai vazio).
  */
 import { createClient } from '@supabase/supabase-js';
 import * as local from './site';
@@ -33,7 +33,22 @@ type Row = Record<string, any>;
 
 const MISSING_TABLE = new Set(['PGRST205', '42P01']);
 
+const LOCAL = () => ({ units: local.units, segments: local.segments, testimonials: local.testimonials, faqs: local.faqs, gallery: local.gallery, source: 'local' });
+
 async function load() {
+  for (let i = 1; i <= 3; i++) {
+    try {
+      return await loadSupabase();
+    } catch (e) {
+      console.warn(`[conteúdo] Tentativa ${i}/3 falhou: ${(e as Error).message}`);
+      if (i < 3) await new Promise((r) => setTimeout(r, 1500 * i));
+    }
+  }
+  console.warn('[conteúdo] ⚠ Supabase inacessível (projeto pausado? URL errada?) — publicando com o conteúdo de src/data/site.ts');
+  return LOCAL();
+}
+
+async function loadSupabase() {
   if (!url || !key) {
     console.warn('[conteúdo] Supabase não configurado — usando src/data/site.ts');
     return { units: local.units, segments: local.segments, testimonials: local.testimonials, faqs: local.faqs, gallery: local.gallery, source: 'local' };
@@ -41,7 +56,7 @@ async function load() {
 
   const db = createClient(url, key, { auth: { persistSession: false } });
   const get = async (table: string) => {
-    const { data, error } = await db.from(table).select('*').order('ordem');
+    const { data, error } = await db.from(table).select('*').order('ordem').abortSignal(AbortSignal.timeout(15000));
     if (error) {
       if (MISSING_TABLE.has(error.code)) return null;
       throw new Error(`[conteúdo] Falha ao ler "${table}" do Supabase: ${error.message}`);
