@@ -1,83 +1,90 @@
-// Portal do Aluno TEC Mais (TEC Mais Academy): área de membros criptografada no build.
-// Fonte: academy-src/app (shell.html + app.css + conteudo.js + app.js) e academy-src/guia-calculos.pdf.
-// Senha: variável ACADEMY_PASSWORD (Vercel → Settings → Environment Variables).
-// No ar vão só a tela de senha + o app e o PDF cifrados (AES-256-GCM, chave PBKDF2-SHA-256).
-// Sem a variável, publica apenas um aviso de "portal indisponível" (nenhum conteúdo vai ao ar).
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+// TEC Mais Academy (Portal do Aluno) · build da área de membros
+//
+// - O app (academy-src/app) vai ao ar aberto: só tem a "casca", o catálogo e a tela de login.
+// - O conteúdo de cada módulo (academy-src/conteudo/<módulo>.json) e o PDF são CIFRADOS (AES-256-GCM)
+//   com a chave do módulo. As chaves ficam na tabela academy_chaves do Supabase; o aluno logado só
+//   recebe as chaves dos módulos liberados para o e-mail dele (academy_acessos + RLS).
+// - Chaves no build: lidas do Supabase com a chave secreta (SUPABASE_SERVICE_ROLE_KEY ou SUPABASE_SECRET_KEY).
+//   Para testes locais: ACADEMY_KEYS_JSON='{"calculo":"<base64>", ...}'.
+// - Fotos: itens com "foto": "<busca>" ganham imagem. Primeiro procura uma foto própria em
+//   academy-src/img/<slug>.(webp|jpg|png); se não houver, busca no Openverse (banco aberto de imagens
+//   Creative Commons, código no GitHub), só com licenças que permitem uso comercial, baixa e publica
+//   no próprio site com o crédito do autor. Sem foto, fica a ilustração.
+import { readFile, writeFile, mkdir, readdir, copyFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { webcrypto as crypto } from 'node:crypto';
 import path from 'node:path';
 
-const ITER = 250000;
-// Base fixa: na Vercel o portal abre em /tec-mais/academy (sem barra final) e links relativos quebravam.
 const BASE = '/tec-mais/academy/';
-const b64 = (u8) => Buffer.from(u8).toString('base64');
-// Endereços do portal antigo → aula equivalente no app novo
 const REDIRECTS = { 'guia-visual.html': 'materiais', 'oportunidades.html': 'antes', 'guia-calculos.html': 'guia' };
+const LICENSES = 'cc0,pdm,by,by-sa';
+const LICENSE_NAME = { cc0: 'CC0', pdm: 'Domínio público', by: 'CC BY', 'by-sa': 'CC BY-SA' };
+const env = (...k) => k.map((x) => process.env[x]).find(Boolean);
+const slug = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-async function encrypt(bytes, password, salt) {
-  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
-  const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: ITER, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt']);
+async function encrypt(bytes, keyB64) {
+  const key = await crypto.subtle.importKey('raw', Buffer.from(keyB64, 'base64'), 'AES-GCM', false, ['encrypt']);
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, bytes));
-  return { iv: b64(iv), ct };
+  return Buffer.concat([Buffer.from(iv), Buffer.from(ct)]);
 }
 
-function gate({ payload, salt, iv, locked }) {
-  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<base href="${BASE}"><meta name="robots" content="noindex, nofollow, noarchive"><meta name="theme-color" content="#00003D"><title>Entrar · TEC Mais Academy</title>
-<link rel="stylesheet" href="fonts/fonts.css">
-<style>
-*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px 16px;font-family:Geist,system-ui,sans-serif;color:#0D0D45;
-background:radial-gradient(55% 60% at 100% 0%,rgba(240,96,34,.5),transparent 65%),radial-gradient(45% 55% at 0% 100%,rgba(70,90,255,.4),transparent 70%),linear-gradient(135deg,#1A1A8C,#000066 55%,#00003D)}
-body::before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(70% 70% at 50% 40%,#000,transparent);pointer-events:none}
-.w{position:relative;width:min(430px,100%)}
-.c{background:#fff;border-radius:28px;padding:34px 30px 30px;box-shadow:0 50px 100px -40px rgba(0,0,30,.8);border-top:5px solid #F06022}
-.lg{width:170px;height:auto;display:block;margin-bottom:22px}
-.k{font-family:"Geist Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#B8440F}
-h1{font-family:"Bricolage Grotesque",Geist,sans-serif;font-weight:800;letter-spacing:-.035em;font-size:32px;line-height:1.02;margin:10px 0 10px}
-h1 i{font-family:"Instrument Serif",serif;font-weight:400;color:#F06022;letter-spacing:-.01em}
-p{color:#4A4F78;margin:0 0 22px;line-height:1.5}
-label{display:block;font-family:"Geist Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#6A6F93;margin-bottom:6px}
-.f{position:relative}
-input{width:100%;height:54px;border-radius:14px;border:1px solid rgba(26,26,140,.2);padding:0 52px 0 16px;font:inherit;font-size:16px;background:#F4F5FB;color:#0D0D45}
-input:focus{outline:none;border-color:#1A1A8C;box-shadow:0 0 0 3px rgba(26,26,140,.15);background:#fff}
-.eye{position:absolute;right:6px;top:7px;width:40px;height:40px;border:0;background:none;border-radius:10px;cursor:pointer;color:#6A6F93;display:grid;place-items:center}
-.eye svg,.b svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.b{margin-top:16px;width:100%;height:54px;border:0;border-radius:999px;font:inherit;font-weight:700;font-size:16px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(95deg,#E0551A,#F06022 50%,#FF8A4C);box-shadow:0 14px 30px -12px rgba(240,96,34,.8)}
-.b[disabled]{opacity:.7;cursor:progress}
-.e{color:#C2213A;font-size:14px;min-height:20px;margin-top:12px;text-align:center}
-.s{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:18px;color:rgba(255,255,255,.7);font-size:13px}
-.s svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2}
-.h{margin-top:14px;font-size:13.5px;color:#6A6F93;text-align:center}.h a{color:#1A1A8C;font-weight:600}
-:focus-visible{outline:3px solid #F06022;outline-offset:3px}
-</style></head><body><div class="w">
-<form class="c" id="f"><img class="lg" src="/img/parceiros/tec-mais.webp" width="720" height="203" alt="TEC Mais Cursos Técnicos"><span class="k">Academy · Portal do Aluno</span>
-${locked ? '<h1>Portal <i>indisponível</i></h1><p>O portal está temporariamente fechado. Fale com a secretaria da TEC Mais.</p></form></div>' : `<h1>Bem-vindo(a) <i>de volta.</i></h1><p>Digite a senha que você recebeu da TEC Mais para acessar seu kit.</p>
-<label for="pw">Senha de acesso</label><div class="f"><input id="pw" type="password" autocomplete="current-password" required autofocus><button class="eye" type="button" id="ey" aria-label="Mostrar senha"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
-<button class="b" type="submit" id="go">Entrar no portal<svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button><div class="e" id="e" role="alert"></div>
-<div class="h">Esqueceu a senha? <a href="https://wa.me/5561998200367?text=${encodeURIComponent('Olá! Sou aluno(a) da TEC Mais e preciso da senha do Portal do Aluno.')}" target="_blank" rel="noopener">Fale com a TEC Mais</a></div></form>
-<div class="s"><svg viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>Conteúdo exclusivo e criptografado</div></div>
-<script>
-(function(){
-var S="${salt}",IV="${iv}",P="${payload}";
-function u8(b){return Uint8Array.from(atob(b),function(c){return c.charCodeAt(0)})}
-async function open(pw){
-  var base=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveKey"]);
-  var key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:u8(S),iterations:${ITER},hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["decrypt"]);
-  var out=await crypto.subtle.decrypt({name:"AES-GCM",iv:u8(IV)},key,u8(P));
-  try{sessionStorage.setItem("tma-pw",pw)}catch(e){}
-  window.__tmaPw=pw;
-  var html=new TextDecoder().decode(out);document.open();document.write(html);document.close();
+async function loadKeys(sbUrl, logger) {
+  if (process.env.ACADEMY_KEYS_JSON) return JSON.parse(process.env.ACADEMY_KEYS_JSON);
+  const secret = env('SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_SECRET_KEY');
+  if (!sbUrl || !secret) { logger.warn('Sem SUPABASE_SERVICE_ROLE_KEY: módulos publicados sem conteúdo (aparecem "em preparação").'); return {}; }
+  try {
+    const r = await fetch(`${sbUrl}/rest/v1/academy_chaves?select=modulo,chave`, { headers: { apikey: secret, Authorization: `Bearer ${secret}` }, signal: AbortSignal.timeout(15000) });
+    if (!r.ok) throw new Error(`HTTP ${r.status} ${await r.text()}`);
+    return Object.fromEntries((await r.json()).map((x) => [x.modulo, x.chave]));
+  } catch (e) {
+    logger.warn(`Não consegui ler as chaves do Supabase (${e.message}). Rode supabase/migrations/0003_academy.sql.`);
+    return {};
+  }
 }
-var f=document.getElementById("f"),e=document.getElementById("e"),go=document.getElementById("go"),pw=document.getElementById("pw");
-document.getElementById("ey").addEventListener("click",function(){var s=pw.type==="password";pw.type=s?"text":"password";this.setAttribute("aria-label",s?"Ocultar senha":"Mostrar senha")});
-f.addEventListener("submit",function(ev){ev.preventDefault();e.textContent="";go.disabled=true;go.firstChild.textContent="Abrindo…";open(pw.value.trim()).catch(function(){go.disabled=false;go.firstChild.textContent="Entrar no portal";e.textContent="Senha incorreta. Confira e tente de novo.";pw.select()})});
-var saved=null;try{saved=sessionStorage.getItem("tma-pw")}catch(x){}
-if(saved)open(saved).catch(function(){try{sessionStorage.removeItem("tma-pw")}catch(x){}});
-})();
-</script>`}
-</body></html>`;
+
+/** Resolve { foto: "busca" } → { img: { src, credito, link } } (foto própria > Openverse > nada). */
+async function makePhotos(out, src, logger) {
+  const dir = path.join(out, 'img');
+  await mkdir(dir, { recursive: true });
+  const own = existsSync(path.join(src, 'img')) ? await readdir(path.join(src, 'img')) : [];
+  const cache = new Map();
+  let fromBank = 0, fromOwn = 0, missing = 0;
+  async function resolve(q) {
+    if (cache.has(q)) return cache.get(q);
+    const s = slug(q);
+    const mine = own.find((f) => f.replace(/\.(webp|jpe?g|png)$/i, '') === s);
+    let res = null;
+    if (mine) {
+      await copyFile(path.join(src, 'img', mine), path.join(dir, mine));
+      res = { src: `img/${mine}`, credito: 'Foto: TEC Mais' }; fromOwn++;
+    } else {
+      try {
+        const r = await fetch(`https://api.openverse.org/v1/images/?q=${encodeURIComponent(q)}&license=${LICENSES}&page_size=5&mature=false`, { headers: { 'User-Agent': 'TecMaisAcademy/1.0 (site escolar)' }, signal: AbortSignal.timeout(12000) });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const hit = (await r.json()).results?.find((x) => x.id && x.license);
+        if (hit) {
+          const t = await fetch(`https://api.openverse.org/v1/images/${hit.id}/thumb/`, { signal: AbortSignal.timeout(15000) });
+          if (!t.ok) throw new Error(`thumb HTTP ${t.status}`);
+          const ext = (t.headers.get('content-type') || '').includes('png') ? 'png' : (t.headers.get('content-type') || '').includes('webp') ? 'webp' : 'jpg';
+          await writeFile(path.join(dir, `${s}.${ext}`), Buffer.from(await t.arrayBuffer()));
+          res = { src: `img/${s}.${ext}`, credito: `Foto: ${hit.creator || 'autor desconhecido'} · ${LICENSE_NAME[hit.license] || hit.license.toUpperCase()} · via Openverse`, link: hit.foreign_landing_url || hit.url };
+          fromBank++;
+        }
+      } catch (e) { logger.warn(`Foto "${q}": ${e.message}`); }
+      if (!res) missing++;
+    }
+    cache.set(q, res);
+    return res;
+  }
+  async function walk(o) {
+    if (Array.isArray(o)) { for (const x of o) await walk(x); return; }
+    if (!o || typeof o !== 'object') return;
+    if (typeof o.foto === 'string') { const img = await resolve(o.foto); if (img) o.img = img; delete o.foto; }
+    for (const v of Object.values(o)) await walk(v);
+  }
+  return { walk, report: () => `${fromOwn} próprias, ${fromBank} do Openverse, ${missing} sem foto (fica a ilustração)` };
 }
 
 const redirect = (lesson) => `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="robots" content="noindex, nofollow">
@@ -89,32 +96,41 @@ export default function academy() {
     hooks: {
       'astro:build:done': async ({ dir, logger }) => {
         const out = path.join(fileURLToPath(dir), 'tec-mais', 'academy');
-        await mkdir(out, { recursive: true });
+        await mkdir(path.join(out, 'm'), { recursive: true });
         const src = path.resolve('academy-src');
         for (const [file, lesson] of Object.entries(REDIRECTS)) await writeFile(path.join(out, file), redirect(lesson));
-        const pw = (process.env.ACADEMY_PASSWORD || '').trim();
-        if (!pw) {
-          await writeFile(path.join(out, 'index.html'), gate({ locked: true }));
-          logger.warn('ACADEMY_PASSWORD não definida: portal publicado como indisponível.');
-          return;
-        }
-        const salt = crypto.getRandomValues(new Uint8Array(16));
-        const pdf = await encrypt(await readFile(path.join(src, 'guia-calculos.pdf')), pw, salt);
-        await writeFile(path.join(out, 'guia-calculos.bin'), pdf.ct);
 
+        const sbUrl = env('NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_URL', 'PUBLIC_SUPABASE_URL');
+        const sbKey = env('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY', 'NEXT_PUBLIC_SUPABASE_ANON_KEY', 'SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_ANON_KEY');
+        const keys = await loadKeys(sbUrl, logger);
+        const photos = await makePhotos(out, src, logger);
+
+        // conteúdo de cada módulo → m/<módulo>.bin
+        const published = [];
+        for (const f of (await readdir(path.join(src, 'conteudo'))).filter((x) => x.endsWith('.json'))) {
+          const mod = f.replace(/\.json$/, '');
+          if (!keys[mod]) { logger.warn(`Módulo "${mod}" sem chave: não publicado.`); continue; }
+          const data = JSON.parse(await readFile(path.join(src, 'conteudo', f), 'utf8'));
+          await photos.walk(data);
+          await writeFile(path.join(out, 'm', `${mod}.bin`), await encrypt(Buffer.from(JSON.stringify(data)), keys[mod]));
+          published.push(mod);
+        }
+        if (keys.calculo) await writeFile(path.join(out, 'm', 'guia-calculos.bin'), await encrypt(await readFile(path.join(src, 'guia-calculos.pdf')), keys.calculo));
+
+        // app aberto (casca + catálogo + login)
         const read = (f) => readFile(path.join(src, 'app', f), 'utf8');
         const safe = (js) => js.replaceAll('</script', '<\\/script');
-        const cfg = `window.TMA_CFG=${JSON.stringify({ salt: b64(salt), pdfIv: pdf.iv, iter: ITER })};`;
-        const [shell, css, conteudo, app] = await Promise.all(['shell.html', 'app.css', 'conteudo.js', 'app.js'].map(read));
+        const [shell, css, catalogo, app] = await Promise.all(['shell.html', 'app.css', 'catalogo.js', 'app.js'].map(read));
+        const cfg = `window.TMA_CFG=${JSON.stringify({ sb: { url: sbUrl || '', key: sbKey || '' }, mods: published })};`;
         const page = shell
           .replace('<head>', `<head><base href="${BASE}">`)
           .replace('/*__CSS__*/', () => css)
           .replace('/*__CFG__*/', () => cfg)
-          .replace('/*__CONTEUDO__*/', () => safe(conteudo))
+          .replace('/*__CONTEUDO__*/', () => safe(catalogo))
           .replace('/*__APP__*/', () => safe(app));
-        const enc = await encrypt(new TextEncoder().encode(page), pw, salt);
-        await writeFile(path.join(out, 'index.html'), gate({ payload: b64(enc.ct), salt: b64(salt), iv: enc.iv }));
-        logger.info(`Portal do Aluno criptografado: app (${Math.round(page.length / 1024)} KB) + PDF.`);
+        await writeFile(path.join(out, 'index.html'), page);
+        logger.info(`Portal do Aluno: ${published.length} módulos cifrados (${published.join(', ') || 'nenhum'}). Fotos: ${photos.report()}.`);
+        if (!sbUrl || !sbKey) logger.warn('Sem NEXT_PUBLIC_SUPABASE_URL/PUBLISHABLE_KEY: a tela de login fica desativada.');
       },
     },
   };

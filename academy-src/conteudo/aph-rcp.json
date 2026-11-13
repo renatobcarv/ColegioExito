@@ -1,0 +1,16 @@
+{
+ "rcpReconhecer": [
+  { "t": "Não responde", "d": "Chame em voz alta e toque nos ombros." },
+  { "t": "Não respira normalmente", "d": "Respiração ausente ou só \"suspiros\" (gasping)." },
+  { "t": "Ligue 192", "d": "Peça a alguém para ligar e buscar um DEA, se houver." },
+  { "t": "Comece a RCP", "d": "Compressões fortes e rápidas no centro do tórax." }
+ ],
+ "rcpFases": [
+  { "id": "bebe", "t": "Bebê", "faixa": "menos de 1 ano", "il": "bebe", "c": "pink", "como": "2 dedos ou 2 polegares, no centro do tórax", "prof": "cerca de 4 cm (1/3 do tórax)", "ritmo": "100 a 120 por minuto", "rel": "30:2", "engasgo": "5 tapas nas costas + 5 compressões no tórax", "nota": "A aula mais importante para quem tem filho pequeno em casa.", "video": "6 a 8 min" },
+  { "id": "crianca", "t": "Criança", "faixa": "1 ano até a puberdade", "il": "crianca", "c": "orange", "como": "1 ou 2 mãos", "prof": "cerca de 5 cm (1/3 do tórax)", "ritmo": "100 a 120 por minuto", "rel": "30:2", "engasgo": "Manobra de Heimlich", "nota": "Atenção a brinquedos pequenos e alimentos: as causas mais comuns de engasgo.", "video": "6 a 8 min" },
+  { "id": "adulto", "t": "Adulto", "faixa": "adolescente e adulto", "il": "adulto", "c": "blue", "como": "2 mãos sobrepostas", "prof": "5 a 6 cm", "ritmo": "100 a 120 por minuto", "rel": "30:2 ou só compressões", "engasgo": "Manobra de Heimlich", "nota": "Use o DEA assim que chegar: ligue e siga as instruções de voz.", "video": "6 a 8 min" },
+  { "id": "idoso", "t": "Idoso", "faixa": "pessoa idosa", "il": "idoso", "c": "teal", "como": "2 mãos sobrepostas", "prof": "5 a 6 cm (risco de fratura de costela: não pare por isso)", "ritmo": "100 a 120 por minuto", "rel": "30:2 ou só compressões", "engasgo": "Heimlich com cuidado; se não conseguir ficar em pé, deite a pessoa e comprima", "nota": "Quedas, medicamentos e fragilidade mudam o atendimento: não pare a RCP por medo de machucar.", "video": "6 a 8 min" }
+ ],
+ "rcpLinhas": [["como", "Como comprimir"], ["prof", "Profundidade"], ["ritmo", "Ritmo"], ["rel", "Relação (leigo, 1 socorrista)"], ["engasgo", "Engasgo"]],
+ "rcpBase": "Base: diretrizes da American Heart Association (AHA)"
+}

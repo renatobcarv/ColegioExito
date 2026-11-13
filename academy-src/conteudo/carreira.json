@@ -1,0 +1,425 @@
+{
+ "marquee": [
+  "Clínicas",
+  "Vacinação",
+  "Farmácias",
+  "Laboratórios",
+  "Home care",
+  "Consultórios",
+  "Hospitais e UPAs",
+  "Estética"
+ ],
+ "antes": [
+  {
+   "t": "É um curso livre",
+   "il": "casa",
+   "d": "Ele aprofunda seu conhecimento em cálculo, preparo e biossegurança, mas não habilita, sozinho, ninguém a aplicar medicamentos injetáveis."
+  },
+  {
+   "t": "Quem pode aplicar",
+   "il": "escudo",
+   "d": "Equipe de enfermagem (enfermeiro, técnico e auxiliar) com COREN ativo, e farmacêuticos com CRF, dentro das regras do seu conselho."
+  },
+  {
+   "t": "Por isso, existem trilhas",
+   "il": "relogio",
+   "d": "O tipo de oportunidade que você vai buscar depende de quem você já é profissionalmente. A próxima aula mostra as três trilhas."
+  }
+ ],
+ "trilhas": [
+  {
+   "id": "A",
+   "t": "Já habilitado",
+   "p": "Técnico, auxiliar ou enfermeiro com COREN ativo; farmacêutico com CRF.",
+   "b": "Vagas em clínicas, consultórios, home care, farmácias, laboratórios e vacinação.",
+   "c": "Reforça o currículo com atualização em técnica, cálculo e biossegurança."
+  },
+  {
+   "id": "B",
+   "t": "Em formação",
+   "p": "Estudante de Técnico em Enfermagem, Enfermagem ou Farmácia.",
+   "b": "Estágios, vagas de apoio (recepção, auxiliar administrativo) e contatos para quando se formar.",
+   "c": "Mostra iniciativa e adianta conteúdo da sua formação."
+  },
+  {
+   "id": "C",
+   "t": "Sem formação na área",
+   "p": "Fez o curso por interesse, cuidado familiar ou para conhecer a área.",
+   "b": "Funções de apoio em saúde e o próximo passo de formação.",
+   "c": "É o primeiro contato com a área, não uma autorização para aplicar."
+  }
+ ],
+ "lugares": [
+  {
+   "t": "Clínicas e policlínicas",
+   "a": "Técnico de enfermagem, sala de medicação",
+   "bc": "Recepção, apoio administrativo"
+  },
+  {
+   "t": "Clínicas de vacinação",
+   "a": "Aplicador habilitado",
+   "bc": "Atendimento, agendamento"
+  },
+  {
+   "t": "Farmácias e drogarias",
+   "a": "Farmacêutico; técnico conforme regras locais",
+   "bc": "Balconista, atendimento"
+  },
+  {
+   "t": "Laboratórios de análises",
+   "a": "Coleta, com a formação exigida",
+   "bc": "Recepção, cadastro"
+  },
+  {
+   "t": "Home care",
+   "a": "Técnico ou auxiliar de enfermagem",
+   "bc": "Cuidador, sem procedimentos invasivos"
+  },
+  {
+   "t": "Estética e dermatologia",
+   "a": "Equipe de enfermagem sob responsável técnico",
+   "bc": "Recepção, atendimento comercial"
+  },
+  {
+   "t": "Hospitais e UPAs",
+   "a": "Processos seletivos e concursos",
+   "bc": "Vagas administrativas e estágio"
+  }
+ ],
+ "canais": [
+  {
+   "t": "Google Maps",
+   "tag": "Maps",
+   "d": "Pesquise \"clínica\", \"vacinação\", \"laboratório\", \"home care\" + seu bairro. Anote nome, telefone e horário no controle.",
+   "i": "pin"
+  },
+  {
+   "t": "Instagram",
+   "tag": "Insta",
+   "d": "Mesmas palavras + cidade. Veja se a clínica está ativa e se publica vagas nos stories.",
+   "i": "phone"
+  },
+  {
+   "t": "Sites de vagas",
+   "tag": "Vagas",
+   "d": "Indeed, Catho, InfoJobs e LinkedIn Vagas, filtrando pela sua cidade.",
+   "i": "search"
+  },
+  {
+   "t": "LinkedIn",
+   "tag": "In",
+   "d": "Perfil completo com o curso; siga clínicas e hospitais da região.",
+   "i": "user"
+  },
+  {
+   "t": "Grupos locais",
+   "tag": "Grupos",
+   "d": "Vagas da cidade no WhatsApp e Facebook. Desconfie de vaga sem nome de empresa.",
+   "i": "chat"
+  },
+  {
+   "t": "Conhecidos da área",
+   "tag": "Rede",
+   "d": "Avise quem trabalha em saúde. Indicação ainda é o canal mais forte.",
+   "i": "users"
+  },
+  {
+   "t": "Seleções públicas",
+   "tag": "Edital",
+   "d": "Na Trilha A, acompanhe editais da secretaria de saúde do estado e do município.",
+   "i": "file"
+  }
+ ],
+ "cvExemplo": {
+  "nome": "Ana Paula Souza",
+  "cidade": "Valparaíso de Goiás – GO",
+  "whats": "(61) 9 0000-0000",
+  "email": "anapaula.souza@email.com",
+  "obj": "técnica de enfermagem em clínica ou serviço de vacinação",
+  "reg": "COREN-GO nº 000.000 – Técnica de Enfermagem",
+  "form": "Técnico em Enfermagem – Escola Exemplo – concluído em 2025\nEnsino médio – Colégio Estadual Exemplo – 2021",
+  "mes": "out/2026",
+  "exp": "Estágio supervisionado – UBS Exemplo – fev a jun/2025\n· Apoio à sala de vacinação e ao acolhimento de pacientes\nAtendente – Farmácia Exemplo – 2022 a 2024\n· Atendimento a cerca de 80 clientes por dia",
+  "comp": "Atendimento ao público · Organização · Atenção a detalhes · Trabalho em equipe",
+  "disp": "Manhã e tarde, de segunda a sábado · Início imediato"
+ },
+ "cvCampos": [
+  {
+   "k": "nome",
+   "l": "Nome completo",
+   "ph": "Ana Paula Souza"
+  },
+  {
+   "k": "cidade",
+   "l": "Cidade – UF",
+   "ph": "Valparaíso de Goiás – GO"
+  },
+  {
+   "k": "whats",
+   "l": "WhatsApp",
+   "ph": "(61) 9 0000-0000",
+   "type": "tel"
+  },
+  {
+   "k": "email",
+   "l": "E-mail",
+   "ph": "seunome@email.com",
+   "type": "email"
+  },
+  {
+   "k": "obj",
+   "l": "Função que você busca",
+   "ph": "técnica de enfermagem em clínica ou vacinação",
+   "h": "O objetivo é montado a partir disso e da sua trilha.",
+   "full": true
+  },
+  {
+   "k": "reg",
+   "l": "Registro profissional",
+   "ph": "COREN-GO nº 000.000 – Técnica de Enfermagem",
+   "h": "Deixe em branco se não tiver. Nunca coloque o curso aqui.",
+   "full": true
+  },
+  {
+   "k": "form",
+   "l": "Formação",
+   "ph": "Técnico em Enfermagem – Escola – 2025\nEnsino médio – Colégio – 2021",
+   "area": true,
+   "full": true
+  },
+  {
+   "k": "mes",
+   "l": "Mês/ano do curso na TEC Mais",
+   "ph": "out/2026"
+  },
+  {
+   "k": "exp",
+   "l": "Experiência",
+   "ph": "Atendente – Farmácia Exemplo – 2022 a 2024\n· Atendimento a cerca de 80 clientes por dia",
+   "h": "Uma linha por cargo, e embaixo uma ação concreta começando com verbo.",
+   "area": true,
+   "full": true
+  },
+  {
+   "k": "comp",
+   "l": "Competências",
+   "ph": "Atendimento ao público · Organização · Trabalho em equipe",
+   "full": true
+  },
+  {
+   "k": "disp",
+   "l": "Disponibilidade",
+   "ph": "Manhã e tarde, de segunda a sábado · Início imediato",
+   "full": true
+  }
+ ],
+ "cvDicas": [
+  "Nunca escreva \"aplicador de injetáveis\" sem registro profissional. O curso entra em Cursos complementares, nunca em Registro.",
+  "Use um e-mail com o seu nome e salve o arquivo como Curriculo-SeuNome.pdf.",
+  "Leve duas cópias impressas sempre que visitar um estabelecimento."
+ ],
+ "mensagens": [
+  {
+   "k": "Primeiro contato",
+   "c": "WhatsApp",
+   "t": "A",
+   "b": "Bom dia! Meu nome é {nome}, sou {funcao} com registro ativo aqui em {cidade}. Concluí recentemente uma capacitação em administração de medicamentos injetáveis e gostaria de saber se a clínica está recebendo currículos. Posso enviar o meu por aqui ou levar pessoalmente, como preferirem. Obrigado(a)!"
+  },
+  {
+   "k": "Primeiro contato",
+   "c": "WhatsApp",
+   "t": "BC",
+   "b": "Bom dia! Meu nome é {nome}, moro em {cidade} e estou buscando oportunidade na área da saúde, em funções de [recepção / apoio / atendimento]. Tenho experiência com [atendimento ao público / organização] e fiz recentemente um curso de capacitação na área. A clínica está recebendo currículos? Posso enviar por aqui. Obrigado(a)!"
+  },
+  {
+   "k": "E-mail",
+   "c": "Com currículo em anexo",
+   "t": "all",
+   "b": "Assunto: Currículo – [Cargo pretendido] – {nome}\n\nOlá, equipe da [Nome da clínica].\n\nMeu nome é {nome} e tenho interesse em atuar como [cargo] em sua equipe. [Uma frase sobre sua formação ou experiência mais relevante.] Recentemente concluí o curso de Administração de Medicamentos Injetáveis na TEC Mais Academy, que reforçou minha base em cálculo, biossegurança e cuidado com o paciente.\n\nEnvio meu currículo em anexo e fico à disposição para uma conversa.\n\nAtenciosamente,\n{nome} · {whats}"
+  },
+  {
+   "k": "Visita presencial",
+   "c": "Na recepção",
+   "t": "all",
+   "b": "Boa tarde! Meu nome é {nome}. Estou deixando meu currículo para a área de [cargo]. Com quem eu poderia falar sobre oportunidades, ou qual o melhor contato para acompanhar?",
+   "n": "Anote o nome de quem atendeu."
+  },
+  {
+   "k": "Follow-up",
+   "c": "3 a 5 dias sem resposta",
+   "t": "all",
+   "b": "Olá, tudo bem? Aqui é {nome}, enviei meu currículo para [cargo] no dia [data]. Gostaria só de confirmar se chegou e se há previsão de seleção. Continuo à disposição. Obrigado(a)!"
+  },
+  {
+   "k": "Resposta ao \"não\"",
+   "c": "Feche bem",
+   "t": "all",
+   "b": "Entendo, obrigado(a) pelo retorno! Posso deixar meu currículo com vocês para uma próxima oportunidade? Se surgir algo, fico à disposição.",
+   "n": "Muitas contratações saem dessa segunda conversa."
+  },
+  {
+   "k": "Pedido de indicação",
+   "c": "Para conhecidos da área",
+   "t": "all",
+   "b": "Oi, [nome]! Tudo bem? Estou buscando oportunidade em [função] e lembrei de você, que trabalha na área. Se souber de alguma clínica contratando ou puder indicar meu currículo, eu agradeço muito. Posso te mandar por aqui?"
+  },
+  {
+   "k": "Depois da entrevista",
+   "c": "No mesmo dia",
+   "t": "all",
+   "b": "Olá, [nome]! Obrigado(a) pela conversa de hoje. Gostei de conhecer a rotina da [clínica] e sigo à disposição para os próximos passos."
+  }
+ ],
+ "plano": [
+  [
+   "Base pronta",
+   [
+    "Confirmar minha trilha (A, B ou C)",
+    "Preencher o currículo e salvar em PDF",
+    "Deixar foto e recado do WhatsApp profissionais"
+   ]
+  ],
+  [
+   "Mapear",
+   [
+    "Listar 20 estabelecimentos no controle de contatos",
+    "Cadastrar o currículo em pelo menos 2 sites de vagas"
+   ]
+  ],
+  [
+   "Primeiros contatos",
+   [
+    "Enviar a mensagem de primeiro contato para 10 estabelecimentos",
+    "Avisar 5 conhecidos que trabalham em saúde"
+   ]
+  ],
+  [
+   "Ir até lá",
+   [
+    "Visitar 3 a 5 estabelecimentos próximos com currículo impresso",
+    "Anotar nome e contato de quem atendeu"
+   ]
+  ],
+  [
+   "Ampliar",
+   [
+    "Enviar mensagem para os outros 10 estabelecimentos",
+    "Completar o LinkedIn e seguir 10 clínicas ou hospitais da região"
+   ]
+  ],
+  [
+   "Acompanhar",
+   [
+    "Enviar follow-up para quem não respondeu",
+    "Responder com educação todos os retornos, inclusive os \"não\""
+   ]
+  ],
+  [
+   "Revisar e decidir",
+   [
+    "Contar contatos, respostas e conversas",
+    "Repetir mais do que funcionou (mensagem, visita ou indicação)",
+    "Montar a lista dos próximos 20 estabelecimentos"
+   ]
+  ]
+ ],
+ "status": [
+  "A contatar",
+  "Mensagem enviada",
+  "Visitado",
+  "Respondeu",
+  "Entrevista",
+  "Sem vaga agora"
+ ],
+ "levar": [
+  "Duas cópias do currículo impressas",
+  "Documento com foto e carteira do conselho (se tiver)",
+  "Certificados, incluindo o da TEC Mais",
+  "Caneta e papel com as suas perguntas"
+ ],
+ "apresentar": [
+  "Chegue 10 minutos antes. Atraso na primeira conversa raramente é perdoado.",
+  "Roupa limpa e discreta; cabelo preso e unhas curtas, como em ambiente de saúde.",
+  "Celular no silencioso e guardado."
+ ],
+ "perguntas": [
+  [
+   "Fale um pouco sobre você.",
+   "Em 1 minuto: formação, experiência mais relevante e por que quer trabalhar ali."
+  ],
+  [
+   "Por que você quer trabalhar aqui?",
+   "Cite algo real que você viu da clínica: o atendimento, a localização, a especialidade."
+  ],
+  [
+   "Qual a sua experiência?",
+   "Seja exato. Se for pouca, mostre o que já fez com responsabilidade em outros trabalhos."
+  ],
+  [
+   "O que faria se tivesse dúvida em um procedimento?",
+   "Pararia e confirmaria com o responsável antes de continuar. É a resposta que todo gestor de saúde quer ouvir."
+  ],
+  [
+   "Qual o seu ponto fraco?",
+   "Um ponto verdadeiro e o que você está fazendo para melhorar."
+  ],
+  [
+   "Qual a sua disponibilidade?",
+   "Dias e turnos com clareza. Não prometa o que não consegue cumprir."
+  ]
+ ],
+ "vocePergunta": [
+  "Como é a rotina de quem ocupa essa função?",
+  "Quem seria meu responsável direto?",
+  "Existe treinamento inicial ou período de experiência?",
+  "Qual o próximo passo do processo?"
+ ],
+ "perfil": [
+  {
+   "t": "Foto do WhatsApp",
+   "d": "Rosto visível, fundo neutro, sem óculos escuros ou filtros.",
+   "i": "user"
+  },
+  {
+   "t": "Recado do WhatsApp",
+   "d": "\"Técnica de Enfermagem · COREN-GO\" ou \"Em busca de oportunidade na área da saúde\".",
+   "i": "chat"
+  },
+  {
+   "t": "LinkedIn",
+   "tag": "In",
+   "d": "Formação real no título e o curso da TEC Mais em Licenças e certificados.",
+   "i": "briefcase"
+  },
+  {
+   "t": "Instagram aberto",
+   "d": "Revise o que aparece. Recrutadores também olham.",
+   "i": "eye"
+  }
+ ],
+ "golpes": [
+  "Pede pagamento para \"garantir a vaga\", cadastro, kit ou treinamento obrigatório.",
+  "Oferece trabalho aplicando injetáveis sem exigir registro profissional.",
+  "Promete salário muito acima do mercado para pouca exigência.",
+  "Não informa nome da empresa, endereço ou CNPJ.",
+  "Pede documentos completos ou dados bancários antes da entrevista."
+ ],
+ "conselhos": [
+  {
+   "t": "Cofen",
+   "u": "https://www.cofen.gov.br"
+  },
+  {
+   "t": "Coren-GO",
+   "u": "https://www.corengo.org.br"
+  },
+  {
+   "t": "Coren-DF",
+   "u": "https://www.coren-df.gov.br"
+  },
+  {
+   "t": "CFF",
+   "u": "https://site.cff.org.br"
+  }
+ ]
+}

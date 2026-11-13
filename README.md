@@ -88,22 +88,44 @@ As tags só rodam depois do consentimento do visitante (banner de cookies + Goog
 Eventos enviados ao `dataLayer`: `whatsapp_click`, `phone_click`, `generate_lead` (formulários) e `consent_update`. No Pixel: `Lead` e `Contact`.
 As UTMs (`utm_source`, `utm_medium`, `utm_campaign`) entram no fim da mensagem do WhatsApp: *(origem: instagram / cpc / matriculas2027)*.
 
-## Portal do Aluno TEC Mais (área restrita)
+## Portal do Aluno · TEC Mais Academy (área de membros)
 
 Endereço: `/tec-mais/academy`. Sem link no site, fora do sitemap e com `noindex`.
-É uma área de membros (estilo Kiwify): 3 módulos, 20 aulas, progresso salvo, "continuar de onde parou" e ferramentas
-(checklist, currículo, mensagens, plano de 7 dias, controle de contatos).
+Cada aluno entra com **e-mail e senha próprios** e só abre os bônus liberados para ele. O resto aparece com cadeado.
 
+| Curso | Bônus (módulos) |
+| --- | --- |
+| Administração de Medicamentos Injetáveis | `calculo`, `visual`, `carreira` |
+| APH · Atendimento Pré-Hospitalar | `aph-peconhentos`, `aph-rcp`, `aph-domesticas`, `aph-curriculo` |
+
+### Configurar uma vez
+1. **Supabase → SQL Editor:** rode `supabase/migrations/0003_academy.sql`. Ele cria as chaves de cada módulo e as regras de acesso.
+2. **Vercel → Settings → Environment Variables:** confira se existe `SUPABASE_SERVICE_ROLE_KEY` (a integração Supabase da Vercel costuma criar). Ela fica só no build, nunca vai para o navegador. A antiga `ACADEMY_PASSWORD` pode ser apagada.
+3. Faça um **Redeploy**. No log do build deve aparecer `Portal do Aluno: 7 módulos cifrados`.
+
+### Liberar um aluno
+1. **Supabase → Authentication → Users → Add user:** e-mail e senha do aluno, com "Auto Confirm User" marcado.
+2. **Table Editor → `academy_acessos` → Insert row:** `email` do aluno e `modulo` liberado (uma linha por bônus).
+   `libera_em` define quando abre (padrão: agora). Exemplo do APH: bônus 1 e 3 na matrícula, bônus 2 em 7 dias, bônus 4 no fim do curso.
+3. Para bloquear de novo, apague a linha. Exemplos prontos em SQL estão no fim do arquivo da migração.
+
+O aluno troca a própria senha no portal ("Trocar senha"). Se esquecer, a secretaria define uma nova no Supabase.
+
+### Onde editar
 | O que | Onde |
 | --- | --- |
-| Módulos, aulas, textos, checklist, mensagens e ilustrações do kit | `academy-src/app/conteudo.js` |
-| Visual (pranchas, cards, mockups) | `academy-src/app/app.css` |
-| Funcionamento | `academy-src/app/app.js` |
+| Cursos, bônus e aulas (nomes, ordem, valor de ancoragem) | `academy-src/app/catalogo.js` |
+| Conteúdo de cada bônus | `academy-src/conteudo/<módulo>.json` |
+| Visual e funcionamento | `academy-src/app/app.css` e `app.js` |
 | Guia de cálculo (PDF) | `academy-src/guia-calculos.pdf` |
 
-No build, o app e o PDF são **criptografados** (AES-256) com a senha da variável **`ACADEMY_PASSWORD`**
-(Vercel → Settings → Environment Variables) e só a tela de senha vai ao ar. Sem a variável, o portal aparece como
-"indisponível". Para trocar a senha: altere a variável e faça um novo deploy.
+### Fotos
+Itens com `"foto": "<busca>"` no conteúdo ganham imagem no build:
+1. **Foto própria** (prioridade): coloque em `academy-src/img/<busca-em-slug>.webp`, por exemplo `tityus-serrulatus.webp`.
+2. Se não houver, a foto vem do **Openverse**, o banco aberto de imagens Creative Commons (código no GitHub). Só entram licenças que permitem uso comercial (CC0, domínio público, CC BY, CC BY-SA), com crédito do autor no card. A foto é baixada e publicada no próprio site.
+3. Sem resultado, fica a ilustração.
+
+Os protocolos de saúde do APH estão marcados como **Prévia · em validação** até o instrutor assinar.
 
 ## Publicar (Vercel)
 

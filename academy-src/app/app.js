@@ -1,8 +1,10 @@
 /* TEC Mais Academy · área de membros (SPA com rotas por #hash).
+   Login individual (Supabase Auth). Cada módulo é cifrado com a sua chave; o Supabase só entrega ao aluno
+   as chaves dos módulos liberados para o e-mail dele (tabela academy_acessos + RLS).
    Progresso e ferramentas ficam salvos só no aparelho (localStorage). */
 (function () {
   'use strict';
-  var C = TMA_CURSO, MODS = TMA_MODULOS, D = TMA_DADOS, CFG = window.TMA_CFG || {};
+  var C = TMA_CURSO, PRODS = TMA_PRODUTOS, MODS = TMA_MODULOS, D = {}, CFG = window.TMA_CFG || {};
 
   /* ---------- utilidades ---------- */
   var $ = function (s, c) { return (c || document).querySelector(s); };
@@ -59,6 +61,7 @@
     route: '<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h6.5"/>',
     spark: '<path d="M12 3l1.8 4.6 4.7 1.9-4.7 1.9L12 16l-1.8-4.6-4.7-1.9 4.7-1.9z"/><path d="M19 15l.8 2 2 .8-2 .8-.8 1.9-.8-1.9-2-.8 2-.8z"/>',
     play: '<path d="M7 4.5v15l12-7.5z"/>',
+    heart: '<path d="M12 20s-7.5-4.6-9.3-9.3C1.5 7.4 3.8 4 7.2 4c2 0 3.6 1.1 4.8 2.8C13.2 5.1 14.8 4 16.8 4c3.4 0 5.7 3.4 4.5 6.7C19.5 15.4 12 20 12 20z"/>',
   };
   // ícone em vidro: forma sólida atrás + vidro fosco na frente (tom: '', bl, gr, rd, gray, yel)
   function gic(n, tone, lg, inner) { return '<span class="gi' + (tone ? ' gi--' + tone : '') + (lg ? ' gi--lg' : '') + '" aria-hidden="true"><span class="gi__s"></span><span class="gi__f">' + (inner || ic(n)) + '</span></span>'; }
@@ -74,18 +77,20 @@
 
   /* ---------- índice de aulas e progresso ---------- */
   var LESSONS = [];
-  MODS.forEach(function (m, mi) { m.n = mi + 1; m.aulas.forEach(function (a, ai) { a.mod = m; a.i = ai; LESSONS.push(a); }); });
+  var PROD = {}; PRODS.forEach(function (p) { PROD[p.id] = p; p.mods = []; });
+  MODS.forEach(function (m) { var p = PROD[m.produto]; p.mods.push(m); m.p = p; m.n = p.mods.length; m.aulas.forEach(function (a, ai) { a.mod = m; a.i = ai; LESSONS.push(a); }); });
   var byId = {}; LESSONS.forEach(function (a) { byId[a.id] = a; });
   var done = LS.get('tma-done', {});
   function isDone(id) { return !!done[id]; }
   function modCount(m) { return m.aulas.filter(function (a) { return isDone(a.id); }).length; }
-  function totalDone() { return LESSONS.filter(function (a) { return isDone(a.id); }).length; }
+  function ACC() { return LESSONS.filter(function (a) { return hasAccess(a.mod); }); }
+  function totalDone() { return ACC().filter(function (a) { return isDone(a.id); }).length; }
   function pct(n, t) { return t ? Math.round(n / t * 100) : 0; }
   function nextLesson() {
-    var last = byId[LS.get('tma-last', '')];
-    if (last && !isDone(last.id)) return last;
-    var start = last ? LESSONS.indexOf(last) : 0;
-    for (var i = 0; i < LESSONS.length; i++) { var a = LESSONS[(start + i) % LESSONS.length]; if (!isDone(a.id)) return a; }
+    var L = ACC(), last = byId[LS.get('tma-last', '')];
+    if (last && hasAccess(last.mod) && !isDone(last.id)) return last;
+    var start = last && L.indexOf(last) > -1 ? L.indexOf(last) : 0;
+    for (var i = 0; i < L.length; i++) { var a = L[(start + i) % L.length]; if (!isDone(a.id)) return a; }
     return null;
   }
   function setDone(id, v) {
@@ -95,23 +100,71 @@
     if (v && before < a.mod.aulas.length && modCount(a.mod) === a.mod.aulas.length) toast('Módulo concluído! Parabéns pela constância.');
     else if (v) toast('Aula concluída');
   }
+
+  /* ---------- acesso: login individual (Supabase) e chaves por módulo ---------- */
+  var SB = CFG.sb || {};
+  var PUB = CFG.mods || [];   // módulos publicados neste deploy (com conteúdo cifrado)
+  var KEYS = {}, SOON = {}, LOADED = {}, AT = null, EMAIL = '';
+  function u8(b) { return Uint8Array.from(atob(b), function (c) { return c.charCodeAt(0); }); }
+  function api(path, opt) {
+    opt = opt || {};
+    var h = { apikey: SB.key, 'Content-Type': 'application/json' };
+    if (AT && !opt.anon) h.Authorization = 'Bearer ' + AT;
+    return fetch(SB.url + path, { method: opt.method || 'GET', headers: h, body: opt.body ? JSON.stringify(opt.body) : undefined, cache: 'no-store' }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (!r.ok) { var e = new Error(j.error_description || j.msg || j.message || ('HTTP ' + r.status)); e.status = r.status; e.code = j.error_code || j.error || ''; throw e; }
+        return j;
+      });
+    });
+  }
+  function session(j) { AT = j.access_token; EMAIL = (j.user && j.user.email) || EMAIL; LS.set('tma-rt', j.refresh_token); LS.set('tma-email', EMAIL); }
+  function login(email, senha) { return api('/auth/v1/token?grant_type=password', { method: 'POST', anon: true, body: { email: email, password: senha } }).then(session); }
+  function refresh() {
+    var rt = LS.get('tma-rt', '');
+    if (!rt) return Promise.reject(new Error('sem sessão'));
+    return api('/auth/v1/token?grant_type=refresh_token', { method: 'POST', anon: true, body: { refresh_token: rt } }).then(session);
+  }
+  function loadAccess() {
+    return Promise.all([api('/rest/v1/academy_chaves?select=modulo,chave'), api('/rest/v1/academy_acessos?select=modulo,libera_em')]).then(function (res) {
+      KEYS = {}; SOON = {};
+      res[1].forEach(function (a) { if (new Date(a.libera_em) > new Date()) SOON[a.modulo] = a.libera_em; });
+      return Promise.all(res[0].map(function (k) { return crypto.subtle.importKey('raw', u8(k.chave), 'AES-GCM', false, ['decrypt']).then(function (ck) { KEYS[k.modulo] = ck; }); }));
+    });
+  }
+  function hasAccess(m) { return !!KEYS[m.id] && PUB.indexOf(m.id) > -1; }
+  function stateOf(m) { return hasAccess(m) ? 'ok' : KEYS[m.id] ? 'prep' : SOON[m.id] ? 'soon' : 'lock'; }
+  function fmtDate(d) { try { return new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }); } catch (e) { return d; } }
+  function openBin(path, key) {
+    return fetch(path, { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error('bin'); return r.arrayBuffer(); })
+      .then(function (buf) { return crypto.subtle.decrypt({ name: 'AES-GCM', iv: new Uint8Array(buf, 0, 12) }, key, new Uint8Array(buf, 12)); });
+  }
+  function loadMod(m) {
+    if (LOADED[m.id]) return Promise.resolve();
+    return openBin('m/' + m.id + '.bin', KEYS[m.id]).then(function (out) { Object.assign(D, JSON.parse(new TextDecoder().decode(out))); LOADED[m.id] = true; });
+  }
+  function waLib(m) { return 'https://wa.me/' + C.whatsapp + '?text=' + encodeURIComponent('Olá! Sou aluno(a) da TEC Mais Academy (' + (EMAIL || 'sem e-mail') + ') e quero liberar o bônus "' + m.titulo + '" do curso ' + m.p.titulo + '.'); }
   function nome() { var n = LS.get('tma-nome', '') || (OP.get('cv', {}).nome || ''); return String(n).trim().split(/\s+/)[0] || ''; }
 
   /* ---------- casca: menu lateral e abas ---------- */
-  var COVER = { orange: 'orange', blue: 'blue', green: 'green' };
+  var COVER = { orange: 'orange', blue: 'blue', green: 'green', red: 'red' };
+  var COVER_TONE = { orange: 'yel', blue: 'or', green: 'yel', red: 'yel' };
+  var STATE_TXT = { lock: 'Bloqueado', soon: 'Em breve', prep: 'Em preparação' };
   function shell(route) {
-    var cur = route.lesson ? route.lesson.mod.id : '';
-    var nav = [['#/', 'Início', 'home', route.name === 'home'], ['#/modulos', 'Módulos', 'grid', route.name === 'modulos'], ['#/ferramentas', 'Ferramentas', 'tool', route.name === 'ferramentas']];
+    var cur = route.lesson ? route.lesson.mod.id : route.mod ? route.mod.id : '';
+    var nav = [['#/', 'Início', 'home', route.name === 'home'], ['#/modulos', 'Meus cursos', 'grid', route.name === 'modulos'], ['#/ferramentas', 'Ferramentas', 'tool', route.name === 'ferramentas']];
     var h = '<div class="side__top"><a class="side__logo" href="#/"><img src="logo-claro.webp" width="720" height="203" alt="TEC Mais Cursos Técnicos"><span>Academy · Portal do Aluno</span></a></div><nav class="side__nav" aria-label="Portal">';
     nav.forEach(function (n) { h += '<a class="nl" href="' + n[0] + '"' + (n[3] ? ' aria-current="page"' : '') + '>' + ic(n[2]) + n[1] + '</a>'; });
-    h += '<div class="side__h">Seus módulos</div>';
-    MODS.forEach(function (m) {
-      var c = modCount(m);
-      h += '<a class="sm" href="#/aula/' + firstOpen(m).id + '"' + (cur === m.id ? ' aria-current="page"' : '') + '><span class="sm__t"><span class="sm__n">0' + m.n + '</span>' + esc(m.titulo) + '</span><div class="bar' + (c === m.aulas.length ? ' bar--g' : '') + '"><i style="width:' + pct(c, m.aulas.length) + '%"></i></div></a>';
+    PRODS.forEach(function (p) {
+      h += '<div class="side__h">' + esc(p.titulo) + '</div>';
+      p.mods.forEach(function (m) {
+        var st = stateOf(m), c = modCount(m);
+        h += '<a class="sm' + (st !== 'ok' ? ' sm--lock' : '') + '" href="#/modulo/' + m.id + '"' + (cur === m.id ? ' aria-current="page"' : '') + '><span class="sm__t"><span class="sm__n">' + (st === 'ok' ? '0' + m.n : ic('lock')) + '</span>' + esc(m.titulo) + '</span>' +
+          (st === 'ok' ? '<div class="bar' + (c === m.aulas.length ? ' bar--g' : '') + '"><i style="width:' + pct(c, m.aulas.length) + '%"></i></div>' : '<small class="sm__s">' + (st === 'soon' ? 'Libera em ' + fmtDate(SOON[m.id]) : STATE_TXT[st]) + '</small>') + '</a>';
+      });
     });
-    h += '</nav><div class="side__foot"><a class="nl" href="https://wa.me/' + C.whatsapp + '?text=' + encodeURIComponent('Olá! Sou aluno(a) da TEC Mais Academy e preciso de ajuda com o portal.') + '" target="_blank" rel="noopener">' + ic('chat') + 'Suporte no WhatsApp</a><button class="nl" type="button" data-sair style="border:0;background:none;cursor:pointer;width:100%">' + ic('logout') + 'Sair do portal</button></div>';
+    h += '</nav><div class="side__foot"><span class="side__me">' + ic('user') + '<span>' + esc(EMAIL) + '</span></span><a class="nl" href="https://wa.me/' + C.whatsapp + '?text=' + encodeURIComponent('Olá! Sou aluno(a) da TEC Mais Academy e preciso de ajuda com o portal.') + '" target="_blank" rel="noopener">' + ic('chat') + 'Suporte no WhatsApp</a><button class="nl nl--b" type="button" data-senha>' + ic('lock') + 'Trocar senha</button><button class="nl nl--b" type="button" data-sair>' + ic('logout') + 'Sair do portal</button></div>';
     $('#side').innerHTML = h;
-    var t = [['#/', 'Início', 'home', route.name === 'home'], ['#/modulos', 'Módulos', 'grid', route.name === 'modulos' || route.name === 'aula'], ['#/ferramentas', 'Ferramentas', 'tool', route.name === 'ferramentas']];
+    var t = [['#/', 'Início', 'home', route.name === 'home'], ['#/modulos', 'Cursos', 'grid', route.name === 'modulos' || route.name === 'aula' || route.name === 'modulo'], ['#/ferramentas', 'Ferramentas', 'tool', route.name === 'ferramentas']];
     var th = '';
     t.forEach(function (n) { th += '<a class="tab" href="' + n[0] + '"' + (n[3] ? ' aria-current="page"' : '') + '>' + ic(n[2]) + n[1] + '</a>'; });
     th += '<a class="tab" href="https://wa.me/' + C.whatsapp + '" target="_blank" rel="noopener">' + ic('chat') + 'Suporte</a>';
@@ -119,57 +172,81 @@
   }
   function firstOpen(m) { for (var i = 0; i < m.aulas.length; i++) if (!isDone(m.aulas[i].id)) return m.aulas[i]; return m.aulas[0]; }
 
-  var COVER_TONE = { orange: 'yel', blue: 'or', green: 'yel' };
   function modCard(m) {
-    var c = modCount(m), t = m.aulas.length, nx = nextLesson();
-    return '<a class="card mod' + (nx && nx.mod === m ? ' mod--next' : '') + '" href="#/aula/' + firstOpen(m).id + '"><div class="cover cover--' + COVER[m.cor] + '"><div class="cover__b"><span class="chip chip--w">Módulo 0' + m.n + '</span>' + (m.previa ? '<span class="chip chip--w">Prévia</span>' : '') + (c === t ? '<span class="chip chip--w">' + ic('check') + ' Concluído</span>' : '') + '</div>' + gic(m.icone, COVER_TONE[m.cor], true) + '<span class="cover__n" aria-hidden="true">0' + m.n + '</span></div>' +
-      '<div class="mod__b"><h3>' + esc(m.titulo) + '</h3><p>' + esc(m.resumo) + '</p><div class="bar' + (c === t ? ' bar--g' : '') + '"><i style="width:' + pct(c, t) + '%"></i></div><div class="mod__p"><span>' + c + ' de ' + t + ' aulas</span><span>' + (nx && nx.mod === m ? '✱ Próximo passo' : c === 0 ? 'Começar' : c === t ? 'Rever' : 'Continuar') + ' →</span></div></div></a>';
+    var st = stateOf(m), c = modCount(m), t = m.aulas.length, nx = nextLesson(), isNext = st === 'ok' && nx && nx.mod === m;
+    var chips = '<span class="chip chip--w">Bônus 0' + m.n + '</span>' + (m.valor ? '<span class="chip chip--w">Vale ' + esc(m.valor) + '</span>' : '') + (m.previa && st === 'ok' ? '<span class="chip chip--w">Prévia</span>' : '') + (st === 'ok' && c === t ? '<span class="chip chip--w">' + ic('check') + ' Concluído</span>' : '');
+    var foot = st === 'ok'
+      ? '<div class="bar' + (c === t ? ' bar--g' : '') + '"><i style="width:' + pct(c, t) + '%"></i></div><div class="mod__p"><span>' + c + ' de ' + t + ' aulas</span><span>' + (isNext ? '✱ Próximo passo' : c === 0 ? 'Começar' : c === t ? 'Rever' : 'Continuar') + ' →</span></div>'
+      : '<div class="mod__p mod__p--lock"><span>' + ic('lock') + (st === 'soon' ? ' Libera em ' + fmtDate(SOON[m.id]) : ' ' + STATE_TXT[st]) + '</span><span>' + t + ' aulas</span></div>';
+    return '<a class="card mod' + (isNext ? ' mod--next' : '') + (st !== 'ok' ? ' mod--lock' : '') + '" href="#/modulo/' + m.id + '"><div class="cover cover--' + COVER[m.cor] + '"><div class="cover__b">' + chips + '</div>' + gic(st === 'ok' ? m.icone : 'lock', COVER_TONE[m.cor], true) + '<span class="cover__n" aria-hidden="true">0' + m.n + '</span>' + (st !== 'ok' ? '<span class="cover__lock">' + ic('lock') + '</span>' : '') + '</div>' +
+      '<div class="mod__b"><h3>' + esc(m.titulo) + '</h3><p>' + esc(m.resumo) + '</p>' + foot + '</div></a>';
   }
+  function prodSection(p, i) {
+    var ok = p.mods.filter(hasAccess).length;
+    return '<section class="sec prod"><div class="sec__h"><div><span class="k">Curso ' + (i + 1) + ' · ' + ok + ' de ' + p.mods.length + ' bônus liberados</span><h2 class="disp h2">' + esc(p.titulo) + '</h2><p>' + esc(p.resumo) + '</p></div></div><div class="mods">' + p.mods.map(modCard).join('') + '</div>' + (p.aviso ? '<p class="note prod__av">' + ic('alert') + esc(p.aviso) + '</p>' : '') + '</section>';
+  }
+  function myTools() { return TMA_FERRAMENTAS.filter(function (f) { return byId[f.aula] && hasAccess(byId[f.aula].mod); }); }
   function toolCards() {
-    return '<div class="tools">' + TMA_FERRAMENTAS.map(function (f) { return '<a class="card tool" href="#/aula/' + f.aula + '">' + gic(f.icone, ['', 'bl', 'gr'][TMA_FERRAMENTAS.indexOf(f) % 3]) + '<span class="tool__t"><b>' + esc(f.titulo) + '</b><span>' + esc(f.texto) + '</span></span></a>'; }).join('') + '</div>';
+    var list = myTools();
+    if (!list.length) return '<p class="note">As ferramentas aparecem aqui quando um bônus for liberado para você.</p>';
+    return '<div class="tools">' + list.map(function (f, i) { return '<a class="card tool" href="#/aula/' + f.aula + '">' + gic(f.icone, ['', 'bl', 'gr'][i % 3]) + '<span class="tool__t"><b>' + esc(f.titulo) + '</b><span>' + esc(f.texto) + '</span></span></a>'; }).join('') + '</div>';
   }
   function foot() { return '<footer class="foot"><span>TEC Mais Cursos Técnicos · Valparaíso de Goiás</span><span>' + esc(C.rodape) + '</span></footer>'; }
 
   /* ---------- páginas ---------- */
   function pageHome() {
-    var n = totalDone(), t = LESSONS.length, p = pct(n, t), nx = nextLesson(), nm = nome();
-    var R = 74, L = 2 * Math.PI * R;
-    var h = '<section class="hero"><span class="hero__c hero__c--tl">TEC Mais Academy</span><span class="hero__c hero__c--tr">Valparaíso de Goiás</span><span class="hero__c hero__c--bl">Portal do aluno</span><span class="hero__c hero__c--br">Salve na tela inicial</span><div class="hero__g"><div><span class="ast">' + esc(C.kit) + '</span><h1 class="disp">' + (nm ? 'Olá, ' + esc(nm) + '! ' : '') + (n === 0 ? 'Seu kit está <span class="serif">pronto.</span>' : n === t ? 'Kit <span class="serif">concluído.</span>' : 'Bora <span class="serif">continuar?</span>') + '</h1><p>Revise os cálculos, relembre os cuidados da aula e organize sua busca por oportunidades. Salve este portal na tela inicial do celular para consultar quando precisar.</p>' +
-      '<div class="hero__cta">' + (nx ? '<a class="btn btn--or" href="#/aula/' + nx.id + '">' + (n === 0 ? 'Começar agora' : 'Continuar') + '<span class="btn__a">' + ic('right') + '</span></a>' : '<a class="btn btn--or" href="#/modulos">Rever os módulos<span class="btn__a">' + ic('right') + '</span></a>') + '<a class="btn btn--ghd" href="#/ferramentas">' + ic('tool') + 'Ferramentas</a></div>' +
-      (nx ? '<div class="hero__next"><i>' + ic('play') + '</i>Próxima aula: <b>' + esc(nx.titulo) + '</b><em> · Módulo 0' + nx.mod.n + '</em></div>' : '') + '</div>' +
-      '<div class="ring" role="img" aria-label="' + p + '% do kit concluído"><svg viewBox="0 0 168 168"><defs><linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="#F06022"/><stop offset="1" stop-color="#FFB547"/></linearGradient></defs><circle class="t" cx="84" cy="84" r="' + R + '"/><circle class="v" cx="84" cy="84" r="' + R + '" stroke-dasharray="' + L.toFixed(1) + '" stroke-dashoffset="' + (L * (1 - p / 100)).toFixed(1) + '"/></svg><div class="ring__c"><b>' + p + '%</b><span>' + n + ' de ' + t + ' aulas</span></div></div></div></section>';
-    h += '<section class="sec"><div class="sec__h"><div><span class="k">Seus módulos</span><h2 class="disp h2">Tudo do seu kit <span class="serif">em um só lugar.</span></h2></div></div><div class="mods">' + MODS.map(modCard).join('') + '</div></section>';
-    h += '<section class="sec"><div class="sec__h"><div><span class="k">Ferramentas do dia a dia</span><h2 class="disp h2">Abra, use e <span class="serif">volte quando precisar.</span></h2></div></div>' + toolCards() + '</section>';
+    var L = ACC(), n = totalDone(), t = L.length, p = pct(n, t), nx = nextLesson(), nm = nome();
+    var R2 = 74, Lc = 2 * Math.PI * R2;
+    var h = '<section class="hero"><span class="hero__c hero__c--tl">TEC Mais Academy</span><span class="hero__c hero__c--tr">Valparaíso de Goiás</span><span class="hero__c hero__c--bl">Portal do aluno</span><span class="hero__c hero__c--br">Salve na tela inicial</span><div class="hero__g"><div><span class="ast">Área do aluno</span><h1 class="disp">' + (nm ? 'Olá, ' + esc(nm) + '! ' : '') + (t === 0 ? 'Seu acesso está <span class="serif">quase pronto.</span>' : n === 0 ? 'Seus bônus estão <span class="serif">prontos.</span>' : n === t ? 'Tudo <span class="serif">concluído.</span>' : 'Bora <span class="serif">continuar?</span>') + '</h1><p>' + (t === 0 ? 'Nenhum bônus foi liberado para a sua conta ainda. Fale com a TEC Mais para liberar o acesso do seu curso.' : 'Revise o que aprendeu em sala, use as ferramentas na prática e volte sempre que precisar. Salve este portal na tela inicial do celular.') + '</p>' +
+      '<div class="hero__cta">' + (nx ? '<a class="btn btn--or" href="#/aula/' + nx.id + '">' + (n === 0 ? 'Começar agora' : 'Continuar') + '<span class="btn__a">' + ic('right') + '</span></a>' : t === 0 ? '<a class="btn btn--or" target="_blank" rel="noopener" href="https://wa.me/' + C.whatsapp + '?text=' + encodeURIComponent('Olá! Sou aluno(a) da TEC Mais (' + EMAIL + ') e quero liberar o acesso ao portal.') + '">Liberar meu acesso<span class="btn__a">' + ic('chat') + '</span></a>' : '<a class="btn btn--or" href="#/modulos">Rever os cursos<span class="btn__a">' + ic('right') + '</span></a>') + '<a class="btn btn--ghd" href="#/ferramentas">' + ic('tool') + 'Ferramentas</a></div>' +
+      (nx ? '<div class="hero__next"><i>' + ic('play') + '</i>Próxima aula: <b>' + esc(nx.titulo) + '</b><em> · ' + esc(nx.mod.titulo) + '</em></div>' : '') + '</div>' +
+      '<div class="ring" role="img" aria-label="' + p + '% concluído"><svg viewBox="0 0 168 168"><defs><linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="#F06022"/><stop offset="1" stop-color="#FFB547"/></linearGradient></defs><circle class="t" cx="84" cy="84" r="' + R2 + '"/><circle class="v" cx="84" cy="84" r="' + R2 + '" stroke-dasharray="' + Lc.toFixed(1) + '" stroke-dashoffset="' + (Lc * (1 - p / 100)).toFixed(1) + '"/></svg><div class="ring__c"><b>' + p + '%</b><span>' + n + ' de ' + t + ' aulas</span></div></div></div></section>';
+    h += PRODS.map(prodSection).join('');
+    if (myTools().length) h += '<section class="sec"><div class="sec__h"><div><span class="k">Ferramentas do dia a dia</span><h2 class="disp h2">Abra, use e <span class="serif">volte quando precisar.</span></h2></div></div>' + toolCards() + '</section>';
     return h + foot();
   }
   function pageModulos() {
-    return '<div class="lh"><span class="k">Área de membros</span><h1 class="disp">Seus módulos</h1><p class="lh__m">' + LESSONS.length + ' aulas em ' + MODS.length + ' módulos · seu progresso fica salvo neste aparelho</p></div><div class="mods">' + MODS.map(modCard).join('') + '</div>' + foot();
+    return '<header class="lh"><div><span class="kk">Área de membros</span><h1 class="disp">Meus <span class="serif grad">cursos.</span></h1><p class="lh__m">Os bônus com cadeado são liberados pela TEC Mais, aluno por aluno.</p></div></header>' + PRODS.map(prodSection).join('') + foot();
   }
   function pageFerramentas() {
-    return '<div class="lh"><span class="k">Ferramentas</span><h1 class="disp">Para usar na prática</h1><p class="lh__m">Checklist, fórmulas, currículo, mensagens e controle da sua busca.</p></div>' + toolCards() + foot();
+    return '<header class="lh"><div><span class="kk">Ferramentas</span><h1 class="disp">Para usar <span class="serif grad">na prática.</span></h1><p class="lh__m">Checklists, quadros, cards e textos prontos dos seus bônus.</p></div></header>' + toolCards() + foot();
+  }
+  function pageLock(m) {
+    var st = stateOf(m);
+    return '<nav class="crumb" aria-label="Você está em"><a href="#/">Início</a>/<a href="#/modulos">' + esc(m.p.titulo) + '</a>/<span>Bônus 0' + m.n + '</span></nav>' +
+      '<section class="lockp"><div class="cover cover--' + COVER[m.cor] + ' lockp__c">' + gic('lock', COVER_TONE[m.cor], true) + '<span class="cover__n" aria-hidden="true">0' + m.n + '</span></div><div class="lockp__b"><span class="kk">' + esc(m.p.titulo) + ' · Bônus 0' + m.n + '</span><h1 class="disp">' + esc(m.titulo) + '</h1><p class="lead">' + esc(m.resumo) + '</p>' +
+      (st === 'soon' ? alertBox('yl', 'Libera em ' + fmtDate(SOON[m.id]) + '.', 'Este bônus abre sozinho nessa data. Volte aqui e ele estará disponível.', 'calendar')
+        : st === 'prep' ? alertBox('bl', 'Seu acesso já está liberado.', 'O conteúdo está sendo preparado e aparece aqui assim que for publicado.', 'spark')
+        : alertBox('', 'Este bônus ainda não foi liberado para a sua conta.', 'A liberação é feita pela TEC Mais, aluno por aluno. Fale com a equipe para liberar.', 'lock')) +
+      '<ol class="lockp__l">' + m.aulas.map(function (a, i) { return '<li><span>' + ic('lock') + '</span>' + (i + 1) + ' · ' + esc(a.titulo) + '<small>' + esc(a.min) + '</small></li>'; }).join('') + '</ol>' +
+      (st === 'lock' ? '<a class="btn btn--or" target="_blank" rel="noopener" href="' + waLib(m) + '">Quero liberar este bônus<span class="btn__a">' + ic('chat') + '</span></a>' : '') + '</div></section>' + foot();
   }
 
-  var WIDE = { curriculo: 1, contatos: 1, materiais: 1, etapas: 1, regras: 1, onde: 1, mensagens: 1, antes: 1, entrevista: 1, perfil: 1 };
+  var WIDE = { curriculo: 1, contatos: 1, materiais: 1, etapas: 1, regras: 1, onde: 1, mensagens: 1, antes: 1, entrevista: 1, perfil: 1, pecIntro: 1, pecFichas: 1, pecPrev: 1, rcpQuadro: 1, rcpFase: 1, rcpRec: 1, domSit: 1, curOnde: 1, curTexto: 1, curEntrev: 1 };
   function pageAula(a) {
-    var m = a.mod, idx = LESSONS.indexOf(a), prev = LESSONS[idx - 1], next = LESSONS[idx + 1], c = modCount(m);
+    var m = a.mod, L = ACC(), idx = L.indexOf(a), prev = L[idx - 1], next = L[idx + 1], c = modCount(m);
     LS.set('tma-last', a.id);
-    var h = '<nav class="crumb" aria-label="Você está em"><a href="#/">Início</a>/<a href="#/modulos">Módulo 0' + m.n + '</a>/<span>' + esc(m.titulo) + '</span></nav><div class="lesson' + (WIDE[a.tipo] ? ' lesson--wide' : '') + '"><div><header class="lh' + (a.num ? ' lh--num' : '') + '"><div><span class="kk">' + esc(a.kk || ('Aula ' + (a.i + 1))) + '</span><h1 class="disp">' + (a.h ? esc(a.h[0]) + ' <span class="serif grad">' + esc(a.h[1]) + '</span>' : esc(a.titulo)) + '</h1><div class="lh__m"><span class="chip chip--w2">Aula ' + (a.i + 1) + ' de ' + m.aulas.length + '</span><span class="chip chip--' + (m.cor === 'orange' ? 'or' : m.cor === 'blue' ? 'bl' : 'gr') + '">' + esc(a.min) + '</span>' + (m.previa ? '<span class="chip chip--or">Prévia · em validação</span>' : '') + (isDone(a.id) ? '<span class="chip chip--gr">' + ic('check') + ' Concluída</span>' : '') + '</div></div>' + (a.num ? '<span class="bignum" aria-hidden="true">' + a.num + '</span>' : '') + '</header>';
+    var h = '<nav class="crumb" aria-label="Você está em"><a href="#/">Início</a>/<a href="#/modulos">' + esc(m.p.titulo) + '</a>/<span>' + esc(m.titulo) + '</span></nav><div class="lesson' + (WIDE[a.tipo] ? ' lesson--wide' : '') + '"><div><header class="lh' + (a.num ? ' lh--num' : '') + '"><div><span class="kk">' + esc(a.kk || ('Aula ' + (a.i + 1))) + '</span><h1 class="disp">' + (a.h ? esc(a.h[0]) + ' <span class="serif grad">' + esc(a.h[1]) + '</span>' : esc(a.titulo)) + '</h1><div class="lh__m"><span class="chip chip--w2">Aula ' + (a.i + 1) + ' de ' + m.aulas.length + '</span><span class="chip chip--' + ({ orange: 'or', blue: 'bl', green: 'gr', red: 'or' }[m.cor]) + '">' + esc(a.min) + '</span>' + (m.previa ? '<span class="chip chip--or">Prévia · em validação</span>' : '') + (isDone(a.id) ? '<span class="chip chip--gr">' + ic('check') + ' Concluída</span>' : '') + '</div></div>' + (a.num ? '<span class="bignum" aria-hidden="true">' + a.num + '</span>' : '') + '</header>';
     h += '<div class="lbody" id="lbody">' + (R[a.tipo] ? R[a.tipo].html(a) : '') + '</div>';
     h += '<div class="lnav">' + (prev ? '<a class="btn btn--gh" href="#/aula/' + prev.id + '" aria-label="Aula anterior">' + ic('left') + '<span class="lbl">Anterior</span></a>' : '<span></span>') +
       '<button class="btn done-btn ' + (isDone(a.id) ? '' : 'btn--gh') + '" type="button" aria-pressed="' + isDone(a.id) + '" id="donebtn">' + ic('check') + '<span>' + (isDone(a.id) ? 'Concluída' : 'Concluir aula') + '</span></button>' +
       (next ? '<a class="btn btn--or" href="#/aula/' + next.id + '" aria-label="Próxima aula"><span class="lbl">Próxima</span><span class="btn__a">' + ic('right') + '</span></a>' : '<a class="btn btn--or" href="#/"><span class="lbl">Início</span><span class="btn__a">' + ic('home') + '</span></a>') + '</div></div>';
-    h += '<aside class="card list" aria-label="Aulas do módulo"><div class="list__h"><span class="k">Módulo 0' + m.n + '</span><b>' + esc(m.titulo) + '</b><div class="bar' + (c === m.aulas.length ? ' bar--g' : '') + '"><i style="width:' + pct(c, m.aulas.length) + '%"></i></div><small>' + c + ' de ' + m.aulas.length + ' aulas concluídas</small></div><ol>';
+    h += '<aside class="card list" aria-label="Aulas do bônus"><div class="list__h"><span class="k">' + esc(m.p.titulo) + ' · Bônus 0' + m.n + '</span><b>' + esc(m.titulo) + '</b><div class="bar' + (c === m.aulas.length ? ' bar--g' : '') + '"><i style="width:' + pct(c, m.aulas.length) + '%"></i></div><small>' + c + ' de ' + m.aulas.length + ' aulas concluídas</small></div><ol>';
     m.aulas.forEach(function (x, i) { h += '<li><a class="li' + (isDone(x.id) ? ' is-done' : '') + '" href="#/aula/' + x.id + '"' + (x === a ? ' aria-current="page"' : '') + '><span class="li__s">' + (isDone(x.id) ? ic('check') : (i + 1)) + '</span><span>' + esc(x.titulo) + '<small>' + esc(x.min) + '</small></span></a></li>'; });
     h += '</ol></aside></div>' + foot();
     return h;
   }
 
-  /* ---------- renderizadores de aula ---------- */
   /* ---------- peças visuais do kit ---------- */
   // ilustração original do kit (traço), em academy-src/app/conteudo.js → TMA_ILUS
   function ilus(k, cls) {
     var x = TMA_ILUS[k]; if (!x) return '';
     return '<svg class="il' + (cls ? ' ' + cls : '') + '" viewBox="0 0 ' + x[0] + ' ' + x[0] + '" aria-hidden="true" style="stroke-width:' + (x[0] > 30 ? 2.6 : 1.9) + '">' + x[1] + '</svg>';
+  }
+  // arte do card: foto (própria ou Openverse, com crédito) ou a ilustração do kit
+  function art(x, cls) {
+    if (x.img) return '<figure class="mat__art mat__art--ph' + (cls ? ' ' + cls : '') + '"><img src="' + esc(x.img.src) + '" alt="' + esc(x.t) + '" loading="lazy" decoding="async"><figcaption>' + (x.img.link ? '<a href="' + esc(x.img.link) + '" target="_blank" rel="noopener">' + esc(x.img.credito) + '</a>' : esc(x.img.credito)) + '</figcaption></figure>';
+    return '<div class="mat__art' + (cls ? ' ' + cls : '') + '">' + ilus(x.il) + '</div>';
   }
   function ckList(items, state, prefix, keyAttr) {
     return items.map(function (t, i) { return '<label class="ck"><input type="checkbox" ' + (keyAttr || 'data-i') + '="' + (keyAttr ? prefix + i : i) + '"' + (state[keyAttr ? prefix + i : i] ? ' checked' : '') + '><span class="bx">' + ic('check') + '</span><span>' + esc(t) + '</span></label>'; }).join('');
@@ -226,7 +303,7 @@
         var pr = byId.materiais.mod.aulas;
         return '<section class="intro"><span class="ast">Guia visual de apoio à prática</span><h2 class="disp">Reveja a aula <span class="serif grad">em poucos segundos.</span></h2><p>Pranchas visuais para relembrar os materiais, os cuidados de biossegurança e os pontos de atenção que você viu presencialmente. Pouco texto, muita clareza.</p><nav class="pnav" aria-label="Pranchas">' + pr.map(function (x, i) { return '<a href="#/aula/' + x.id + '"' + (i === 0 ? ' aria-current="page"' : '') + '>' + (i + 1) + ' · ' + ['Materiais', 'Biossegurança', 'Antes, durante e depois', 'Erros de atenção', 'Descarte', 'Na dúvida'][i] + '</a>'; }).join('') + '</nav></section>' + AVISO +
           '<p class="lead" style="margin-top:8px">Os itens que você manuseou na aula. Reconhecer cada um pelo nome é o primeiro passo da segurança.</p><div class="mats">' +
-          D.materiais.map(function (x, i) { return '<article class="card mat mat--' + TONES[i % 4] + '"><div class="mat__art">' + ilus(x.il) + '</div><span class="num">' + String(i + 1).padStart(2, '0') + '</span><h3>' + esc(x.t) + '</h3><p>' + esc(x.d) + '</p></article>'; }).join('') + '</div>';
+          D.materiais.map(function (x, i) { return '<article class="card mat mat--' + TONES[i % 4] + '">' + art(x) + '<span class="num">' + String(i + 1).padStart(2, '0') + '</span><h3>' + esc(x.t) + '</h3><p>' + esc(x.d) + '</p></article>'; }).join('') + '</div>';
       },
     },
     regras: {
@@ -308,7 +385,7 @@
           '<div class="cv"><form class="card form" id="cvf" onsubmit="return false">' + D.cvCampos.map(function (f) {
             var id = 'cv-' + f.k, val = esc(cv[f.k] || '');
             return '<div class="fld' + (f.full ? ' fld--full' : '') + '"><label for="' + id + '">' + esc(f.l) + '</label>' + (f.area ? '<textarea class="in" id="' + id + '" data-k="' + f.k + '" placeholder="' + esc(f.ph) + '">' + val + '</textarea>' : '<input class="in" id="' + id + '" data-k="' + f.k + '" type="' + (f.type || 'text') + '" placeholder="' + esc(f.ph) + '" value="' + val + '">') + (f.h ? '<small>' + esc(f.h) + '</small>' : '') + '</div>';
-          }).join('') + '<div class="form__a"><button class="btn btn--or btn--sm" type="button" id="cvc">' + ic('copy') + ' Copiar currículo</button><button class="btn btn--gh btn--sm" type="button" id="cvx">Preencher com exemplo</button><button class="btn btn--gh btn--sm" type="button" id="cvl">Limpar</button></div></form><article class="paper" id="cvp" aria-live="polite"></article></div>' +
+          }).join('') + '<div class="form__a"><button class="btn btn--or btn--sm" type="button" id="cvc">' + ic('copy') + ' Copiar currículo</button><button class="btn btn--gh btn--sm" type="button" id="cvx">Preencher com exemplo</button><button class="btn btn--gh btn--sm" type="button" id="cvl">Limpar</button></div></form><article class="paper printable" id="cvp" aria-live="polite"></article></div>' +
           '<ul class="dots">' + D.cvDicas.map(function (d) { return '<li>' + esc(d) + '</li>'; }).join('') + '</ul>';
       },
       init: function () {
@@ -414,7 +491,140 @@
           '<div class="links" style="justify-content:center">' + D.conselhos.map(function (c) { return '<a class="btn btn--gh btn--sm" href="' + c.u + '" target="_blank" rel="noopener">' + esc(c.t) + ' ' + ic('external') + '</a>'; }).join('') + '</div>';
       },
     },
+    /* ----- APH · Bônus 1: animais peçonhentos ----- */
+    pecIntro: {
+      html: function () {
+        return '<div class="stats">' + D.pecDados.map(function (x) { return '<article class="card stat"><b class="disp">' + esc(x.n) + '</b><p>' + esc(x.t) + '</p><small>Fonte: ' + esc(x.f) + '</small></article>'; }).join('') + '</div>' +
+          '<section class="gold"><div><span class="ast">Regra de ouro · vale para todos</span><h2 class="disp">Picou? <span class="serif">Ligue, lave e vá ao hospital.</span></h2><ul class="arrows">' + D.pecRegra.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div><div class="phones">' + phones(D.pecTelefones) + '</div></section>' +
+          videoPh(D.pecVideo.t, D.pecVideo.d) + avisoAph();
+      },
+    },
+    pecFichas: {
+      html: function () {
+        return '<p class="lead">Uma ficha por animal: o que fazer, o que nunca fazer e quando é emergência. Em qualquer caso, siga a regra de ouro: 192, lavar e hospital.</p><div class="pets">' +
+          D.pecAnimais.map(function (x) { return '<article class="card pet pet--' + x.c + '"><div class="pet__h">' + art(x) + '<div><h3>' + esc(x.t) + '</h3>' + (x.sub ? '<small>' + esc(x.sub) + '</small>' : '') + '</div></div>' +
+            '<div class="pet__c"><div><span class="tag tag--yes">Faça</span><ul class="oks">' + x.fazer.map(function (y) { return '<li>' + esc(y) + '</li>'; }).join('') + '</ul></div><div><span class="tag tag--no">Nunca faça</span><ul class="xs">' + x.nunca.map(function (y) { return '<li>' + esc(y) + '</li>'; }).join('') + '</ul></div></div>' +
+            '<p class="pet__a">' + ic('alert') + esc(x.alerta) + '</p></article>'; }).join('') + '</div>' + avisoAph();
+      },
+    },
+    pecPrev: {
+      html: function () {
+        var st = LS.get('tma-prev', {});
+        return '<div class="g2 pg"><section><h3 class="subh">Prevenção em casa</h3><p class="lead">Marque o que você já fez. Fica salvo neste aparelho.</p><article class="card ckwrap" id="prev">' + ckList(D.pecPrevencao, st, 'p', 'data-k') + '</article></section>' +
+          '<section><h3 class="subh">Mito ou verdade?</h3><p class="lead">Toque no card para ver a resposta. Ótimo para mandar no grupo da família.</p><div class="myths">' + D.pecMitos.map(function (x) { return '<button class="myth" type="button" aria-pressed="false"><span class="myth__f"><span class="tag tag--no">Mito</span>' + esc(x[0]) + '</span><span class="myth__b"><span class="tag tag--yes">Verdade</span>' + esc(x[1]) + '</span></button>'; }).join('') + '</div></section></div>' + avisoAph();
+      },
+      init: function () {
+        var st = LS.get('tma-prev', {});
+        $('#prev').addEventListener('change', function (e) { st[e.target.dataset.k] = e.target.checked; LS.set('tma-prev', st); });
+        $$('.myth').forEach(function (b) { b.addEventListener('click', function () { b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true')); }); });
+      },
+    },
+    pecCard: {
+      html: function () {
+        return '<div class="pcard-w"><div class="pcard" id="pcard"><span class="pcard__k">TEC Mais Academy · APH</span><h3>Picada de animal peçonhento</h3><ol><li>Ligue <b>192</b> (SAMU) ou <b>193</b></li><li>Lave com água e sabão</li><li>Vá ao hospital com soro</li><li>Foto do animal, se for seguro</li></ol><p class="pcard__no">NUNCA: torniquete, cortar, chupar, receitas caseiras.</p><div class="pcard__t"><span>Disque-Intoxicação</span><b>0800 722 6001</b></div></div>' +
+          '<div><p class="lead">Baixe o card e deixe salvo na galeria do celular. Na hora do susto, você não precisa lembrar de nada: é só abrir.</p><button class="btn btn--or" type="button" id="pcd">' + ic('download') + ' Baixar card para o celular</button><p class="note" style="margin-top:12px">Dica: depois de baixar, favorite a imagem na galeria para achar rápido.</p></div></div>' + avisoAph();
+      },
+      init: function () { $('#pcd').addEventListener('click', baixarCard); },
+    },
+
+    /* ----- APH · Bônus 2: RCP por fase da vida ----- */
+    rcpRec: {
+      html: function () {
+        return '<p class="lead">Antes de qualquer técnica: reconhecer que é uma parada e chamar ajuda. Em 10 segundos.</p><div class="flow">' + D.rcpReconhecer.map(function (x, i) { return '<article class="card flow__s"><b>' + (i + 1) + '</b><h3>' + esc(x.t) + '</h3><p>' + esc(x.d) + '</p></article>'; }).join('') + '</div>' +
+          '<section class="metro"><div><span class="ast">Treine o ritmo</span><h2 class="disp">100 a 120 <span class="serif">por minuto.</span></h2><p>Toque em começar e acompanhe o pulso com as mãos numa almofada. É o ritmo certo para bebê, criança, adulto e idoso.</p><button class="btn btn--or" type="button" id="mtb">' + ic('play') + ' Começar o ritmo</button></div><div class="metro__d" id="mtd" aria-hidden="true"><span></span><b>110</b><small>compressões/min</small></div></section>' +
+          '<div class="g4 fases">' + D.rcpFases.map(function (f) { return '<a class="card fase fase--' + f.c + '" href="#/aula/rcp-' + f.id + '"><div class="mat__art">' + ilus(f.il) + '</div><h3>' + esc(f.t) + '</h3><small>' + esc(f.faixa) + '</small></a>'; }).join('') + '</div>' + avisoAph();
+      },
+      init: function () {
+        var on = false, ctx = null, tm = null, d = $('#mtd'), b = $('#mtb');
+        function beat() { d.classList.remove('hit'); void d.offsetWidth; d.classList.add('hit'); try { if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); var o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.value = 880; g.gain.setValueAtTime(.18, ctx.currentTime); g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .08); o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + .09); } catch (e) {} }
+        b.addEventListener('click', function () { on = !on; if (on) { beat(); tm = setInterval(beat, 545); b.innerHTML = ic('x') + ' Parar'; } else { clearInterval(tm); b.innerHTML = ic('play') + ' Começar o ritmo'; } });
+        window.addEventListener('hashchange', function stop() { clearInterval(tm); window.removeEventListener('hashchange', stop); });
+      },
+    },
+    rcpFase: {
+      html: function (a) {
+        var f = D.rcpFases[a.fase];
+        return '<section class="fase-h fase--' + f.c + '"><div class="mat__art">' + ilus(f.il) + '</div><div><span class="kk">' + esc(f.faixa) + '</span><p class="lead">' + esc(f.nota) + '</p></div></section>' +
+          '<div class="params">' + D.rcpLinhas.map(function (l, i) { return '<article class="card param' + (l[0] === 'engasgo' ? ' param--wide' : '') + '"><span class="num">' + String(i + 1).padStart(2, '0') + '</span><h3>' + esc(l[1]) + '</h3><p>' + esc(f[l[0]]) + '</p></article>'; }).join('') + '</div>' +
+          videoPh('Videoaula: RCP ' + (f.id === 'bebe' ? 'e engasgo no bebê' : f.id === 'crianca' ? 'e engasgo na criança' : f.id === 'adulto' ? 'no adulto e uso do DEA' : 'no idoso'), f.video) +
+          '<p class="note">' + esc(D.rcpBase) + '. <a href="#/aula/rcp-quadro">Ver o quadro com as 4 fases →</a></p>' + avisoAph();
+      },
+    },
+    rcpQuadro: {
+      html: function () {
+        return '<div class="printable"><div class="qtab" role="table" aria-label="RCP por fase da vida"><div class="qtab__r qtab__r--h" role="row"><span role="columnheader"></span>' + D.rcpFases.map(function (f) { return '<span role="columnheader" class="qh--' + f.c + '"><b>' + esc(f.t) + '</b><small>' + esc(f.faixa) + '</small></span>'; }).join('') + '</div>' +
+          D.rcpLinhas.map(function (l) { return '<div class="qtab__r" role="row"><span role="rowheader">' + esc(l[1]) + '</span>' + D.rcpFases.map(function (f) { return '<span role="cell">' + esc(f[l[0]]) + '</span>'; }).join('') + '</div>'; }).join('') + '</div><p class="note">' + esc(D.rcpBase) + '. Em emergência, ligue 192.</p></div>' +
+          '<div class="radd"><button class="btn btn--or btn--sm" type="button" onclick="print()">' + ic('download') + ' Imprimir ou salvar em PDF</button><span class="note">Cabe em uma página. Deixe na bolsa ou na parede do quarto das crianças.</span></div>' + avisoAph();
+      },
+    },
+
+    /* ----- APH · Bônus 3: emergências domésticas ----- */
+    domSit: {
+      html: function () {
+        return '<p class="lead">As 7 emergências mais comuns dentro de casa. Para cada uma: o que fazer e o erro que quase todo mundo comete.</p><div class="sits">' +
+          D.domSituacoes.map(function (x) { return '<article class="card sit pet--' + x.c + '"><div class="pet__h">' + art(x) + '<div><h3>' + esc(x.t) + '</h3>' + (x.sub ? '<small>' + esc(x.sub) + '</small>' : '') + '</div></div><p class="sit__do"><span class="tag tag--yes">Faça</span>' + esc(x.fazer) + '</p><p class="sit__no"><span class="tag tag--no">Erro comum</span>' + esc(x.erro) + '</p></article>'; }).join('') + '</div>' +
+          videoPh('Vídeos: situação → o que fazer', D.domVideos) + avisoAph();
+      },
+    },
+    domTel: {
+      html: function () {
+        var t = LS.get('tma-tel', {});
+        return '<div class="fridge-w"><div class="fridge printable"><span class="fridge__k">Telefones de emergência</span><h3>Em emergência, <i>não espere.</i></h3><ul>' + D.domTelefones.map(function (x) { return '<li><b>' + esc(x.n) + '</b><span>' + esc(x.t) + '</span></li>'; }).join('') +
+          '<li class="fridge__ed"><span>Hospital mais próximo</span><input class="in" data-k="hosp" placeholder="Nome e telefone" value="' + esc(t.hosp || '') + '"></li><li class="fridge__ed"><span>Endereço de casa</span><input class="in" data-k="end" placeholder="Rua, número, ponto de referência" value="' + esc(t.end || '') + '"></li></ul><small>TEC Mais Academy · APH</small></div>' +
+          '<div><p class="lead">Preencha o hospital mais próximo e o endereço de casa: na hora do nervoso, quem liga para o 192 precisa dessas informações. Depois, imprima e cole na geladeira.</p><button class="btn btn--or" type="button" onclick="print()">' + ic('download') + ' Imprimir</button></div></div>' + avisoAph();
+      },
+      init: function () { var t = LS.get('tma-tel', {}); $$('.fridge input').forEach(function (i) { i.addEventListener('input', function () { t[i.dataset.k] = i.value; LS.set('tma-tel', t); }); }); },
+    },
+
+    /* ----- APH · Bônus 4: APH no currículo ----- */
+    curOnde: {
+      html: function () {
+        return '<p class="lead">O APH é um diferencial em qualquer lugar onde há pessoas. Estas são as áreas em que ele mais pesa na hora de escolher um candidato.</p><div class="areas">' + D.curAreas.map(function (x, i) { return '<span class="area area--' + TONES[i % 5] + '">' + ic('check') + esc(x) + '</span>'; }).join('') + '</div>' +
+          alertBox('bl', 'Diferencial, não garantia.', 'O APH fortalece o seu currículo, mas nenhuma capacitação garante vaga ou salário. O que garante é você aparecer, com o currículo certo e a postura certa.', 'spark');
+      },
+    },
+    curTexto: {
+      html: function () {
+        var ch = LS.get('tma-aph-ch', '');
+        return '<div class="fld" style="max-width:260px"><label for="ch">Carga horária do seu curso</label><input class="in" id="ch" inputmode="numeric" placeholder="Ex.: 20" value="' + esc(ch) + '"></div>' +
+          '<div class="g2"><article class="card msg"><header><div><span class="k">Currículo</span><h3>Em "Cursos complementares"</h3></div></header><div class="body" id="t1"></div><footer><small>Cole no seu currículo.</small><button class="btn btn--gh btn--sm" type="button" data-cpt="1">' + ic('copy') + ' Copiar</button></footer></article>' +
+          '<article class="card msg"><header><div><span class="k">LinkedIn</span><h3>Post ou "Sobre"</h3></div></header><div class="body" id="t2"></div><footer><small>Adicione o certificado em Licenças e certificados.</small><button class="btn btn--gh btn--sm" type="button" data-cpt="2">' + ic('copy') + ' Copiar</button></footer></article></div>';
+      },
+      init: function () {
+        function txt() { var h = $('#ch').value.trim(); return D.curTexto.replace('[X]', h || '[X]'); }
+        function draw() { $('#t1').innerHTML = esc(txt()).replace(/\[X\]/g, '<mark>[X]</mark>'); $('#t2').textContent = D.curLinkedin; }
+        $('#ch').addEventListener('input', function () { LS.set('tma-aph-ch', this.value); draw(); });
+        $$('[data-cpt]').forEach(function (b) { b.addEventListener('click', function () { copy(b.dataset.cpt === '1' ? txt() : D.curLinkedin, b); }); });
+        draw();
+      },
+    },
+    curEntrev: {
+      html: function () {
+        return '<p class="lead">Na entrevista, conte um atendimento real ou simulado em 3 partes. É o formato que recrutadores usam para avaliar se você age bem sob pressão.</p><div class="star">' + D.curStar.map(function (x, i) { return '<article class="card star__s"><b class="disp">' + 'SAR'[i] + '</b><h3>' + esc(x.k) + '</h3><p>' + esc(x.d) + '</p></article>'; }).join('') + '</div>' +
+          '<h3 class="subh">O APH é a porta de entrada</h3><p class="lead">Gostou de agir em emergência? Estes são os próximos passos naturais na TEC Mais.</p><div class="g2">' + D.curTrilhas.map(function (x, i) { return '<a class="card box nextc" href="' + x.u + '" target="_blank" rel="noopener"><span class="sq sq--' + ['or', 'te'][i] + '">' + ilus(['capelo', 'epi'][i]) + '</span><h3>' + esc(x.t) + '</h3><p>' + esc(x.d) + '</p><span class="nextc__l">Conhecer o curso ' + ic('external') + '</span></a>'; }).join('') + '</div>';
+      },
+    },
+
   };
+
+  /* ---------- peças do APH ---------- */
+  function avisoAph() { return '<p class="note prod__av">' + ic('alert') + 'Conteúdo educativo. Não substitui atendimento médico. Em emergência, ligue 192.</p>'; }
+  function phones(list) { return list.map(function (x) { return '<a class="tel" href="tel:' + x.n.replace(/\D/g, '') + '"><b>' + esc(x.n) + '</b><span>' + esc(x.t) + '</span></a>'; }).join(''); }
+  function videoPh(t, d) { return '<article class="vid"><span class="vid__p">' + ic('play') + '</span><div><span class="k">Videoaula · em produção</span><h3>' + esc(t) + '</h3><p>' + esc(d) + '. O vídeo aparece aqui assim que for gravado com o instrutor.</p></div></article>'; }
+  function baixarCard() {
+    var W = 1080, H = 1920, cv2 = document.createElement('canvas'); cv2.width = W; cv2.height = H;
+    var g = cv2.getContext('2d'), gr = g.createLinearGradient(0, 0, W, H);
+    gr.addColorStop(0, '#1A1A8C'); gr.addColorStop(.6, '#0B0B30'); gr.addColorStop(1, '#3A1404'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+    var gl = g.createRadialGradient(W / 2, H + 100, 50, W / 2, H + 100, 900); gl.addColorStop(0, 'rgba(255,106,43,.75)'); gl.addColorStop(1, 'rgba(255,106,43,0)'); g.fillStyle = gl; g.fillRect(0, 0, W, H);
+    g.fillStyle = '#FFE45C'; g.font = '600 34px "Geist Mono", monospace'; g.fillText('TEC MAIS ACADEMY · APH', 90, 170);
+    g.fillStyle = '#fff'; g.font = '800 92px "Bricolage Grotesque", sans-serif'; ['Picada de', 'animal', 'peçonhento'].forEach(function (l, i) { g.fillText(l, 90, 330 + i * 100); });
+    var steps = ['Ligue 192 (SAMU) ou 193', 'Lave com água e sabão', 'Vá ao hospital com soro', 'Foto do animal, se seguro'];
+    steps.forEach(function (t, i) { var y = 720 + i * 150; g.fillStyle = '#FF6A2B'; g.beginPath(); g.arc(130, y - 18, 40, 0, 7); g.fill(); g.fillStyle = '#fff'; g.font = '800 44px "Bricolage Grotesque", sans-serif'; g.fillText(String(i + 1), 117, y - 2); g.font = '600 50px Geist, sans-serif'; g.fillText(t, 200, y); });
+    g.fillStyle = 'rgba(255,90,79,.18)'; g.fillRect(90, 1330, W - 180, 170); g.fillStyle = '#FFB4AD'; g.font = '700 40px Geist, sans-serif'; g.fillText('NUNCA: torniquete, cortar, chupar', 130, 1400); g.fillText('ou receitas caseiras.', 130, 1460);
+    g.fillStyle = '#fff'; g.font = '500 40px Geist, sans-serif'; g.fillText('Disque-Intoxicação', 90, 1640); g.font = '800 88px "Bricolage Grotesque", sans-serif'; g.fillText('0800 722 6001', 90, 1740);
+    g.fillStyle = 'rgba(255,255,255,.55)'; g.font = '400 30px Geist, sans-serif'; g.fillText('Conteúdo educativo. Não substitui atendimento médico.', 90, 1840);
+    var a = document.createElement('a'); a.download = 'card-peconhentos-tecmais.png'; a.href = cv2.toDataURL('image/png'); document.body.appendChild(a); a.click(); a.remove(); toast('Card baixado');
+  }
 
   function msgCard(m, n, note) {
     var f = fill(m.b);
@@ -443,50 +653,102 @@
     return { plain: plain, html: html };
   }
 
-  /* ---------- PDF criptografado (mesma senha do portal) ---------- */
+  /* ---------- PDF do guia de cálculo (cifrado com a chave do módulo) ---------- */
   var pdfUrl = null;
-  function u8(b) { return Uint8Array.from(atob(b), function (c) { return c.charCodeAt(0); }); }
   function loadPdf() {
     if (pdfUrl) return Promise.resolve(pdfUrl);
-    var pw = window.__tmaPw; try { pw = pw || sessionStorage.getItem('tma-pw'); } catch (e) {}
-    if (!pw || !CFG.salt) return Promise.reject(new Error('sem senha'));
-    var enc = new TextEncoder();
-    return crypto.subtle.importKey('raw', enc.encode(pw), 'PBKDF2', false, ['deriveKey'])
-      .then(function (base) { return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: u8(CFG.salt), iterations: CFG.iter, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']); })
-      .then(function (key) { return fetch('guia-calculos.bin', { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error('bin'); return r.arrayBuffer(); }).then(function (buf) { return crypto.subtle.decrypt({ name: 'AES-GCM', iv: u8(CFG.pdfIv) }, key, buf); }); })
-      .then(function (out) { pdfUrl = URL.createObjectURL(new Blob([out], { type: 'application/pdf' })); return pdfUrl; });
+    if (!KEYS.calculo) return Promise.reject(new Error('sem acesso'));
+    return openBin('m/guia-calculos.bin', KEYS.calculo).then(function (out) { pdfUrl = URL.createObjectURL(new Blob([out], { type: 'application/pdf' })); return pdfUrl; });
   }
 
-  /* ---------- nome (primeiro acesso) ---------- */
+  /* ---------- janelas: nome (primeiro acesso) e troca de senha ---------- */
+  function modal(html) {
+    var w = document.createElement('div'); w.className = 'modal'; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-labelledby', 'mt');
+    w.innerHTML = '<div class="card">' + html + '</div>'; document.body.appendChild(w);
+    w.addEventListener('keydown', function (e) { if (e.key === 'Escape') w.remove(); });
+    return w;
+  }
   function askName() {
     if (LS.get('tma-nome', null) !== null) return;
-    var w = document.createElement('div'); w.className = 'modal'; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-labelledby', 'mt');
-    w.innerHTML = '<div class="card"><span class="k">Bem-vindo(a) à TEC Mais Academy</span><h2 class="disp" id="mt">Como podemos te chamar?</h2><p>Seu nome fica só neste aparelho e aparece na sua tela inicial.</p><form><input class="in" id="mn" autocomplete="given-name" placeholder="Seu primeiro nome" maxlength="40"><button class="btn btn--or" type="submit">Entrar no portal<span class="btn__a">' + ic('right') + '</span></button><button class="btn btn--gh btn--sm" type="button" id="mskip">Agora não</button></form></div>';
-    document.body.appendChild(w);
+    var w = modal('<span class="k">Bem-vindo(a) à TEC Mais Academy</span><h2 class="disp" id="mt">Como podemos te chamar?</h2><p>Seu nome fica só neste aparelho e aparece na sua tela inicial.</p><form><input class="in" id="mn" autocomplete="given-name" placeholder="Seu primeiro nome" maxlength="40"><button class="btn btn--or" type="submit">Entrar no portal<span class="btn__a">' + ic('right') + '</span></button><button class="btn btn--gh btn--sm" type="button" id="mskip">Agora não</button></form>');
     var inp = $('#mn', w); setTimeout(function () { inp.focus(); }, 50);
     function close(n) { LS.set('tma-nome', n); w.remove(); route(); }
     $('form', w).addEventListener('submit', function (e) { e.preventDefault(); close(inp.value.trim()); });
     $('#mskip', w).addEventListener('click', function () { close(''); });
   }
+  function trocarSenha() {
+    var w = modal('<span class="k">Sua conta · ' + esc(EMAIL) + '</span><h2 class="disp" id="mt">Trocar senha</h2><p>Use pelo menos 8 caracteres.</p><form><input class="in" id="s1" type="password" autocomplete="new-password" placeholder="Nova senha" minlength="8" required><input class="in" id="s2" type="password" autocomplete="new-password" placeholder="Repita a nova senha" required><p class="form-err" id="se" role="alert"></p><button class="btn btn--or" type="submit">Salvar nova senha</button><button class="btn btn--gh btn--sm" type="button" id="sx">Cancelar</button></form>');
+    setTimeout(function () { $('#s1', w).focus(); }, 50);
+    $('#sx', w).addEventListener('click', function () { w.remove(); });
+    $('form', w).addEventListener('submit', function (e) {
+      e.preventDefault();
+      var a = $('#s1', w).value, b = $('#s2', w).value, er = $('#se', w);
+      if (a.length < 8) { er.textContent = 'A senha precisa de pelo menos 8 caracteres.'; return; }
+      if (a !== b) { er.textContent = 'As duas senhas não são iguais.'; return; }
+      er.textContent = 'Salvando…';
+      refresh().then(function () { return api('/auth/v1/user', { method: 'PUT', body: { password: a } }); })
+        .then(function () { w.remove(); toast('Senha trocada'); })
+        .catch(function (x) { er.textContent = /same|different/i.test(x.message) ? 'Escolha uma senha diferente da atual.' : 'Não deu certo. Tente de novo ou fale com a TEC Mais.'; });
+    });
+  }
+
+  /* ---------- login ---------- */
+  function showLogin(msg) {
+    $('#app').hidden = true;
+    var old = $('#login'); if (old) old.remove();
+    var w = document.createElement('main'); w.id = 'login'; w.className = 'login';
+    var ready = !!(SB.url && SB.key);
+    w.innerHTML = '<form class="login__c" novalidate><img class="login__lg" src="/img/parceiros/tec-mais.webp" width="720" height="203" alt="TEC Mais Cursos Técnicos"><span class="login__k">Academy · Portal do Aluno</span><h1>Bem-vindo(a) <i>de volta.</i></h1><p>Entre com o e-mail e a senha que você recebeu da TEC Mais.</p>' +
+      '<label for="le">E-mail</label><input id="le" type="email" autocomplete="email" inputmode="email" required value="' + esc(LS.get('tma-email', '')) + '">' +
+      '<label for="lp">Senha</label><div class="login__f"><input id="lp" type="password" autocomplete="current-password" required><button class="login__eye" type="button" id="ley" aria-label="Mostrar senha">' + ic('eye') + '</button></div>' +
+      '<button class="login__b" type="submit" id="lgo"' + (ready ? '' : ' disabled') + '>Entrar no portal' + ic('right') + '</button><div class="login__e" id="lerr" role="alert">' + esc(msg || (ready ? '' : 'O portal ainda não foi configurado. Fale com a TEC Mais.')) + '</div>' +
+      '<div class="login__h">Esqueceu a senha ou ainda não tem acesso? <a href="https://wa.me/' + C.whatsapp + '?text=' + encodeURIComponent('Olá! Sou aluno(a) da TEC Mais e preciso de acesso ao Portal do Aluno.') + '" target="_blank" rel="noopener">Fale com a TEC Mais</a></div></form>' +
+      '<p class="login__s">' + ic('lock') + 'Acesso individual · conteúdo criptografado</p>';
+    document.body.appendChild(w);
+    var em = $('#le', w), pw = $('#lp', w), er = $('#lerr', w), go = $('#lgo', w);
+    (em.value ? pw : em).focus();
+    $('#ley', w).addEventListener('click', function () { var s = pw.type === 'password'; pw.type = s ? 'text' : 'password'; this.setAttribute('aria-label', s ? 'Ocultar senha' : 'Mostrar senha'); });
+    $('form', w).addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = em.value.trim().toLowerCase(), senha = pw.value;
+      if (!email || !senha) { er.textContent = 'Preencha e-mail e senha.'; return; }
+      er.textContent = ''; go.disabled = true; go.firstChild.textContent = 'Entrando…';
+      login(email, senha).then(loadAccess).then(start).catch(function (x) {
+        go.disabled = false; go.firstChild.textContent = 'Entrar no portal';
+        er.textContent = x.status === 400 || x.status === 401 ? 'E-mail ou senha incorretos.' : x.status === 429 ? 'Muitas tentativas. Espere um minuto e tente de novo.' : 'Não foi possível conectar. Verifique a internet e tente de novo.';
+        pw.select();
+      });
+    });
+  }
 
   /* ---------- roteador ---------- */
-  var TITLES = { home: 'Início', modulos: 'Módulos', ferramentas: 'Ferramentas' };
+  var TITLES = { home: 'Início', modulos: 'Meus cursos', ferramentas: 'Ferramentas' };
+  var MODBY = {}; MODS.forEach(function (m) { MODBY[m.id] = m; });
   function parse() {
-    var h = location.hash.replace(/^#\/?/, '');
-    var p = h.split('/');
+    var p = location.hash.replace(/^#\/?/, '').split('/');
     if (p[0] === 'aula' && byId[p[1]]) return { name: 'aula', lesson: byId[p[1]] };
+    if (p[0] === 'modulo' && MODBY[p[1]]) return { name: 'modulo', mod: MODBY[p[1]] };
     if (p[0] === 'modulos') return { name: 'modulos' };
     if (p[0] === 'ferramentas') return { name: 'ferramentas' };
     return { name: 'home' };
   }
   var lastKey = '';
   function route() {
-    var r = parse(), key = r.name + (r.lesson ? r.lesson.id : '');
+    if (!AT) return;
+    var r = parse();
+    if (r.name === 'modulo' && hasAccess(r.mod)) { location.replace('#/aula/' + firstOpen(r.mod).id); return; }
+    if (r.name === 'aula' && !hasAccess(r.lesson.mod)) r = { name: 'modulo', mod: r.lesson.mod };
+    var key = r.name + (r.lesson ? r.lesson.id : r.mod ? r.mod.id : '');
     $('#app').classList.remove('menu');
     shell(r);
     var page = $('#page');
-    page.innerHTML = r.name === 'aula' ? pageAula(r.lesson) : r.name === 'modulos' ? pageModulos() : r.name === 'ferramentas' ? pageFerramentas() : pageHome();
-    document.title = (r.lesson ? r.lesson.titulo : TITLES[r.name]) + ' · TEC Mais Academy';
+    document.title = (r.lesson ? r.lesson.titulo : r.mod ? r.mod.titulo : TITLES[r.name]) + ' · TEC Mais Academy';
+    if (r.lesson && !LOADED[r.lesson.mod.id]) {
+      page.innerHTML = '<div class="loading">' + ic('lock') + 'Abrindo o conteúdo…</div>';
+      loadMod(r.lesson.mod).then(route, function () { page.innerHTML = '<div class="loading">Não foi possível abrir este conteúdo agora. <button class="btn btn--gh btn--sm" type="button" onclick="location.reload()">Tentar de novo</button></div>'; });
+      return;
+    }
+    page.innerHTML = r.name === 'aula' ? pageAula(r.lesson) : r.name === 'modulo' ? pageLock(r.mod) : r.name === 'modulos' ? pageModulos() : r.name === 'ferramentas' ? pageFerramentas() : pageHome();
     if (r.lesson) {
       var R0 = R[r.lesson.tipo]; if (R0 && R0.init) R0.init(r.lesson);
       $('#donebtn').addEventListener('click', function () { var on = !isDone(r.lesson.id); setDone(r.lesson.id, on); var y = scrollY; route(); scrollTo(0, y); });
@@ -494,18 +756,31 @@
     if (key !== lastKey) { scrollTo(0, 0); var h1 = $('h1', page); if (h1 && lastKey) { h1.setAttribute('tabindex', '-1'); h1.focus({ preventScroll: true }); } }
     lastKey = key;
   }
-  function sair() { try { sessionStorage.removeItem('tma-pw'); } catch (e) {} window.__tmaPw = null; location.replace('/tec-mais/academy'); }
+  function sair() {
+    var done2 = function () { try { localStorage.removeItem('tma-rt'); } catch (e) {} AT = null; location.replace('/tec-mais/academy'); };
+    if (AT) api('/auth/v1/logout', { method: 'POST' }).then(done2, done2); else done2();
+  }
+  function start() {
+    var l = $('#login'); if (l) l.remove();
+    $('#app').hidden = false;
+    route(); askName();
+  }
 
   document.addEventListener('click', function (e) {
     var t = e.target.closest ? e.target : null; if (!t) return;
     if (t.closest('[data-sair]')) { e.preventDefault(); sair(); return; }
+    if (t.closest('[data-senha]')) { e.preventDefault(); trocarSenha(); return; }
     if (t.closest('#menub')) { $('#app').classList.toggle('menu'); return; }
     if (t.closest('#scrim')) { $('#app').classList.remove('menu'); return; }
     var a = t.closest('a[href^="#"]');
-    if (a) { e.preventDefault(); var h = a.getAttribute('href'); if (h === location.hash || (h === '#/' && !location.hash)) route(); else location.hash = h; }
+    if (a && AT) { e.preventDefault(); var h = a.getAttribute('href'); if (h === location.hash || (h === '#/' && !location.hash)) route(); else location.hash = h; }
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') $('#app').classList.remove('menu'); });
   window.addEventListener('hashchange', route);
-  route();
-  askName();
+  if (!SB.url || !SB.key) showLogin();
+  else if (!LS.get('tma-rt', '')) showLogin();
+  else {
+    $('#app').hidden = true;
+    refresh().then(loadAccess).then(start).catch(function () { try { localStorage.removeItem('tma-rt'); } catch (e) {} showLogin('Sua sessão expirou. Entre de novo.'); });
+  }
 })();
