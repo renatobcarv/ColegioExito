@@ -88,6 +88,12 @@ As tags só rodam depois do consentimento do visitante (banner de cookies + Goog
 Eventos enviados ao `dataLayer`: `whatsapp_click`, `phone_click`, `generate_lead` (formulários) e `consent_update`. No Pixel: `Lead` e `Contact`.
 As UTMs (`utm_source`, `utm_medium`, `utm_campaign`) entram no fim da mensagem do WhatsApp: *(origem: instagram / cpc / matriculas2027)*.
 
+## Portal do Aluno TEC Mais (área restrita)
+
+Fica em `/tec-mais/academy` (arquivos em `public/tec-mais/academy`). Não tem link no site, não entra no sitemap e não é indexado pelo Google.
+O acesso pede senha (arquivo `middleware.ts`): crie na Vercel a variável **`ACADEMY_PASSWORD`** e faça um novo deploy.
+O aluno digita qualquer usuário (ex.: `aluno`) e essa senha. Sem a variável, o portal fica bloqueado para todos.
+
 ## Publicar (Vercel)
 
 A Vercel publica sozinha a cada push na `main` (e gera uma prévia para cada branch/PR).
