@@ -152,9 +152,8 @@
   function pageAula(a) {
     var m = a.mod, idx = LESSONS.indexOf(a), prev = LESSONS[idx - 1], next = LESSONS[idx + 1], c = modCount(m);
     LS.set('tma-last', a.id);
-    var h = '<nav class="crumb" aria-label="Você está em"><a href="#/">Início</a>/<a href="#/modulos">Módulo 0' + m.n + '</a>/<span>' + esc(m.titulo) + '</span></nav><div class="lesson' + (a.tipo === 'curriculo' || a.tipo === 'contatos' ? ' lesson--wide' : '') + '"><div><header class="lh"><span class="k">Aula ' + (a.i + 1) + ' de ' + m.aulas.length + '</span><h1 class="disp">' + esc(a.titulo) + '</h1><div class="lh__m"><span class="chip chip--' + (m.cor === 'orange' ? 'or' : m.cor === 'blue' ? 'bl' : 'gr') + '">' + esc(a.min) + '</span>' + (isDone(a.id) ? '<span class="chip chip--gr">' + ic('check') + ' Concluída</span>' : '') + '</div></header>';
-    if (m.previa) h += '<div class="alert alert--bl" style="margin-bottom:18px">' + ic('alert') + '<span><b>Prévia.</b> ' + esc(m.previa) + '</span></div>';
-    h += '<div class="lbody" id="lbody">' + (R[a.tipo] ? R[a.tipo].html(a) : '') + '</div>';
+    var h = '<nav class="crumb" aria-label="Você está em"><a href="#/">Início</a>/<a href="#/modulos">Módulo 0' + m.n + '</a>/<span>' + esc(m.titulo) + '</span></nav><div class="lesson' + (a.secoes ? ' lesson--wide' : '') + '"><div><header class="lh"><span class="k">Aula ' + (a.i + 1) + ' de ' + m.aulas.length + '</span><h1 class="disp">' + esc(a.titulo) + '</h1><div class="lh__m"><span class="chip chip--' + (m.cor === 'orange' ? 'or' : m.cor === 'blue' ? 'bl' : 'gr') + '">' + esc(a.min) + '</span>' + (m.previa ? '<span class="chip chip--or">Prévia · em validação</span>' : '') + (isDone(a.id) ? '<span class="chip chip--gr">' + ic('check') + ' Concluída</span>' : '') + '</div></header>';
+    h += '<div class="lbody" id="lbody">' + (a.secoes ? '<div class="sheet" id="sheet"><div class="sheet__l">Carregando a aula…</div></div>' : R[a.tipo] ? R[a.tipo].html(a) : '') + '</div>';
     h += '<div class="lnav">' + (prev ? '<a class="btn btn--gh" href="#/aula/' + prev.id + '" aria-label="Aula anterior">' + ic('left') + '<span class="lbl">Anterior</span></a>' : '<span></span>') +
       '<button class="btn done-btn ' + (isDone(a.id) ? '' : 'btn--gh') + '" type="button" aria-pressed="' + isDone(a.id) + '" id="donebtn">' + ic('check') + '<span>' + (isDone(a.id) ? 'Concluída' : 'Concluir aula') + '</span></button>' +
       (next ? '<a class="btn btn--or" href="#/aula/' + next.id + '" aria-label="Próxima aula"><span class="lbl">Próxima</span><span class="btn__a">' + ic('right') + '</span></a>' : '<a class="btn btn--or" href="#/"><span class="lbl">Início</span><span class="btn__a">' + ic('home') + '</span></a>') + '</div></div>';
@@ -172,10 +171,6 @@
   function ckList(items, state, prefix) {
     return items.map(function (t, i) { return '<label class="ck"><input type="checkbox" data-i="' + i + '" id="' + prefix + i + '"' + (state[i] ? ' checked' : '') + '><span class="bx">' + ic('check') + '</span><span>' + esc(t) + '</span></label>'; }).join('');
   }
-  var trilha = OP.get('trilha', '');
-  var cv = OP.get('cv', {});
-  function v(k) { return String(cv[k] || '').trim(); }
-
   var R = {
     pdf: {
       html: function () {
@@ -191,215 +186,58 @@
         });
       },
     },
-    formulas: {
-      html: function () {
-        return '<p class="lead">Resumo do Guia de Cálculo. Para o passo a passo completo, com exemplos e exercícios, <a href="#/aula/guia">abra o guia</a>.</p><div class="g3">' + D.formulas.map(function (f) { return '<article class="card fm"><h3>' + esc(f.t) + '</h3>' + f.f.map(function (x) { return '<code>' + esc(x) + '</code>'; }).join('') + '<p>' + esc(f.n) + '</p></article>'; }).join('') + '</div>' +
-          '<div class="alert">' + ic('alert') + '<span><b>UI não vira mg.</b> Pedido em UI, frasco em UI. Na insulina U-100, use sempre a seringa de insulina.</span></div>';
-      },
-    },
-    checklist: {
-      html: function () {
-        return '<p class="lead">Antes de preparar, marque cada item. As marcações ficam salvas só neste aparelho. Limpe a lista a cada novo preparo.</p><article class="card"><div class="ckh"><b id="ckc">0 de ' + D.checklist.length + '</b><div class="bar bar--g"><i id="ckb" style="width:0"></i></div><button class="btn btn--gh btn--sm" type="button" id="ckr">Limpar</button></div><div class="ckwrap" id="ck">' + ckList(D.checklist, LS.get('tecmais-checklist-v1', []), 'ck-') + '</div></article>' +
-          '<div class="alert alert--rd">' + ic('alert') + '<span><b>Cálculo certo não é autorização para administrar.</b> Dose, concentração, diluente e velocidade vêm da prescrição, do rótulo, da bula e do protocolo da instituição. Na dúvida, pare e confirme com o enfermeiro responsável, o prescritor ou o farmacêutico.</span></div>';
-      },
-      init: function () {
-        var st = LS.get('tecmais-checklist-v1', []);
-        function upd() { var n = st.filter(Boolean).length; $('#ckc').textContent = n + ' de ' + D.checklist.length; $('#ckb').style.width = pct(n, D.checklist.length) + '%'; if (n === D.checklist.length) toast('Tudo conferido. Siga o protocolo.'); }
-        $('#ck').addEventListener('change', function (e) { st[+e.target.dataset.i] = e.target.checked; LS.set('tecmais-checklist-v1', st); upd(); });
-        $('#ckr').addEventListener('click', function () { st = []; LS.set('tecmais-checklist-v1', st); $$('#ck input').forEach(function (x) { x.checked = false; }); upd(); });
-        var n = st.filter(Boolean).length; $('#ckc').textContent = n + ' de ' + D.checklist.length; $('#ckb').style.width = pct(n, D.checklist.length) + '%';
-      },
-    },
-    materiais: { html: function () { return '<p class="lead">Os itens que você manuseou na aula. Reconhecer cada um pelo nome é o primeiro passo da segurança.</p>' + boxes(D.materiais, 'g4', 'ibox--or') + aviso(); } },
-    regras: { html: function () { return '<p class="lead">As cinco regras que protegem você e o paciente em todo atendimento.</p>' + boxes(D.regras, 'g3') + aviso(); } },
-    etapas: {
-      html: function () {
-        return '<p class="lead">Os pontos de conferência de cada etapa. A técnica em si é a que a professora ensinou em sala e o protocolo da instituição define.</p><div class="steps">' + D.etapas.map(function (e) { return '<article class="card step"><span class="k">' + esc(e.k) + '</span><h3>' + esc(e.t) + '</h3><ul>' + e.l.map(function (x) { return '<li>' + ic('check') + '<span>' + esc(x) + '</span></li>'; }).join('') + '</ul></article>'; }).join('') + '</div>' +
-          '<article class="card box"><h3>Os 9 certos da administração de medicamentos</h3><p style="margin-bottom:14px">Repasse mentalmente antes de cada administração.</p><div class="nove">' + D.noveCertos.map(function (x, i) { return '<div><b>' + (i + 1) + '</b>' + esc(x) + '</div>'; }).join('') + '</div></article>' + aviso();
-      },
-    },
-    erros: {
-      html: function () {
-        return '<p class="lead">Os deslizes mais comuns não são de técnica, são de atenção. Troque cada hábito da esquerda pelo da direita.</p>' + D.erros.map(function (e) { return '<article class="card pair"><div class="no"><span class="chip chip--no">Evite</span><span>' + esc(e[0]) + '</span></div><div class="yes"><span class="chip chip--yes">Faça</span><span>' + esc(e[1]) + '</span></div></article>'; }).join('') + aviso();
-      },
-    },
-    descarte: {
-      html: function () {
-        var cls = { orange: '', red: 'rd', gray: 'gray' };
-        return '<p class="lead">Cada resíduo tem um destino. Descarte na hora, sem desconectar seringa e agulha.</p><div class="g3">' + D.descarte.map(function (x) { return '<article class="card box">' + gic(x.i, cls[x.c]) + '<h3>' + esc(x.t) + '</h3><ul class="ul" style="margin-top:12px">' + x.l.map(function (y) { return '<li>' + ic('check') + '<span>' + esc(y) + '</span></li>'; }).join('') + '</ul></article>'; }).join('') + '</div>' + aviso();
-      },
-    },
-    duvida: {
-      html: function () {
-        return '<article class="card bigq"><span class="ast">A regra mais importante do kit</span><h2 class="disp" style="margin-top:12px">Parar nunca é erro.<br><span class="serif">Seguir na dúvida é.</span></h2></article><div class="g3">' + D.duvida.map(function (x, i) { return '<article class="card box">' + gic('', ['rd', '', 'bl'][i], false, '<b>' + (i + 1) + '</b>') + '<h3>' + esc(x.t) + '</h3><p>' + esc(x.d) + '</p></article>'; }).join('') + '</div>' + aviso();
-      },
-    },
-    antes: {
-      html: function () {
-        return '<p class="lead"><b>O certificado abre portas. O registro profissional é o que autoriza.</b> Profissionais sérios se destacam porque conhecem os limites da própria formação e trabalham dentro deles. Leia isto antes de mandar qualquer mensagem.</p><div class="g3">' + D.antes.map(function (x, i) { return '<article class="card box"><span class="num">' + String(i + 1).padStart(2, '0') + '</span><h3 style="margin-top:6px">' + esc(x.t) + '</h3><p>' + esc(x.d) + '</p></article>'; }).join('') + '</div>' +
-          '<div class="alert alert--rd">' + ic('alert') + '<span>Desconfie de quem oferece trabalho aplicando injetáveis sem exigir registro profissional. Esse tipo de proposta coloca o paciente em risco e expõe você a responsabilidade legal.</span></div>';
-      },
-    },
-    trilhas: {
-      html: function () {
-        return '<p class="lead">As mensagens prontas, o objetivo do currículo e os destaques de onde procurar mudam conforme a sua escolha.</p><div class="g3 trails">' + D.trilhas.map(function (t) { return '<button class="trail" type="button" data-t="' + t.id + '" aria-pressed="' + (trilha === t.id) + '"><span class="trail__l">' + t.id + '</span><h3>' + esc(t.t) + '</h3><p>' + esc(t.p) + '</p><dl><div><dt>O que buscar</dt><dd>' + esc(t.b) + '</dd></div><div><dt>Como o curso entra</dt><dd>' + esc(t.c) + '</dd></div></dl><span class="trail__s">' + (trilha === t.id ? ic('check') + ' Minha trilha' : 'Esta é a minha trilha →') + '</span></button>'; }).join('') + '</div>' +
-          '<div class="alert alert--bl" id="trc"' + (trilha === 'C' ? '' : ' hidden') + '>' + ic('route') + '<span><b>Trilha C:</b> o caminho para aplicar injetáveis profissionalmente passa por uma formação regulamentada, como o Técnico em Enfermagem. Use este guia para entrar no ambiente de saúde por funções de apoio enquanto decide esse passo.</span></div>';
-      },
-      init: function (a) {
-        $$('.trail').forEach(function (b) {
-          b.addEventListener('click', function () {
-            trilha = trilha === b.dataset.t ? '' : b.dataset.t; OP.set('trilha', trilha);
-            if (trilha) toast('Trilha ' + trilha + ' escolhida');
-            $('#lbody').innerHTML = R.trilhas.html(a); R.trilhas.init(a);
-          });
-        });
-      },
-    },
-    onde: {
-      html: function () {
-        var hl = trilha === 'A' ? ' hl-a' : trilha ? ' hl-bc' : '';
-        return '<p class="lead">Em clínicas pequenas, a oportunidade fica com quem aparece primeiro, com educação e currículo em mãos. Mapeie estes lugares na sua região.' + (trilha ? ' Destacamos o que vale para a <b>Trilha ' + trilha + '</b>.' : ' <a href="#/aula/trilha">Escolha sua trilha</a> para ver os destaques.') + '</p>' +
-          '<div class="g3' + hl + '">' + D.lugares.map(function (l) { return '<article class="card place"><h3>' + esc(l.t) + '</h3><p class="pa"><b>A</b>' + esc(l.a) + '</p><p class="pbc"><b>B·C</b>' + esc(l.bc) + '</p></article>'; }).join('') + '</div>' +
-          '<h2 class="disp h2" style="margin-top:14px">Onde encontrar</h2>' + boxes(D.canais, 'g3', 'ibox--gr') +
-          '<article class="card goal"><b>20</b><span><b>Sua meta dos dois primeiros dias:</b> mapear 20 estabelecimentos. Quantidade gera opções; opções geram conversa. <a href="#/aula/contatos">Anote no controle de contatos →</a></span></article>';
-      },
-    },
-    curriculo: {
-      html: function () {
-        return '<p class="lead">Uma página, honesta, pronta em 10 minutos. Preencha os campos e veja o currículo se montar. Depois copie o texto, cole no Word ou no Google Docs e salve em PDF. Seus dados ficam só neste aparelho.</p>' +
-          '<div class="cv"><form class="card form" id="cvf" onsubmit="return false">' + D.cvCampos.map(function (f) {
-            var id = 'cv-' + f.k, val = esc(cv[f.k] || '');
-            return '<div class="fld' + (f.full ? ' fld--full' : '') + '"><label for="' + id + '">' + esc(f.l) + '</label>' + (f.area ? '<textarea class="in" id="' + id + '" data-k="' + f.k + '" placeholder="' + esc(f.ph) + '">' + val + '</textarea>' : '<input class="in" id="' + id + '" data-k="' + f.k + '" type="' + (f.type || 'text') + '" placeholder="' + esc(f.ph) + '" value="' + val + '">') + (f.h ? '<small>' + esc(f.h) + '</small>' : '') + '</div>';
-          }).join('') + '<div class="form__a"><button class="btn btn--or btn--sm" type="button" id="cvc">' + ic('copy') + ' Copiar currículo</button><button class="btn btn--gh btn--sm" type="button" id="cvx">Preencher com exemplo</button><button class="btn btn--gh btn--sm" type="button" id="cvl">Limpar</button></div></form><article class="card paper" id="cvp" aria-live="polite"></article></div>' +
-          '<ul class="ul ul--x">' + D.cvDicas.map(function (d, i) { return '<li>' + ic(i === 0 ? 'alert' : 'check') + '<span>' + esc(d) + '</span></li>'; }).join('') + '</ul>';
-      },
-      init: function () {
-        function draw() {
-          var ph = function (t, p) { return t ? esc(t) : '<span class="ph">' + esc(p) + '</span>'; };
-          var ct = [v('cidade'), v('whats'), v('email')].filter(Boolean).join(' · ');
-          var h = '<h4>' + ph(v('nome').toUpperCase(), '[SEU NOME COMPLETO]') + '</h4><div class="ct">' + ph(ct, '[Cidade – UF] · [WhatsApp] · [e-mail]') + '</div>';
-          h += '<div class="s"><b>OBJETIVO</b>' + esc(objText()) + '</div>';
-          if (v('reg')) h += '<div class="s"><b>REGISTRO PROFISSIONAL</b>' + esc(v('reg')) + '</div>';
-          h += '<div class="s"><b>FORMAÇÃO</b>' + ph(v('form'), '[Curso técnico / graduação] – [Instituição] – [ano]\nEnsino médio – [Escola] – [ano]') + '</div>';
-          h += '<div class="s"><b>CURSOS COMPLEMENTARES</b>' + esc(cursoText()) + '</div>';
-          h += '<div class="s"><b>EXPERIÊNCIA</b>' + ph(v('exp'), '[Cargo] – [Empresa] – [período]\n· [Uma realização concreta, com verbo de ação]') + '</div>';
-          h += '<div class="s"><b>COMPETÊNCIAS</b>' + ph(v('comp'), 'Atendimento ao público · Organização · Atenção a detalhes · Trabalho em equipe') + '</div>';
-          h += '<div class="s"><b>DISPONIBILIDADE</b>' + ph(v('disp'), '[Turnos e dias] · [Início imediato]') + '</div>';
-          $('#cvp').innerHTML = h;
-        }
-        $('#cvf').addEventListener('input', function (e) { var k = e.target.dataset.k; if (!k) return; cv[k] = e.target.value; OP.set('cv', cv); draw(); });
-        $('#cvc').addEventListener('click', function () { copy(cvPlain(), this); });
-        $('#cvx').addEventListener('click', function () { cv = Object.assign({}, D.cvExemplo); OP.set('cv', cv); $$('#cvf [data-k]').forEach(function (x) { x.value = cv[x.dataset.k] || ''; }); draw(); toast('Exemplo preenchido. Troque pelos seus dados.'); });
-        $('#cvl').addEventListener('click', function () { cv = {}; OP.set('cv', cv); $$('#cvf [data-k]').forEach(function (x) { x.value = ''; }); draw(); });
-        draw();
-      },
-    },
-    mensagens: {
-      html: function () {
-        var list = D.mensagens.filter(function (m) { return m.t === 'all' || !trilha || (m.t === 'A' && trilha === 'A') || (m.t === 'BC' && trilha !== 'A'); });
-        return '<p class="lead">"Tem vaga?" sozinho é ignorado. Estas mensagens já usam o nome e a cidade do seu <a href="#/aula/curriculo">currículo</a>. O que está em <mark class="mk">amarelo</mark>, você completa.' + (trilha ? '' : ' <a href="#/aula/trilha">Escolha sua trilha</a> para ver só as que servem para você.') + '</p>' +
-          '<div class="g2">' + list.map(function (m, i) { var f = fill(m.b); return '<article class="card msg"><header><div><span class="k">' + esc(m.c) + '</span><h3>' + (i + 1) + ' · ' + esc(m.k) + '</h3></div>' + (m.t !== 'all' ? '<span class="chip ' + (m.t === 'A' ? 'chip--bl' : 'chip--or') + '">' + (m.t === 'A' ? 'Trilha A' : 'Trilhas B e C') + '</span>' : '') + '</header><div class="body">' + f.html + '</div><footer><small>' + esc(m.n || '') + '</small><button class="btn btn--gh btn--sm" type="button" data-cp="' + D.mensagens.indexOf(m) + '">' + ic('copy') + ' Copiar</button></footer></article>'; }).join('') + '</div>';
-      },
-      init: function () { $$('[data-cp]').forEach(function (b) { b.addEventListener('click', function () { copy(fill(D.mensagens[+b.dataset.cp].b).plain, b); }); }); },
-    },
-    plano: {
-      html: function () {
-        var plan = OP.get('plan', {}), total = 0;
-        var h = '<p class="lead">Uma hora por dia, durante 7 dias, rende mais que um dia inteiro de ansiedade. Seu progresso fica salvo neste aparelho.</p><article class="card"><div class="ckh"><b id="pc"></b><div class="bar bar--g"><i id="pb"></i></div></div></article><div class="mods-p" id="tl">';
-        D.plano.forEach(function (d, i) {
-          h += '<article class="card day"><div class="day__n"><span>DIA</span><b>' + (i + 1) + '</b></div><div><h3>' + esc(d[0]) + '</h3>';
-          d[1].forEach(function (t, j) { var id = 'd' + i + '-' + j; total++; h += '<label class="ck"><input type="checkbox" data-id="' + id + '"' + (plan[id] ? ' checked' : '') + '><span class="bx">' + ic('check') + '</span><span>' + esc(t) + '</span></label>'; });
-          h += '</div></article>';
-        });
-        return h + '</div><p class="closing"><span class="serif">Busca de trabalho é colheita:</span> vem de semear com constância, não de um único dia bom.</p>';
-      },
-      init: function () {
-        var plan = OP.get('plan', {});
-        function upd() { var ins = $$('#tl input'), n = ins.filter(function (x) { return x.checked; }).length; $('#pc').textContent = n + ' de ' + ins.length + ' passos'; $('#pb').style.width = pct(n, ins.length) + '%'; $$('#tl .day').forEach(function (d) { var i = $$('input', d); d.classList.toggle('done', i.every(function (x) { return x.checked; })); }); }
-        $('#tl').addEventListener('change', function (e) { plan[e.target.dataset.id] = e.target.checked; OP.set('plan', plan); upd(); var d = e.target.closest('.day'); if (e.target.checked && $$('input', d).every(function (x) { return x.checked; })) toast('Dia concluído!'); });
-        upd();
-      },
-    },
-    contatos: {
-      html: function () {
-        return '<p class="lead">O que não é anotado é esquecido. Registre cada estabelecimento e atualize o status a cada passo. O placar se calcula sozinho.</p><div class="score">' + ['Contatos feitos', 'Visitas', 'Respostas', 'Entrevistas'].map(function (t, i) { return '<div class="card"><b id="s' + i + '">0</b><span>' + t + '</span></div>'; }).join('') + '</div>' +
-          '<div class="row__h"><span>Estabelecimento</span><span>Tipo</span><span>Contato</span><span>1º contato</span><span>Status</span><span>Próximo passo</span><span></span></div><div class="rows" id="rows"></div><div><button class="btn btn--gh" type="button" id="radd">' + ic('plus') + ' Adicionar contato</button></div><p class="note">Salvo automaticamente neste aparelho. A primeira linha é um exemplo; apague quando quiser.</p>';
-      },
-      init: function () {
-        var rows = OP.get('rows', null);
-        if (!rows) rows = [{ ex: 1, nome: 'Ex.: Clínica Vida', tipo: 'Clínica', contato: '(61) 9 0000-0000', data: '14/10', status: 'Visitado', prox: 'Ligar dia 18, falar com Joana' }, { nome: '', tipo: '', contato: '', data: '', status: 'A contatar', prox: '' }, { nome: '', tipo: '', contato: '', data: '', status: 'A contatar', prox: '' }];
-        var ST = D.status;
-        function save() { OP.set('rows', rows); score(); }
-        function score() {
-          var real = rows.filter(function (r) { return !r.ex && String(r.nome || '').trim(); });
-          var c = function (arr) { return real.filter(function (r) { return arr.indexOf(r.status) > -1; }).length; };
-          $('#s0').textContent = c(ST.slice(1)); $('#s1').textContent = c(['Visitado', 'Respondeu', 'Entrevista']); $('#s2').textContent = c(['Respondeu', 'Entrevista']); $('#s3').textContent = c(['Entrevista']);
-        }
-        function draw() {
-          var box = $('#rows'); box.innerHTML = '';
-          rows.forEach(function (r, i) {
-            var el = document.createElement('div'); el.className = 'card row' + (r.ex ? ' ex' : '');
-            var f = function (k, lab, ph) { return '<input class="in r-' + k + '" data-k="' + k + '" aria-label="' + lab + '" placeholder="' + ph + '" value="' + esc(r[k] || '') + '">'; };
-            el.innerHTML = f('nome', 'Estabelecimento', 'Estabelecimento') + f('tipo', 'Tipo', 'Tipo') + f('contato', 'Contato', 'Telefone ou @') + f('data', '1º contato', 'dd/mm') +
-              '<select class="in" data-k="status" aria-label="Status">' + ST.map(function (s) { return '<option' + (s === r.status ? ' selected' : '') + '>' + s + '</option>'; }).join('') + '</select>' + f('prox', 'Próximo passo', 'Próximo passo') +
-              '<button class="del" type="button" aria-label="Remover contato">' + ic('x') + '</button>';
-            el.addEventListener('input', function (e) { var k = e.target.dataset.k; if (!k) return; r[k] = e.target.value; if (r.ex) { delete r.ex; el.classList.remove('ex'); } save(); });
-            el.addEventListener('change', function (e) { if (e.target.dataset.k === 'status') { r.status = e.target.value; save(); } });
-            $('.del', el).addEventListener('click', function () { rows.splice(i, 1); save(); draw(); });
-            box.appendChild(el);
-          });
-        }
-        $('#radd').addEventListener('click', function () { rows.push({ nome: '', tipo: '', contato: '', data: '', status: 'A contatar', prox: '' }); save(); draw(); var ins = $$('#rows .r-nome'); ins[ins.length - 1].focus(); });
-        draw(); score();
-      },
-    },
-    entrevista: {
-      html: function () {
-        var lv = OP.get('lv', {});
-        return '<p class="lead">A entrevista se ganha antes de começar.</p><div class="g2"><article class="card"><div class="ckh"><b>O que levar</b></div><div class="ckwrap" id="lv">' + D.levar.map(function (t, i) { return '<label class="ck"><input type="checkbox" data-k="l' + i + '"' + (lv['l' + i] ? ' checked' : '') + '><span class="bx">' + ic('check') + '</span><span>' + esc(t) + '</span></label>'; }).join('') + '</div></article>' +
-          '<article class="card box"><h3>Como se apresentar</h3><ul class="ul" style="margin-top:14px">' + D.apresentar.map(function (t) { return '<li>' + ic('check') + '<span>' + esc(t) + '</span></li>'; }).join('') + '</ul></article></div>' +
-          '<h2 class="disp h2" style="margin-top:10px">Perguntas comuns e como pensar a resposta</h2><article class="card qa">' + D.perguntas.map(function (q, i) { return '<details' + (i === 0 ? ' open' : '') + '><summary>' + esc(q[0]) + ic('plus') + '</summary><p>' + esc(q[1]) + '</p></details>'; }).join('') + '</article>' +
-          '<article class="card box"><h3>Perguntas que você pode fazer</h3><ul class="ul" style="margin-top:14px">' + D.vocePergunta.map(function (t) { return '<li>' + ic('chat') + '<span>' + esc(t) + '</span></li>'; }).join('') + '</ul></article>' +
-          '<div class="alert alert--bl">' + ic('chat') + '<span>No mesmo dia, mande a <a href="#/aula/mensagens">mensagem de agradecimento</a>. Pouca gente faz, e é lembrada por isso.</span></div>';
-      },
-      init: function () { var lv = OP.get('lv', {}); $('#lv').addEventListener('change', function (e) { lv[e.target.dataset.k] = e.target.checked; OP.set('lv', lv); }); },
-    },
-    perfil: { html: function () { return '<p class="lead">Antes de responder, eles olham seu perfil. Ajuste estes quatro pontos hoje.</p>' + boxes(D.perfil, 'g2', 'ibox--or'); } },
-    golpes: {
-      html: function () {
-        return '<p class="lead">Quem busca trabalho é alvo fácil. Não avance quando a proposta:</p><article class="card box"><ul class="ul ul--x">' + D.golpes.map(function (t) { return '<li>' + ic('ban') + '<span>' + esc(t) + '</span></li>'; }).join('') + '</ul></article><div class="alert alert--bl">' + ic('search') + '<span>Na dúvida, pesquise a empresa no Google e no Reclame Aqui, e confirme o endereço no Maps.</span></div>';
-      },
-    },
-    proximo: {
-      html: function () {
-        return '<article class="card bigq"><span class="ast">Próximo passo</span><h2 class="disp" style="margin-top:12px">O curso abriu uma porta.<br><span class="serif">A formação faz você atravessar.</span></h2><p style="color:rgba(255,255,255,.75);max-width:56ch;margin:14px auto 0">Capacitação contínua é o que faz você ser lembrado na hora de uma vaga, e formação regulamentada é o que permite atuar com procedimentos.</p></article>' +
-          '<div class="g2"><article class="card box">' + gic('shield', 'bl') + '<h3>Trilha A</h3><p>Mantenha o registro em dia e siga se atualizando. É o que diferencia quem é chamado primeiro.</p></article><article class="card box">' + gic('spark', '') + '<h3>Trilhas B e C</h3><p>O caminho é uma formação técnica ou superior, como o Técnico em Enfermagem. Fale com a equipe da TEC Mais para conhecer turmas, duração e formas de pagamento.</p><a class="btn btn--or btn--sm" style="margin-top:16px" target="_blank" rel="noopener" href="https://wa.me/' + C.whatsapp + '?text=' + encodeURIComponent('Olá! Sou aluno(a) da TEC Mais Academy e quero saber sobre o Técnico em Enfermagem.') + '">Falar com a TEC Mais</a></article></div>' +
-          '<div><span class="k">Conselhos de classe</span><div class="links" style="margin-top:10px">' + D.conselhos.map(function (c) { return '<a class="btn btn--gh btn--sm" href="' + c.u + '" target="_blank" rel="noopener">' + esc(c.t) + ic('external') + '</a>'; }).join('') + '</div></div>';
-      },
-    },
   };
-  function aviso() { return '<div class="alert">' + ic('alert') + '<span>Este guia é revisão, não protocolo. Ele não substitui o protocolo da instituição, a prescrição, a bula nem a supervisão profissional. Aplicar injetáveis é atividade de profissionais legalmente habilitados.</span></div>'; }
 
-  /* currículo e mensagens: mesma lógica do kit original */
-  function objText() {
-    var o = v('obj');
-    if (trilha === 'A' || (!trilha && v('reg'))) return 'Atuar como ' + (o || '[função]') + ', com foco em segurança do paciente e atendimento humanizado.';
-    return 'Atuar em ' + (o || '[recepção / apoio]') + ' de clínica ou serviço de saúde, contribuindo com atendimento organizado e humanizado.';
+  /* ---------- aulas que mostram um pedaço das páginas originais (academy-src/paginas) ---------- */
+  var PAG = window.TMA_PAGINAS || {};
+  // roda DENTRO do iframe: mostra só as seções da aula, informa a altura e repassa links e avisos
+  function frameScript(show) {
+    var keep = [];
+    show.forEach(function (s) { var e = document.querySelector(s); if (e) keep.push(e); });
+    Array.prototype.forEach.call(document.body.children, function (el) {
+      if (/^(SCRIPT|STYLE|TEMPLATE)$/.test(el.tagName) || el.id === 'toast') return;
+      if (keep.indexOf(el) < 0) el.style.display = 'none';
+    });
+    function h() { var b = document.body, cs = getComputedStyle(b); parent.postMessage({ tma: 'h', h: Math.ceil(b.getBoundingClientRect().height + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom)) }, '*'); }
+    try { new ResizeObserver(h).observe(document.body); } catch (e) {}
+    addEventListener('load', h); h();
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href]'); if (!a) return;
+      var href = a.getAttribute('href');
+      if (/^https?:/i.test(href)) { a.target = '_blank'; a.rel = 'noopener'; return; }
+      if (/^(mailto|tel):/i.test(href)) return;
+      e.preventDefault();
+      if (href.charAt(0) === '#') { var t = document.querySelector(href); if (t && t.offsetParent !== null) { parent.postMessage({ tma: 'y', y: t.getBoundingClientRect().top }, '*'); return; } }
+      parent.postMessage({ tma: 'go', href: href }, '*');
+    }, true);
+    var t = document.getElementById('toast');
+    if (t) new MutationObserver(function () { if (t.classList.contains('on')) parent.postMessage({ tma: 'toast', m: t.textContent }, '*'); }).observe(t, { attributes: true, attributeFilter: ['class'] });
   }
-  function cursoText() { return 'Administração de Medicamentos Injetáveis (curso livre) – TEC Mais Academy – ' + (v('mes') || '[mês/ano]') + '\n· Cálculo de medicamentos, reconstituição e diluição\n· Biossegurança, preparo e descarte de materiais\n· Cuidados antes, durante e após a administração'; }
-  function cvPlain() {
-    var L = [(v('nome') || '[SEU NOME COMPLETO]').toUpperCase(), [v('cidade') || '[Cidade – UF]', v('whats') || '[WhatsApp]', v('email') || '[e-mail]'].join(' · '), '', 'OBJETIVO', objText()];
-    if (v('reg')) L.push('', 'REGISTRO PROFISSIONAL', v('reg'));
-    L.push('', 'FORMAÇÃO', v('form') || '[Formação]', '', 'CURSOS COMPLEMENTARES', cursoText(), '', 'EXPERIÊNCIA', v('exp') || '[Experiência]', '', 'COMPETÊNCIAS', v('comp') || '[Competências]', '', 'DISPONIBILIDADE', v('disp') || '[Disponibilidade]');
-    return L.join('\n');
+  function frameDoc(a) {
+    var src = PAG[a.mod.pagina] || '<p>Conteúdo indisponível.</p>';
+    var head = '<base href="/tec-mais/academy/"><style>.toast{display:none!important}</style>';
+    var tail = '<script>(' + frameScript.toString() + ')(' + JSON.stringify(a.secoes) + ')<\/script>';
+    return src.replace(/<head([^>]*)>/i, function (m) { return m + head; }).replace(/<\/body>/i, function () { return tail + '</body>'; });
   }
-  function fill(body) {
-    var c = v('cidade'), map = { nome: v('nome').split(' ').slice(0, 2).join(' '), cidade: c ? c.split(/[–-]/)[0].trim() : '', whats: v('whats'), funcao: v('obj') ? v('obj').split(' em ')[0] : '' };
-    var ph = { nome: '[Nome]', cidade: '[cidade]', whats: '[WhatsApp]', funcao: '[técnico(a) de enfermagem]' };
-    var plain = body.replace(/\{(\w+)\}/g, function (_, k) { return map[k] || ph[k]; });
-    var html = esc(body).replace(/\{(\w+)\}/g, function (_, k) { return map[k] ? '<span class="fill">' + esc(map[k]) + '</span>' : '<mark>' + ph[k] + '</mark>'; }).replace(/\[([^\]]+)\]/g, '<mark>[$1]</mark>');
-    return { plain: plain, html: html };
+  var curFrame = null;
+  function mountFrame(a) {
+    var f = document.createElement('iframe');
+    f.className = 'sheet__f'; f.title = a.titulo; f.style.height = '70vh';
+    f.srcdoc = frameDoc(a);
+    $('#sheet').appendChild(f); curFrame = f;
   }
+  window.addEventListener('message', function (e) {
+    if (!curFrame || e.source !== curFrame.contentWindow) return;
+    var d = e.data || {};
+    if (d.tma === 'h' && d.h > 50) { curFrame.style.height = d.h + 'px'; $('#sheet').classList.add('on'); }
+    else if (d.tma === 'toast') toast(d.m);
+    else if (d.tma === 'y') scrollTo({ top: curFrame.getBoundingClientRect().top + scrollY + d.y - 80, behavior: 'smooth' });
+    else if (d.tma === 'go') {
+      var k = d.href, id = TMA_LINKS[k];
+      if (id === undefined && k.indexOf('#') > 0) id = TMA_LINKS[k.slice(k.indexOf('#'))];
+      if (id !== undefined) location.hash = id ? '#/aula/' + id : '#/';
+    }
+  });
 
   /* ---------- PDF criptografado (mesma senha do portal) ---------- */
   var pdfUrl = null;
@@ -446,7 +284,7 @@
     page.innerHTML = r.name === 'aula' ? pageAula(r.lesson) : r.name === 'modulos' ? pageModulos() : r.name === 'ferramentas' ? pageFerramentas() : pageHome();
     document.title = (r.lesson ? r.lesson.titulo : TITLES[r.name]) + ' · TEC Mais Academy';
     if (r.lesson) {
-      var R0 = R[r.lesson.tipo]; if (R0 && R0.init) R0.init(r.lesson);
+      if (r.lesson.secoes) mountFrame(r.lesson); else { var R0 = R[r.lesson.tipo]; if (R0 && R0.init) R0.init(r.lesson); }
       $('#donebtn').addEventListener('click', function () { var on = !isDone(r.lesson.id); setDone(r.lesson.id, on); var y = scrollY; route(); scrollTo(0, y); });
     }
     if (key !== lastKey) { scrollTo(0, 0); var h1 = $('h1', page); if (h1 && lastKey) { h1.setAttribute('tabindex', '-1'); h1.focus({ preventScroll: true }); } }
