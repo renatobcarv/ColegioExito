@@ -89,7 +89,7 @@ export type Formacao = {
   factsTitle: string;
   facts: { title: string; text: string }[];
   /** Áreas e cursos. Lista vazia = a página convida para falar com a equipe. */
-  areas: { title: string; courses: string; icon: 'briefcase' | 'cpu' | 'heart' | 'book' | 'monitor' | 'bolt' | 'tool' }[];
+  areas: { title: string; courses: string; icon: 'briefcase' | 'cpu' | 'heart' | 'book' | 'monitor' | 'bolt' | 'tool'; href?: string; badge?: string }[];
   modalities: { title: string; text: string; featured?: boolean }[];
   steps: { title: string; text: string }[];
   form: { title: string; text: string; selectLabel: string; cta: string; askModality: boolean };
@@ -584,11 +584,11 @@ export const formacoes: Formacao[] = [
     ],
     areas: [
       { title: 'Primeiros Socorros', courses: 'Reconhecer a emergência, ligar para o 192 e agir certo até o socorro chegar. Carga horária de 8h.', icon: 'heart' },
-      { title: 'APH: Atendimento Pré-Hospitalar', courses: 'O atendimento no local da ocorrência, com técnica e sangue-frio.', icon: 'bolt' },
+      { title: 'APH: Atendimento Pré-Hospitalar', courses: 'Um dia de teoria e prática, com 4 bônus na plataforma TEC Mais Academy. Turma fundadora por R$ 99.', icon: 'bolt', href: '/tec-mais/aph', badge: 'Turma fundadora · R$ 99' },
       { title: 'Feridas e Curativos', courses: 'Avaliação, limpeza e cuidado correto de feridas.', icon: 'tool' },
       { title: 'Cuidador de Idoso', courses: 'Rotina, segurança e dignidade no cuidado com a pessoa idosa.', icon: 'heart' },
       { title: 'Combate a Incêndio', courses: 'Prevenção, uso de extintores e evacuação segura.', icon: 'bolt' },
-      { title: 'Injetáveis', courses: 'Técnicas de aplicação com segurança e boas práticas.', icon: 'tool' },
+      { title: 'Injetáveis', courses: 'Um dia de teoria e prática com simuladores, apostila, lanche, mimo e acesso à TEC Mais Academy.', icon: 'tool', href: '/tec-mais/injetaveis', badge: 'Com plataforma exclusiva' },
     ],
     modalities: [],
     steps: [

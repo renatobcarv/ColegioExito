@@ -93,11 +93,16 @@ const options = [...(f.technical ?? []).map((c) => c.name), ...f.areas.map((a) =
               {f.areas.map((a) => (
                 <li class="area rv">
                   <span class="area__icon"><Icon name={a.icon} size={24} /></span>
+                  {a.badge && <span class="area__badge">{a.badge}</span>}
                   <h3 class="disp">{a.title}</h3>
                   <p>{a.courses}</p>
-                  <a href={waLink(f.contact.whatsapp, `${f.whatsappMessage} Tenho interesse em ${a.title}.`)} target="_blank" rel="noopener" class="area__cta">
-                    Tenho interesse <Icon name="arrow" size={16} />
-                  </a>
+                  {a.href ? (
+                    <a href={`${base}${a.href}`} class="area__cta">Ver o curso completo <Icon name="arrow" size={16} /></a>
+                  ) : (
+                    <a href={waLink(f.contact.whatsapp, `${f.whatsappMessage} Tenho interesse em ${a.title}.`)} target="_blank" rel="noopener" class="area__cta">
+                      Tenho interesse <Icon name="arrow" size={16} />
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>
@@ -267,6 +272,7 @@ const options = [...(f.technical ?? []).map((c) => c.name), ...f.areas.map((a) =
 </script>
 
 <style>
+  .area__badge { display: inline-block; margin-bottom: 8px; padding: 4px 10px; border-radius: 999px; background: var(--pd); color: #FFE45C; font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; }
   .fp { --ink-txt: #0B1F5C; }
 
   :global(.fbtn) {
