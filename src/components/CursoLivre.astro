@@ -1,0 +1,522 @@
+---
+/**
+ * Página de um curso de experiência prática (um dia) da TEC Mais, no modelo do "Guia da Turma":
+ * fundo creme, títulos com serifa, rótulos laranja e fotos com moldura deslocada.
+ * Dados: src/data/cursos-livres.ts.
+ */
+import '@fontsource-variable/lora';
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import Icon from './Icon.astro';
+import Arrow from './Arrow.astro';
+import { school, waLink, formatPhone, formacoes } from '../data/site';
+import { cursosLivres, type CursoLivre } from '../data/cursos-livres';
+
+interface Props { c: CursoLivre }
+const { c } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const tec = formacoes.find((x) => x.slug === 'tec-mais')!;
+const wa = waLink(tec.contact.whatsapp, c.whatsappMessage);
+const outro = cursosLivres.find((x) => x.slug !== c.slug)!;
+const total = c.bonus.reduce((n, b) => n + (b.valor ? Number(b.valor.replace(/\D/g, '')) : 0), 0);
+const num = (i: number) => String(i + 1).padStart(2, '0');
+let sec = 0;
+const n = () => num(sec++);
+---
+
+<Base title={`${c.nome} em Valparaíso de Goiás | TEC Mais · ${school.name}`} description={`${c.nome} na TEC Mais: um dia de teoria e prática, apostila, lanche, mimo e acesso à plataforma exclusiva TEC Mais Academy.${c.preco.valor ? ` Turma fundadora por ${c.preco.valor}.` : ''}`}>
+  <Header />
+  <main id="conteudo" class="cl">
+
+    <!-- capa -->
+    <section class="cl-hero">
+      <div class="wrap cl-hero__g">
+        <div>
+          <nav aria-label="Você está em" class="mono cl-crumb"><a href={`${base}/`}>Início</a> / <a href={`${base}/tec-mais`}>TEC Mais</a> / <span aria-current="page">{c.nomeCurto}</span></nav>
+          <p class="cl-k">{c.kicker}</p>
+          <h1 class="cl-h1">{c.nome}</h1>
+          <p class="cl-promise">{c.titulo} <em>{c.acento}</em></p>
+          <p class="cl-lead">{c.lead}</p>
+          {c.preco.valor && (
+            <div class="cl-price">
+              <span class="cl-price__sel">{c.preco.selo}</span>
+              <span class="cl-price__v">por apenas <strong>{c.preco.valor}</strong></span>
+              {c.preco.ancora && <span class="cl-price__a">{c.preco.ancora}</span>}
+            </div>
+          )}
+          <div class="cl-ctas">
+            <a href={wa} target="_blank" rel="noopener" class="cl-btn" data-wa>{c.preco.valor ? `Garantir minha vaga por ${c.preco.valor}` : 'Quero minha vaga'}<span class="cl-btn__a"><Arrow /></span></a>
+            <a href="#plataforma" class="cl-ghost">Ver a plataforma</a>
+          </div>
+        </div>
+        <figure class="cl-frame cl-frame--hero">
+          <img src={`${base}${c.fotoHero.src}`} alt={c.fotoHero.alt} decoding="async" fetchpriority="high" />
+        </figure>
+      </div>
+      <div class="wrap cl-strip">
+        <div><span class="cl-strip__k">Turma</span><strong>{c.turma.data ?? 'Próxima turma: data pelo WhatsApp'}</strong></div>
+        <div><span class="cl-strip__k">Horário</span><strong>08h00 — 17h30</strong></div>
+        <div><span class="cl-strip__k">Programação</span><strong>{c.turma.carga}</strong></div>
+        <div><span class="cl-strip__k">Depois da aula</span><strong>Acesso à TEC Mais Academy</strong></div>
+      </div>
+    </section>
+
+    <!-- o que você ganha -->
+    <section class="cl-s">
+      <div class="wrap">
+        <p class="cl-k">{n()} — O que você ganha</p>
+        <h2 class="cl-h2">Não é só uma aula. <em>É um pacote completo.</em></h2>
+        <ul class="cl-gain">
+          <li><b>Aula teórica</b><span>08h00 às 12h00</span></li>
+          <li><b>Aula prática</b><span>13h30 às 17h30</span></li>
+          {c.incluso.filter((x) => x.icone !== 'monitor').map((x) => <li><b>{x.titulo.replace(' completo', '').replace(' durante o intervalo', '')}</b><span>{x.icone === 'book' ? 'para levar' : x.icone === 'tool' ? 'sem custo adicional' : x.icone === 'heart' ? 'no intervalo' : 'no encerramento'}</span></li>)}
+          <li class="cl-gain--hl"><b>Plataforma exclusiva</b><span>{c.bonus.length} bônus{total ? ` · valem R$ ${total}` : ''}</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- programação -->
+    <section class="cl-s cl-s--soft">
+      <div class="wrap cl-two">
+        <div>
+          <p class="cl-k">{n()} — Programação do dia</p>
+          <h2 class="cl-h2">Seu dia, <em>do começo ao fim.</em></h2>
+          <p class="cl-p">Para você chegar já sabendo como será a experiência, organizamos a programação em etapas.</p>
+          <p class="cl-big"><strong>9h30</strong><span>de programação,<br />do início ao encerramento</span></p>
+        </div>
+        <ol class="cl-tl">
+          {c.programacao.map((p) => (
+            <li>
+              <span class="cl-tl__t">{p.inicio}{p.fim && <><br />{p.fim}</>}</span>
+              <div><h3>{p.titulo}</h3><p>{p.texto}</p></div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- conteúdo -->
+    <section class="cl-s">
+      <div class="wrap">
+        <p class="cl-k">{n()} — O que você vai aprender</p>
+        <h2 class="cl-h2">O conteúdo ganha sentido <em>quando você entende onde ele será aplicado.</em></h2>
+        <div class="cl-topics">
+          {c.conteudo.map((t, i) => (
+            <article><span>{num(i)}</span><h3>{t.titulo}</h3><p>{t.texto}</p></article>
+          ))}
+        </div>
+        {c.destaqueConteudo && <div class="cl-band"><span>{c.destaqueConteudo.label}</span><strong>{c.destaqueConteudo.valor}</strong></div>}
+      </div>
+    </section>
+
+    <!-- incluso -->
+    <section class="cl-s cl-s--soft">
+      <div class="wrap">
+        <p class="cl-k">{n()} — O que está incluso</p>
+        <h2 class="cl-h2">Além do conteúdo, <em>cuidamos de cada detalhe do seu dia.</em></h2>
+        <p class="cl-p">Sua inscrição garante tudo isso, e o aprendizado continua depois que a aula acaba.</p>
+        <div class="cl-inc">
+          {c.incluso.map((x) => (
+            <article class={x.icone === 'monitor' ? 'cl-inc--hl' : ''}>
+              <span class="cl-inc__i"><Icon name={x.icone} size={22} /></span>
+              <h3>{x.titulo}</h3><p>{x.texto}</p>
+              {x.icone === 'monitor' && <a href="#plataforma">Conhecer a plataforma →</a>}
+            </article>
+          ))}
+        </div>
+        <blockquote class="cl-quote">“{c.frase}”</blockquote>
+      </div>
+    </section>
+
+    <!-- plataforma -->
+    <section id="plataforma" class="cl-s cl-plat">
+      <div class="cl-plat__glow" aria-hidden="true"></div>
+      <div class="wrap">
+        <p class="cl-k cl-k--l">{n()} — Plataforma exclusiva</p>
+        <h2 class="cl-h2">A aula acaba às 17h30. <em>Na TEC Mais Academy, ela continua.</em></h2>
+        <p class="cl-p">{c.bonusIntro}</p>
+        <ul class="cl-plat__feats">
+          <li><Icon name="check" size={16} />Login individual, só seu</li>
+          <li><Icon name="check" size={16} />Funciona no celular</li>
+          <li><Icon name="check" size={16} />Progresso salvo, aula por aula</li>
+          <li><Icon name="check" size={16} />Ferramentas para usar na prática</li>
+        </ul>
+        <div class="cl-shots">
+          <figure class="cl-shot">
+            <div class="cl-shot__bar"><i></i><i></i><i></i><span>tecmais academy</span></div>
+            <img src={`${base}${c.telas[0].src}`} alt={c.telas[0].alt} loading="lazy" decoding="async" width="1440" height="900" />
+            <figcaption>{c.telas[0].legenda}</figcaption>
+          </figure>
+          <div class="cl-phones">
+            {c.telasCelular.map((t) => <figure class="cl-phone"><img src={`${base}${t.src}`} alt={t.alt} loading="lazy" decoding="async" width="665" height="1440" /></figure>)}
+          </div>
+        </div>
+        <div class="cl-bonus">
+          {c.bonus.map((b, i) => (
+            <article>
+              <header><span class="cl-bonus__n">Bônus {num(i)}</span>{b.valor && <span class="cl-bonus__v">Vale <s>{b.valor}</s></span>}</header>
+              <h3>{b.titulo}</h3>
+              <p>{b.texto}</p>
+              <small><Icon name="clock" size={14} />{b.libera}</small>
+            </article>
+          ))}
+        </div>
+        {c.telas[1] && (
+          <figure class="cl-shot cl-shot--2">
+            <div class="cl-shot__bar"><i></i><i></i><i></i><span>tecmais academy</span></div>
+            <img src={`${base}${c.telas[1].src}`} alt={c.telas[1].alt} loading="lazy" decoding="async" width="1440" height="900" />
+            <figcaption>{c.telas[1].legenda}</figcaption>
+          </figure>
+        )}
+      </div>
+    </section>
+
+    <!-- prática -->
+    <section class="cl-s">
+      <div class="wrap">
+        <p class="cl-k">{n()} — Parte prática</p>
+        <h2 class="cl-h2">Depois de entender, <em>vem a prática.</em></h2>
+        <p class="cl-p">{c.pratica.intro}</p>
+        <div class="cl-note"><strong>Prática supervisionada</strong>{c.pratica.nota}</div>
+        <div class="cl-mats">
+          {c.pratica.grupos.map((g) => (
+            <div><h3>{g.titulo}</h3><ul>{g.itens.map((x) => <li>{x}</li>)}</ul></div>
+          ))}
+        </div>
+        <ol class="cl-steps">{c.etapas.map((e, i) => <li><span>{num(i)}</span>{e}</li>)}</ol>
+        <div class={`cl-gal cl-gal--${c.pratica.fotos.length}`}>
+          {c.pratica.fotos.map((f, i) => <figure class={`cl-frame${i % 2 ? ' cl-frame--alt' : ''}`}><img src={`${base}${f.src}`} alt={f.alt} loading="lazy" decoding="async" /></figure>)}
+        </div>
+        {c.pratica.fotosNota && <p class="cl-gal__n">{c.pratica.fotosNota}</p>}
+      </div>
+    </section>
+
+    <!-- quem conduz -->
+    {c.professor && (
+      <section class="cl-s cl-s--soft">
+        <div class="wrap cl-prof">
+          <div>
+            <p class="cl-k">{n()} — Quem conduz a turma</p>
+            <h2 class="cl-h2 cl-prof__n">{c.professor.nome}</h2>
+            <p class="cl-prof__c">{c.professor.cargo}</p>
+            <h3 class="cl-prof__f">Formação</h3>
+            <ul>{c.professor.formacao.map((x) => <li>{x}</li>)}</ul>
+            {c.professor.fotoAula && <figure class="cl-frame cl-frame--sm"><img src={`${base}${c.professor.fotoAula}`} alt={`${c.professor.nome} em sala de aula`} loading="lazy" decoding="async" /></figure>}
+          </div>
+          <img class="cl-prof__img" src={`${base}${c.professor.foto}`} alt={c.professor.nome} loading="lazy" decoding="async" />
+        </div>
+      </section>
+    )}
+
+    <!-- investimento -->
+    <section class="cl-s" id="investimento">
+      <div class="wrap">
+        <div class="cl-inv">
+          <div>
+            <p class="cl-k">{n()} — Investimento</p>
+            {c.preco.valor ? (
+              <>
+                <h2 class="cl-h2">Turma fundadora: <em>{c.preco.valor}.</em></h2>
+                <p class="cl-p">{c.preco.nota}</p>
+              </>
+            ) : (
+              <>
+                <h2 class="cl-h2">Tudo isso <em>numa única inscrição.</em></h2>
+                <p class="cl-p">{c.preco.nota}</p>
+              </>
+            )}
+          </div>
+          <div class="cl-inv__box">
+            <ul>
+              <li><span>Aula teórica + aula prática</span><b>9h30</b></li>
+              <li><span>Apostila, lanche e mimo da turma</span><b>incluso</b></li>
+              {c.bonus.map((b) => <li><span>{b.titulo}</span><b>{b.valor ? <s>{b.valor}</s> : 'incluso'}</b></li>)}
+            </ul>
+            {c.preco.valor ? (
+              <p class="cl-inv__t"><span>{total ? <>De <s>R$ {total}</s> só em bônus, por</> : 'Por'}</span><strong>{c.preco.valor}</strong><small>valor exclusivo da primeira turma</small></p>
+            ) : (
+              <p class="cl-inv__t"><span>Valores e formas de pagamento</span><strong class="cl-inv__ask">pelo WhatsApp</strong></p>
+            )}
+            <a href={wa} target="_blank" rel="noopener" class="cl-btn cl-btn--full" data-wa>{c.preco.valor ? `Garantir minha vaga por ${c.preco.valor}` : 'Consultar valor e próxima turma'}<span class="cl-btn__a"><Icon name="whatsapp" size={20} /></span></a>
+            <p class="cl-inv__w">Atendimento humano no WhatsApp {formatPhone(tec.contact.whatsapp.slice(2))}.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- antes de ir -->
+    <section class="cl-s cl-s--soft">
+      <div class="wrap cl-two">
+        <div>
+          <p class="cl-k">{n()} — Orientações</p>
+          <h2 class="cl-h2">Antes de sair de casa, <em>confira.</em></h2>
+          <dl class="cl-dl">
+            <div><dt>Data</dt><dd>{c.turma.data ?? 'Confirmada no WhatsApp ao garantir a vaga'}</dd></div>
+            <div><dt>Horário</dt><dd>{c.turma.horario}</dd></div>
+            <div><dt>Intervalo</dt><dd>{c.turma.intervalo}</dd></div>
+            <div><dt>Local</dt><dd>{c.turma.local}</dd></div>
+            <div><dt>Prática</dt><dd>{c.pratica.nota.replace(/\.$/, '')}</dd></div>
+            <div><dt>Você recebe</dt><dd>Apostila, lanche, mimo especial e acesso à TEC Mais Academy</dd></div>
+          </dl>
+        </div>
+        <div class="cl-addr">
+          <a class="cl-map" href={tec.contact.mapsUrl ?? '#'} target="_blank" rel="noopener" aria-label="Abrir a localização da TEC Mais no Google Maps"><img src={`${base}/img/cursos/mapa-tecmais.webp`} alt="Mapa com a localização da TEC Mais no Jardim Céu Azul, Valparaíso de Goiás" loading="lazy" decoding="async" /></a>
+          <p><strong>TEC Mais Cursos Técnicos</strong>Quadra 122 — Jardim Céu Azul<br />Valparaíso de Goiás — GO · CEP 72871-075</p>
+          {tec.contact.mapsUrl && <a href={tec.contact.mapsUrl} target="_blank" rel="noopener">Como chegar →</a>}
+        </div>
+      </div>
+    </section>
+
+    <!-- dúvidas -->
+    <section class="cl-s">
+      <div class="wrap cl-two">
+        <div>
+          <p class="cl-k">{n()} — Dúvidas</p>
+          <h2 class="cl-h2">Antes de você perguntar, <em>a gente responde.</em></h2>
+          <a href={wa} target="_blank" rel="noopener" class="cl-ghost cl-ghost--d" data-wa><Icon name="whatsapp" size={18} />Falar com a equipe</a>
+        </div>
+        <div class="cl-faq">
+          {c.faq.map((f, i) => <details open={i === 0}><summary>{f.q}<span aria-hidden="true">+</span></summary><p>{f.a}</p></details>)}
+        </div>
+      </div>
+    </section>
+
+    <!-- fechamento -->
+    <section class="cl-end">
+      <div class="wrap">
+        <p class="cl-k">TEC Mais · {c.nomeCurto}</p>
+        <h2>{c.finalTitulo}</h2>
+        <p>{c.finalTexto}</p>
+        <p class="cl-end__h">08h00 — 17h30</p>
+        <a href={wa} target="_blank" rel="noopener" class="cl-btn" data-wa>{c.preco.valor ? `Garantir minha vaga por ${c.preco.valor}` : 'Quero minha vaga'}<span class="cl-btn__a"><Arrow /></span></a>
+        <p class="cl-end__o">Também tem: <a href={`${base}/tec-mais/${outro.slug}`}>{outro.nome}</a></p>
+        <img src={`${base}${tec.logo.src}`} alt="TEC Mais Cursos Técnicos" width={tec.logo.w} height={tec.logo.h} loading="lazy" />
+        <small>TEC Mais Cursos Técnicos · 25 anos de formação profissional · +30 escolas</small>
+      </div>
+    </section>
+
+  </main>
+  <Footer cta={false} wa={wa} waLabel="Falar com a TEC Mais" />
+</Base>
+
+<script>
+  // UTMs na mensagem e evento de lead nos botões de WhatsApp
+  document.querySelectorAll<HTMLAnchorElement>('.cl [data-wa]').forEach((a) =>
+    a.addEventListener('click', () => {
+      const W = window as unknown as { exitoWa?: (u: string) => string; exitoTrack?: (n: string, p?: object) => void };
+      if (W.exitoWa) a.href = W.exitoWa(a.href);
+      W.exitoTrack?.('generate_lead', { form: 'curso_livre', page: location.pathname });
+    }),
+  );
+</script>
+
+<style>
+  .cl { --cream: #F7F3EE; --cream2: #EFE7DC; --beige: #E6D9C8; --ink: #0D1240; --mu: #5B6188; --or: #E0551A; --or2: #F06022; --navy: #1A1A8C; --serif: 'Lora Variable', Georgia, serif; background: var(--cream); color: var(--ink); }
+  .cl em { font-style: italic; color: var(--or); font-weight: 500; }
+  .cl-k { margin: 0 0 14px; display: flex; align-items: center; gap: 10px; font-family: var(--f-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--or); }
+  .cl-k::before { content: ""; width: 26px; height: 2px; background: var(--or); }
+  .cl-k--l { color: #FF9A5C; } .cl-k--l::before { background: #FF9A5C; }
+  .cl-h2 { margin: 0; font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 3.6vw, 46px); line-height: 1.12; letter-spacing: -.015em; max-width: 24ch; text-wrap: balance; }
+  .cl-p { margin: 14px 0 0; max-width: 60ch; font-size: 17px; line-height: 1.6; color: var(--mu); }
+  .cl-s { padding: clamp(70px, 8vw, 110px) 0; }
+  .cl-s--soft { background: #FFFFFF; }
+  .cl-two { display: grid; grid-template-columns: .9fr 1.1fr; gap: 56px; align-items: start; }
+
+  .cl-btn { display: inline-flex; align-items: center; gap: 14px; height: 60px; padding: 0 8px 0 26px; border-radius: 999px; background: linear-gradient(180deg, var(--or2), var(--or)); color: #fff; font-weight: 800; font-size: 17px; text-decoration: none; box-shadow: 0 16px 34px -14px rgba(224, 85, 26, .8); transition: transform .3s var(--ease); }
+  .cl-btn:hover { color: #fff; transform: translateY(-2px); }
+  .cl-btn__a { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: #fff; }
+  .cl-btn--full { width: 100%; justify-content: space-between; }
+  .cl-ghost { display: inline-flex; align-items: center; gap: 8px; height: 60px; padding: 0 24px; border-radius: 999px; border: 1.5px solid var(--ink); color: var(--ink); font-weight: 700; text-decoration: none; transition: .25s; }
+  .cl-ghost:hover { background: var(--ink); color: #fff; }
+  .cl-ghost--d { margin-top: 24px; }
+
+  /* capa */
+  .cl-hero { padding: 40px 0 0; background: radial-gradient(50% 60% at 100% 0%, rgba(240, 96, 34, .1), transparent 70%), var(--cream); }
+  .cl-hero__g { display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; }
+  .cl-crumb { font-size: 12px; color: var(--mu); margin-bottom: 26px; } .cl-crumb a { color: var(--ink); }
+  .cl-h1 { margin: 0; font-family: var(--f-disp); font-size: clamp(38px, 5.2vw, 68px); font-weight: 800; letter-spacing: -.04em; line-height: 1; color: var(--ink); text-wrap: balance; }
+  .cl-promise { margin: 18px 0 0; font-family: var(--serif); font-size: clamp(20px, 2vw, 26px); line-height: 1.35; max-width: 30ch; }
+  .cl-lead { margin: 16px 0 0; max-width: 56ch; font-size: 17px; line-height: 1.6; color: var(--mu); }
+  .cl-price { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 24px; padding: 14px 18px; border-radius: 18px; background: #fff; border: 1px solid var(--beige); box-shadow: 0 20px 40px -30px rgba(13, 18, 64, .4); }
+  .cl-price__sel { padding: 6px 12px; border-radius: 999px; background: var(--ink); color: #FFE45C; font-family: var(--f-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+  .cl-price__v { font-size: 16px; } .cl-price__v strong { font-family: var(--serif); font-size: 34px; color: var(--or); margin-left: 4px; }
+  .cl-price__a { flex-basis: 100%; font-size: 13.5px; color: var(--mu); }
+  .cl-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  .cl-frame { position: relative; margin: 0; }
+  .cl-frame::before { content: ""; position: absolute; inset: 14px -14px -14px 14px; border: 2px solid var(--navy); border-radius: 4px; z-index: 0; }
+  .cl-frame::after { content: ""; position: absolute; left: -8px; top: -8px; width: 60%; height: 8px; background: var(--or2); z-index: 2; }
+  .cl-frame img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; border-radius: 4px; display: block; }
+  .cl-frame--alt::before { inset: -14px 14px 14px -14px; border-color: var(--or2); }
+  .cl-frame--alt::after { left: auto; right: -8px; top: auto; bottom: -8px; background: var(--navy); }
+  .cl-frame--hero img { aspect-ratio: 4/3; }
+  .cl-strip { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 64px; border-top: 1px solid var(--beige); }
+  .cl-strip > div { padding: 22px 18px 26px 0; display: grid; gap: 4px; }
+  .cl-strip > div + div { padding-left: 18px; border-left: 1px solid var(--beige); }
+  .cl-strip__k { font-family: var(--f-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--or); }
+  .cl-strip strong { font-family: var(--serif); font-size: 18px; font-weight: 600; }
+
+  /* ganhos */
+  .cl-gain { list-style: none; margin: 34px 0 0; padding: 0; display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+  .cl-gain li { padding: 18px 14px; border-radius: 16px; background: #fff; border: 1px solid var(--beige); display: grid; gap: 4px; }
+  .cl-gain b { font-family: var(--serif); font-size: 17px; line-height: 1.2; }
+  .cl-gain span { font-size: 13px; color: var(--mu); }
+  .cl-gain--hl { background: var(--ink) !important; border-color: var(--ink) !important; color: #fff; box-shadow: 0 20px 40px -20px rgba(13, 18, 64, .6); }
+  .cl-gain--hl span { color: #FFB08A; }
+
+  /* programação */
+  .cl-big { display: flex; align-items: center; gap: 14px; margin: 34px 0 0; }
+  .cl-big strong { font-family: var(--serif); font-size: 72px; font-weight: 500; color: var(--or); line-height: 1; }
+  .cl-big span { font-size: 14px; color: var(--mu); line-height: 1.35; }
+  .cl-tl { list-style: none; margin: 0; padding: 0; display: grid; }
+  .cl-tl li { display: grid; grid-template-columns: 78px 1fr; gap: 22px; padding: 18px 0; border-bottom: 1px solid var(--beige); }
+  .cl-tl li > div { border-left: 2px solid var(--or2); padding-left: 20px; }
+  .cl-tl__t { font-family: var(--serif); font-size: 17px; line-height: 1.3; }
+  .cl-tl h3 { margin: 0 0 4px; font-family: var(--serif); font-size: 19px; }
+  .cl-tl p { margin: 0; color: var(--mu); line-height: 1.55; }
+
+  /* conteúdo */
+  .cl-topics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 34px; }
+  .cl-topics article { padding: 22px; border-radius: 6px; background: var(--beige); }
+  .cl-topics span { font-family: var(--serif); color: var(--or); font-size: 15px; }
+  .cl-topics h3 { margin: 6px 0; font-family: var(--serif); font-size: 19px; }
+  .cl-topics p { margin: 0; color: #4A4F6E; font-size: 14.5px; line-height: 1.5; }
+  .cl-band { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 18px; padding: 18px 24px; background: var(--ink); color: #fff; border-radius: 4px; box-shadow: 8px 8px 0 var(--or2); }
+  .cl-band span { font-family: var(--f-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+  .cl-band strong { font-family: var(--serif); font-size: clamp(18px, 2vw, 24px); letter-spacing: .04em; }
+
+  /* incluso */
+  .cl-inc { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 34px; }
+  .cl-inc article { padding: 24px; border-radius: 6px; border: 1px solid var(--beige); background: var(--cream); }
+  .cl-inc__i { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: var(--or); margin-bottom: 14px; border: 1px solid var(--beige); }
+  .cl-inc h3 { margin: 0 0 6px; font-family: var(--serif); font-size: 19px; }
+  .cl-inc p { margin: 0; color: var(--mu); line-height: 1.55; font-size: 15px; }
+  .cl-inc--hl { grid-column: span 1; background: var(--ink) !important; border-color: var(--ink) !important; color: #fff; }
+  .cl-inc--hl p { color: rgba(255, 255, 255, .8); }
+  .cl-inc--hl .cl-inc__i { background: var(--or2); color: #fff; border: 0; }
+  .cl-inc--hl a { display: inline-block; margin-top: 12px; color: #FFB08A; font-weight: 700; }
+  .cl-quote { margin: 30px 0 0; padding: 22px 26px; border-left: 4px solid var(--or2); background: var(--cream); font-family: var(--serif); font-style: italic; font-size: clamp(18px, 1.8vw, 22px); line-height: 1.45; color: var(--ink); }
+
+  /* plataforma */
+  .cl-plat { position: relative; overflow: clip; color: #fff; background: radial-gradient(60% 50% at 50% 115%, rgba(240, 96, 34, .55), transparent 70%), linear-gradient(180deg, #0B0B30, #05051A); }
+  .cl-plat__glow { position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px); background-size: 64px 64px; -webkit-mask-image: linear-gradient(180deg, #000, transparent 60%); mask-image: linear-gradient(180deg, #000, transparent 60%); pointer-events: none; }
+  .cl-plat .wrap { position: relative; }
+  .cl-plat .cl-h2 { color: #fff; max-width: 26ch; } .cl-plat em { color: #FF9A5C; }
+  .cl-plat .cl-p { color: rgba(240, 240, 255, .78); }
+  .cl-plat__feats { list-style: none; margin: 22px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px 22px; font-weight: 600; }
+  .cl-plat__feats li { display: inline-flex; gap: 8px; align-items: center; } .cl-plat__feats :global(svg) { color: #4FE08A; }
+  .cl-shots { display: grid; grid-template-columns: 1fr auto; gap: 28px; align-items: end; margin-top: 44px; }
+  .cl-shot { margin: 0; border-radius: 16px; overflow: hidden; background: #111236; border: 1px solid rgba(255, 255, 255, .14); box-shadow: 0 50px 100px -40px rgba(0, 0, 0, .9), 0 0 80px -30px rgba(240, 96, 34, .5); }
+  .cl-shot__bar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: #1A1B45; }
+  .cl-shot__bar i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, .25); }
+  .cl-shot__bar span { margin-left: 10px; font-family: var(--f-mono); font-size: 11px; color: rgba(255, 255, 255, .5); }
+  .cl-shot img { display: block; width: 100%; height: auto; }
+  .cl-shot figcaption { padding: 12px 16px; font-size: 13.5px; color: rgba(255, 255, 255, .7); }
+  .cl-shot--2 { margin-top: 28px; }
+  .cl-phones { display: flex; gap: 14px; }
+  .cl-phone { margin: 0; width: 190px; border-radius: 30px; padding: 7px; background: #1A1B45; border: 1px solid rgba(255, 255, 255, .18); box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .9); }
+  .cl-phone img { display: block; width: 100%; height: auto; border-radius: 24px; }
+  .cl-phone:nth-child(2) { transform: translateY(-30px); }
+  .cl-bonus { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin-top: 40px; }
+  .cl-bonus article { padding: 22px; border-radius: 20px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .14); display: flex; flex-direction: column; }
+  .cl-bonus header { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+  .cl-bonus__n { font-family: var(--f-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #FFE45C; }
+  .cl-bonus__v { font-size: 13px; color: rgba(255, 255, 255, .6); } .cl-bonus__v s { color: #FF9A5C; }
+  .cl-bonus h3 { margin: 12px 0 8px; font-family: var(--serif); font-size: 20px; line-height: 1.25; }
+  .cl-bonus p { margin: 0 0 14px; color: rgba(240, 240, 255, .75); font-size: 14.5px; line-height: 1.55; flex: 1; }
+  .cl-bonus small { display: inline-flex; gap: 6px; align-items: center; color: #7BE495; font-size: 12.5px; }
+
+  /* prática */
+  .cl-note { margin-top: 22px; max-width: 640px; padding: 18px 22px; background: var(--beige); border-left: 4px solid var(--or2); display: grid; gap: 4px; color: #4A4F6E; }
+  .cl-note strong { font-family: var(--serif); color: var(--ink); font-size: 18px; }
+  .cl-mats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 28px; margin-top: 30px; }
+  .cl-mats h3 { margin: 0 0 8px; font-family: var(--f-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--or); font-weight: 600; }
+  .cl-mats ul { list-style: none; margin: 0 0 20px; padding: 0; }
+  .cl-mats li { padding: 9px 0; border-bottom: 1px solid var(--beige); font-size: 15px; }
+  .cl-steps { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  .cl-steps li { display: grid; gap: 4px; font-size: 14px; color: var(--mu); }
+  .cl-steps span { font-family: var(--serif); color: var(--or); font-size: 20px; }
+  .cl-gal { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px 34px; margin-top: 54px; }
+  .cl-gal--2 { grid-template-columns: 1fr 1fr; } .cl-gal--3 { grid-template-columns: repeat(3, 1fr); }
+  .cl-gal .cl-frame img { aspect-ratio: 4/5; }
+  .cl-gal--2 .cl-frame img { aspect-ratio: 4/3; }
+
+  .cl-gal__n { margin: 26px 0 0; font-size: 13px; color: var(--mu); }
+
+  /* professora */
+  .cl-prof { display: grid; grid-template-columns: 1fr .8fr; gap: 40px; align-items: center; }
+  .cl-prof__n { max-width: 16ch; }
+  .cl-prof__c { margin: 6px 0 0; font-family: var(--f-mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--or); }
+  .cl-prof__f { margin: 26px 0 8px; font-family: var(--serif); font-size: 19px; }
+  .cl-prof ul { margin: 0 0 30px; padding: 0; list-style: none; display: grid; gap: 6px; color: var(--mu); }
+  .cl-prof li::before { content: "· "; color: var(--or); font-weight: 800; }
+  .cl-frame--sm { max-width: 340px; } .cl-frame--sm img { aspect-ratio: 1; }
+  .cl-prof__img { width: 100%; max-height: 640px; object-fit: cover; object-position: top; border-radius: 8px; }
+
+  /* investimento */
+  .cl-inv { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  .cl-inv__box { padding: 30px; border-radius: 10px; background: #fff; border: 1px solid var(--beige); box-shadow: 14px 14px 0 var(--ink); }
+  .cl-inv__box ul { list-style: none; margin: 0; padding: 0; }
+  .cl-inv__box li { display: flex; justify-content: space-between; gap: 14px; padding: 11px 0; border-bottom: 1px dashed var(--beige); font-size: 15px; }
+  .cl-inv__box li b { white-space: nowrap; font-family: var(--serif); }
+  .cl-inv__box li s { color: var(--mu); }
+  .cl-inv__t { margin: 22px 0 18px; display: grid; gap: 2px; }
+  .cl-inv__t span { color: var(--mu); } .cl-inv__t s { color: var(--or); }
+  .cl-inv__t strong { font-family: var(--serif); font-size: 64px; line-height: 1; color: var(--or); }
+  .cl-inv__ask { font-size: 36px !important; color: var(--ink) !important; }
+  .cl-inv__t small { font-family: var(--f-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); }
+  .cl-inv__w { margin: 12px 0 0; font-size: 13px; color: var(--mu); text-align: center; }
+
+  /* orientações */
+  .cl-dl { margin: 30px 0 0; display: grid; }
+  .cl-dl div { display: grid; grid-template-columns: 140px 1fr; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--beige); }
+  .cl-dl dt { font-family: var(--f-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--or); padding-top: 3px; }
+  .cl-dl dd { margin: 0; font-family: var(--serif); font-size: 17px; }
+  .cl-map { display: block; } .cl-map img { width: 100%; height: auto; border-radius: 4px; box-shadow: 12px 12px 0 var(--ink), -6px -6px 0 var(--or2); }
+  .cl-addr p { margin: 26px 0 6px; color: var(--mu); line-height: 1.5; } .cl-addr p strong { display: block; font-family: var(--serif); color: var(--ink); font-size: 18px; }
+  .cl-addr a { font-weight: 700; color: var(--or); }
+
+  /* dúvidas */
+  .cl-faq { display: grid; gap: 10px; }
+  .cl-faq details { border: 1px solid var(--beige); border-radius: 10px; background: #fff; }
+  .cl-faq details[open] { border-color: var(--or2); }
+  .cl-faq summary { list-style: none; cursor: pointer; padding: 18px 20px; font-family: var(--serif); font-size: 18px; font-weight: 600; display: flex; justify-content: space-between; gap: 16px; }
+  .cl-faq summary::-webkit-details-marker { display: none; }
+  .cl-faq summary span { color: var(--or); font-size: 22px; transition: transform .3s; } .cl-faq details[open] summary span { transform: rotate(45deg); }
+  .cl-faq p { margin: 0; padding: 0 20px 20px; color: var(--mu); line-height: 1.6; }
+
+  /* fechamento */
+  .cl-end { padding: clamp(80px, 9vw, 120px) 0; text-align: center; background: var(--cream); }
+  .cl-end .cl-k { justify-content: center; } .cl-end .cl-k::before { display: none; }
+  .cl-end h2 { margin: 0 auto; max-width: 20ch; font-family: var(--serif); font-weight: 600; font-size: clamp(30px, 4vw, 52px); line-height: 1.1; }
+  .cl-end > .wrap > p { margin: 16px auto 0; max-width: 56ch; color: var(--mu); font-size: 17px; }
+  .cl-end .cl-end__h { font-family: var(--serif); font-size: 28px; color: var(--or) !important; margin: 26px auto !important; }
+  .cl-end__o { margin-top: 26px !important; font-size: 15px !important; } .cl-end__o a { color: var(--ink); font-weight: 700; }
+  .cl-end img { width: 240px; height: auto; margin: 46px auto 10px; }
+  .cl-end small { color: var(--mu); font-size: 12px; }
+
+
+  @media (max-width: 1100px) {
+    .cl-gain { grid-template-columns: repeat(4, 1fr); }
+    .cl-inc { grid-template-columns: 1fr 1fr; }
+    .cl-shots { grid-template-columns: 1fr; } .cl-phones { justify-content: center; }
+  }
+  @media (max-width: 900px) {
+    .cl-hero__g, .cl-two, .cl-prof, .cl-inv { grid-template-columns: 1fr; }
+    .cl-strip { grid-template-columns: 1fr 1fr; }
+    .cl-strip > div:nth-child(odd) { padding-left: 0; border-left: 0; }
+    .cl-topics { grid-template-columns: 1fr 1fr; }
+    .cl-mats { grid-template-columns: 1fr 1fr; }
+    .cl-steps { grid-template-columns: repeat(3, 1fr); gap: 16px 10px; }
+    .cl-gal { grid-template-columns: 1fr 1fr !important; }
+    .cl-prof__img { max-height: 460px; order: -1; }
+  }
+  @media (max-width: 640px) {
+    .cl-gain { grid-template-columns: 1fr 1fr; }
+    .cl-topics, .cl-inc, .cl-mats { grid-template-columns: 1fr; }
+    .cl-ctas a { width: 100%; justify-content: center; } .cl-btn { justify-content: space-between; }
+    .cl-phone { width: 46%; } .cl-phone:nth-child(2) { transform: none; }
+    .cl-dl div { grid-template-columns: 1fr; gap: 4px; }
+    .cl-frame::before { inset: 10px -10px -10px 10px; } .cl-frame--alt::before { inset: -10px 10px 10px -10px; }
+  }
+</style>

@@ -1,0 +1,7 @@
+---
+import CursoLivre from '../../components/CursoLivre.astro';
+import { cursosLivres } from '../../data/cursos-livres';
+const c = cursosLivres.find((x) => x.slug === 'injetaveis')!;
+---
+
+<CursoLivre c={c} />
