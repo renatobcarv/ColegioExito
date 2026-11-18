@@ -12,7 +12,7 @@ export default defineConfig({
   site: SITE_URL,
   base: BASE_PATH,
   trailingSlash: 'ignore',
-  integrations: [sitemap({ filter: (page) => !page.includes('/tec-mais/academy') }), academy()],
+  integrations: [sitemap({ filter: (page) => !page.includes('/tec-mais/academy') && !page.includes('/admin') }), academy()],
   build: { inlineStylesheets: 'auto' },
   compressHTML: true,
 });
