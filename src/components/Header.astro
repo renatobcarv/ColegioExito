@@ -29,6 +29,7 @@ const links: Item[] = [
   { label: 'Unidades', href: `${home}#unidades` },
   { label: 'Dúvidas', href: `${home}#duvidas` },
 ];
+const academy = school.services.academy ? `${base}${school.services.academy}` : null;
 const isCurrent = (href: string) => !href.includes('#') && path.endsWith(href.replace(base, ''));
 ---
 
@@ -47,6 +48,7 @@ const isCurrent = (href: string) => !href.includes('#') && path.endsWith(href.re
     <span class="topbar__portals">
       {school.services.unicollege && <a href={school.services.unicollege} target="_blank" rel="noopener" title="Notas, frequência, boletim e recados">Portal Unicollege</a>}
       {school.services.ead && <a href={school.services.ead} target="_blank" rel="noopener" title="Aulas, materiais e provas online">Ambiente Virtual EAD</a>}
+      {academy && <a href={academy} title="Portal do aluno dos cursos TEC Mais">TEC Mais Academy</a>}
     </span>
     <span class="topbar__social">
       <a href={school.instagramReels} target="_blank" rel="noopener" aria-label="Instagram do Colégio Êxito"><Icon name="instagram" size={16} /><span>{school.instagramHandle}</span></a>
@@ -89,6 +91,7 @@ const isCurrent = (href: string) => !href.includes('#') && path.endsWith(href.re
       <div class="nav__portals-m">
         {school.services.unicollege && <a href={school.services.unicollege} target="_blank" rel="noopener">Portal Unicollege</a>}
         {school.services.ead && <a href={school.services.ead} target="_blank" rel="noopener">Ambiente Virtual EAD</a>}
+        {academy && <a href={academy}>TEC Mais Academy</a>}
       </div>
     </nav>
 
@@ -252,6 +255,7 @@ const isCurrent = (href: string) => !href.includes('#') && path.endsWith(href.re
     .nav__cta-m { display: flex; margin-top: 20px; height: 54px; font-size: 16px; }
     .nav__portals-m { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
     .nav__portals-m a { display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 14px; border: 1px solid var(--line2); font-weight: 700; font-size: 14px; color: var(--royal); text-decoration: none; text-align: center; padding: 0 8px; }
+    .nav__portals-m a:last-child:nth-child(odd) { grid-column: 1 / -1; }
   }
   @media (max-width: 559px) {
     .nav__cta { display: none; }

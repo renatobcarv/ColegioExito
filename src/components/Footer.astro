@@ -23,8 +23,9 @@ const ensino = [
 const services = [
   { label: 'Portal Unicollege', href: school.services.unicollege },
   { label: 'Ambiente Virtual EAD', href: school.services.ead },
+  { label: 'TEC Mais Academy', href: school.services.academy ? `${base}${school.services.academy}` : null, internal: true },
   { label: 'Webmail', href: school.services.webmail },
-].filter((l): l is { label: string; href: string } => Boolean(l.href));
+].filter((l): l is { label: string; href: string; internal?: boolean } => Boolean(l.href));
 ---
 
 <footer class="foot dark">
@@ -63,7 +64,7 @@ const services = [
       <h2>Formação profissional</h2>
       <ul>
         {formacoes.map((f) => <li><a href={`${base}/${f.slug}`}>{f.name} <small>{f.kind}</small></a></li>)}
-        {services.map((l) => <li><a href={l.href} target="_blank" rel="noopener">{l.label}</a></li>)}
+        {services.map((l) => <li>{l.internal ? <a href={l.href}>{l.label}</a> : <a href={l.href} target="_blank" rel="noopener">{l.label}</a>}</li>)}
       </ul>
     </nav>
 

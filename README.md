@@ -90,7 +90,7 @@ As UTMs (`utm_source`, `utm_medium`, `utm_campaign`) entram no fim da mensagem d
 
 ## Portal do Aluno · TEC Mais Academy (área de membros)
 
-Endereço: `/tec-mais/academy`. Sem link no site, fora do sitemap e com `noindex`.
+Endereço: `/tec-mais/academy`. Tem link "TEC Mais Academy" junto dos outros logins (barra do topo, menu do celular e rodapé), mas fica fora do sitemap e com `noindex`.
 Cada aluno entra com **e-mail e senha próprios** e só abre os bônus liberados para ele. O resto aparece com cadeado.
 
 | Curso | Bônus (módulos) |
