@@ -127,6 +127,31 @@ Itens com `"foto": "<busca>"` no conteúdo ganham imagem no build:
 
 Os protocolos de saúde do APH estão marcados como **Prévia · em validação** até o instrutor assinar.
 
+## Cofre de senhas da equipe (`/admin/cofre`)
+
+Guarda as senhas das contas da escola (Instagram, Gmail, Meta, domínio, sistemas, bancos). Sem link no site, fora do sitemap, com `noindex`, sem nenhuma tag de rastreamento e com regras de segurança próprias no `vercel.json`.
+
+**Duas travas:** login do Supabase (só e-mails da tabela `cofre_admins`) + **senha mestra**. Tudo é cifrado no navegador (AES-256-GCM, chave derivada da senha mestra com PBKDF2-SHA256, 600 mil rodadas). O Supabase só guarda texto embaralhado: nem o nome das contas fica legível lá. O cofre tranca sozinho após 5 min sem uso, e a senha copiada some da área de transferência em 30 s.
+
+> **A senha mestra não tem recuperação.** Se for perdida, ninguém abre o cofre: nem a TI, nem o Supabase. Anote no papel e guarde num lugar físico seguro (cofre da direção), e baixe backups com frequência.
+
+### Configurar uma vez
+1. **Supabase → SQL Editor:** rode `supabase/migrations/0004_cofre.sql`.
+2. **Authentication → Users → Add user:** e-mail e senha forte de cada pessoa autorizada ("Auto Confirm User" marcado). Recomendado: ative a verificação em 2 etapas da conta Supabase do painel.
+3. **Table Editor → `cofre_admins` → Insert row:** o mesmo e-mail (uma linha por pessoa).
+4. Abra `/admin/cofre`, entre e **crie a senha mestra** (só na primeira vez). Depois cadastre as contas.
+
+### Rotina
+- **Alguém saiu da equipe:** apague o e-mail de `cofre_admins` e do Authentication, depois use **Ferramentas → Trocar a senha mestra** e troque as senhas das contas que a pessoa conhecia.
+- **Backup:** **Ferramentas → Baixar backup** gera um arquivo cifrado. Ele abre sem internet em `/admin/cofre` → "Abrir um backup sem internet", com a senha mestra da época do backup.
+- **Histórico:** quem criou, alterou, apagou, destrancou ou baixou backup (tabela `cofre_log`, que não pode ser alterada pelo site).
+
+| O que | Onde |
+| --- | --- |
+| Tela e funcionamento | `src/pages/admin/cofre.astro` e `src/scripts/cofre.ts` |
+| Criptografia | `src/scripts/cofre-crypto.ts` |
+| Tabelas e regras de acesso | `supabase/migrations/0004_cofre.sql` |
+
 ## Publicar (Vercel)
 
 A Vercel publica sozinha a cada push na `main` (e gera uma prévia para cada branch/PR).
