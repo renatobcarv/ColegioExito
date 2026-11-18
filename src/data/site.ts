@@ -136,6 +136,8 @@ export const school = {
     unicollege: 'https://www.unicollege.net/exito/Login.aspx?ReturnUrl=%2fexito%2f' as string | null,
     /** EADMAX: ambiente virtual de aprendizagem (aulas, materiais EAD e provas). */
     ead: 'https://www.exito.eadmax.net/' as string | null,
+    /** TEC Mais Academy: portal do aluno dos cursos livres (caminho interno do site). */
+    academy: '/tec-mais/academy' as string | null,
     matricula: null as string | null,
     webmail: null as string | null,
     blog: null as string | null,
