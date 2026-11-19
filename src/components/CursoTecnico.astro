@@ -45,7 +45,7 @@ const compare = [
   <main id="conteudo" class="ct" style={vars}>
 
     <!-- 1 · Promessa -->
-    <section class={`ch${c.heroPhoto ? ' ch--photo' : ''}`}>
+    <section class={`ch${c.heroPhoto ? ' ch--photo' : ''}${c.heroPhoto?.full ? ' ch--full' : ''}`}>
       {c.heroPhoto && (
         <div class="ch__bg" aria-hidden="true">
           <img src={`${base}${c.heroPhoto.src}`} alt="" width={c.heroPhoto.w} height={c.heroPhoto.h} decoding="async" fetchpriority="high" style={c.heroPhoto.pos ? `object-position:${c.heroPhoto.pos}` : undefined} />
@@ -466,6 +466,14 @@ const compare = [
   .ch__sal--glass span { color: var(--h); }
   .ch__sal--glass strong { color: #FFF; }
   .ch__sal--glass small { color: rgba(255,255,255,.8); }
+  /* foto de turma cobrindo o topo inteiro: o lado do texto fica tingido de azul */
+  .ch--full .ch__bg { width: 100%; }
+  .ch--full .ch__bg img { -webkit-mask-image: none; mask-image: none; }
+  .ch--full .ch__bg::after { background:
+    linear-gradient(90deg, var(--pdeep) 0%, color-mix(in srgb, var(--pdeep) 88%, transparent) 32%, color-mix(in srgb, var(--pdeep) 35%, transparent) 62%, color-mix(in srgb, var(--pdeep) 10%, transparent) 100%),
+    linear-gradient(0deg, var(--pdeep) 0%, transparent 30%),
+    linear-gradient(180deg, color-mix(in srgb, var(--pdeep) 55%, transparent) 0%, transparent 25%); }
+  .ch--full .ch__float { margin-left: 0; justify-content: flex-end; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
   /* autoridade */
@@ -637,6 +645,9 @@ const compare = [
     .ch__bg img { -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 100%); mask-image: linear-gradient(180deg, #000 55%, transparent 100%); }
     .ch__bg::after { background: linear-gradient(180deg, color-mix(in srgb, var(--pdeep) 40%, transparent) 0%, transparent 25%); }
     .ch__float { min-height: 0; margin-top: 8px; margin-left: 0; justify-content: flex-start; }
+    .ch--full .ch__bg::after { background: linear-gradient(0deg, var(--pdeep) 0%, transparent 45%), linear-gradient(180deg, color-mix(in srgb, var(--pdeep) 45%, transparent) 0%, transparent 25%); }
+    .ch--full .ch__bg img { -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent 100%); mask-image: linear-gradient(180deg, #000 60%, transparent 100%); }
+    .ch--full .ch__float { justify-content: flex-start; }
     .day__head, .faq .cs__head { position: static; }
     .per { grid-template-columns: 1fr; }
     .ba { grid-template-columns: 1fr; }
