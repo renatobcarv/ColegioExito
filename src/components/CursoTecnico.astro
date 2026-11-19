@@ -45,7 +45,12 @@ const compare = [
   <main id="conteudo" class="ct" style={vars}>
 
     <!-- 1 · Promessa -->
-    <section class="ch">
+    <section class={`ch${c.heroPhoto ? ' ch--photo' : ''}`}>
+      {c.heroPhoto && (
+        <div class="ch__bg" aria-hidden="true">
+          <img src={`${base}${c.heroPhoto.src}`} alt="" width={c.heroPhoto.w} height={c.heroPhoto.h} decoding="async" fetchpriority="high" style={c.heroPhoto.pos ? `object-position:${c.heroPhoto.pos}` : undefined} />
+        </div>
+      )}
       <div class="ch__glow" aria-hidden="true"></div>
       <div class="ch__grid-bg" aria-hidden="true"></div>
       <div class="wrap ch__g">
@@ -66,6 +71,16 @@ const compare = [
             <li><Icon name="check" size={18} />{c.schedule.replace('Noturno · ', 'À noite, ')}</li>
           </ul>
         </div>
+        {c.heroPhoto ? (
+          <div class="ch__float fade" style="animation-delay:.45s">
+            <p class="sr">{c.heroPhoto.alt}</p>
+            <div class="ch__sal ch__sal--glass">
+              <span class="mono">{salLabel}</span>
+              <strong class="disp">{c.salary.headline}</strong>
+              <small>{c.salary.detail} · {c.salary.source}</small>
+            </div>
+          </div>
+        ) : (
         <figure class="ch__media fade" style="animation-delay:.3s">
           <img src={`${base}${c.photo}`} alt={`Alunos do curso ${c.name} da TEC Mais`} width="720" height="720" decoding="async" fetchpriority="high" />
           <figcaption class="ch__sal">
@@ -75,6 +90,7 @@ const compare = [
           </figcaption>
           <div class="ch__badge"><img src={`${base}${f.logo.src}`} alt="TEC Mais" width={f.logo.w} height={f.logo.h} /></div>
         </figure>
+        )}
       </div>
     </section>
 
@@ -430,6 +446,28 @@ const compare = [
   .ch__badge { position: absolute; right: -14px; top: 26px; padding: 12px 16px; border-radius: 18px; background: #FFF; box-shadow: 0 20px 40px -20px rgba(0,0,30,.6); }
   .ch__badge img { width: 116px; height: auto; }
 
+  /* topo com foto integrada ao fundo (sem moldura) */
+  .ch--photo { min-height: min(760px, 92vh); display: grid; align-content: center; }
+  .ch__bg { position: absolute; top: 0; right: 0; bottom: 0; width: 56%; pointer-events: none; }
+  .ch__bg img { width: 100%; height: 100%; object-fit: cover; filter: saturate(1.05) contrast(1.02);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.55) 18%, #000 42%); mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.55) 18%, #000 42%); }
+  .ch__bg::after { content: ''; position: absolute; inset: 0; background:
+    linear-gradient(0deg, var(--pdeep) 0%, color-mix(in srgb, var(--pdeep) 55%, transparent) 18%, transparent 42%),
+    linear-gradient(180deg, color-mix(in srgb, var(--pdeep) 45%, transparent) 0%, transparent 22%),
+    radial-gradient(ellipse 60% 50% at 70% 40%, transparent 40%, color-mix(in srgb, var(--pdeep) 35%, transparent) 100%); }
+  .ch--photo .ch__glow { opacity: .55; }
+  .ch--photo { padding: 40px 0 72px; }
+  .ch--photo .ch__g { grid-template-columns: 1.3fr .7fr; gap: 24px; }
+  .ch--photo .ch__t { font-size: clamp(34px, 4.1vw, 58px); }
+  .ch--photo .ch__lead { max-width: 560px; }
+  .ch--photo .ch__g > div:first-child { position: relative; z-index: 1; }
+  .ch__float { position: relative; z-index: 1; align-self: end; display: flex; justify-content: flex-start; min-height: 520px; align-items: flex-end; margin-left: -110px; }
+  .ch__sal--glass { position: static; max-width: 250px; background: rgba(0,0,40,.42); color: #FFF; border: 1px solid rgba(255,255,255,.22); border-top: 4px solid var(--h); -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%); }
+  .ch__sal--glass span { color: var(--h); }
+  .ch__sal--glass strong { color: #FFF; }
+  .ch__sal--glass small { color: rgba(255,255,255,.8); }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
   /* autoridade */
   .auth { position: relative; z-index: 2; margin-top: -52px; }
   .auth__in { display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; padding: 22px 26px; border-radius: 24px; background: #FFF; border: 1px solid #E8ECF5; box-shadow: 0 30px 70px -40px rgba(11,31,92,.55); color: var(--mu); font-size: 16px; line-height: 1.55; }
@@ -593,6 +631,12 @@ const compare = [
     .ch__media { max-width: 460px; margin-inline: auto; width: 100%; }
     .ch__sal { left: 12px; bottom: 16px; }
     .ch__badge { right: 12px; }
+    .ch--photo { display: block; min-height: 0; padding-top: min(78vw, 360px); }
+    .ch--photo .ch__g { grid-template-columns: 1fr; }
+    .ch__bg { left: 0; width: 100%; bottom: auto; height: min(98vw, 440px); }
+    .ch__bg img { -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 100%); mask-image: linear-gradient(180deg, #000 55%, transparent 100%); }
+    .ch__bg::after { background: linear-gradient(180deg, color-mix(in srgb, var(--pdeep) 40%, transparent) 0%, transparent 25%); }
+    .ch__float { min-height: 0; margin-top: 8px; margin-left: 0; justify-content: flex-start; }
     .day__head, .faq .cs__head { position: static; }
     .per { grid-template-columns: 1fr; }
     .ba { grid-template-columns: 1fr; }
