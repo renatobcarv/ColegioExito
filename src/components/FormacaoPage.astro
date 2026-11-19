@@ -5,6 +5,7 @@ import Footer from './Footer.astro';
 import Icon from './Icon.astro';
 import Arrow from './Arrow.astro';
 import TecCursos from './TecCursos.astro';
+import KitEstudante from './KitEstudante.astro';
 import { school, waLink, formatPhone, type Formacao } from '../data/site';
 
 interface Props { f: Formacao }
@@ -63,6 +64,8 @@ const options = [...(f.technical ?? []).map((c) => c.name), ...f.areas.map((a) =
     </section>
 
     <TecCursos f={f} />
+
+    {f.kit && <KitEstudante f={f} />}
 
     <section class="fs" aria-labelledby="dor-t">
       <div class="wrap">

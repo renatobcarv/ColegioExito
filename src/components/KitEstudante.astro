@@ -1,0 +1,100 @@
+---
+// Kit do Estudante (TEC Mais): entregue grátis na matrícula. Dados em `formacoes[].kit` (src/data/site.ts).
+// Usa as cores da página onde entra (--p, --pd, --pdeep, --a, --ab, --ai).
+import Icon from './Icon.astro';
+import { waLink, type Formacao } from '../data/site';
+
+interface Props { f: Formacao; curso?: string }
+const { f, curso } = Astro.props;
+const kit = f.kit!;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const [principal, ...extras] = kit.fotos;
+const msg = curso
+  ? `Olá! Vim pelo site e quero garantir minha vaga em ${curso} com o Kit do Estudante grátis.`
+  : 'Olá! Vim pelo site e quero saber dos cursos técnicos da TEC Mais com o Kit do Estudante grátis.';
+---
+
+<section class="kit" aria-labelledby="kit-t">
+  <div class="wrap kit__g">
+    <div class="kit__txt rv">
+      <div class="mono kit__k">Kit do Estudante · grátis na matrícula</div>
+      <h2 id="kit-t" class="disp kit__t">Você não começa sozinho. <span>Começa equipado.</span></h2>
+      <p class="kit__price">
+        <s>{kit.valor}</s>
+        <strong class="disp">Grátis</strong>
+        <span>pra quem se matricula</span>
+      </p>
+      <ul class="kit__list">
+        {kit.itens.map((x, i) => (
+          <li>
+            <span class="mono kit__n">{String(i + 1).padStart(2, '0')}</span>
+            <span><strong>{x.nome}</strong>{x.texto}</span>
+          </li>
+        ))}
+      </ul>
+      <a href={waLink(f.contact.whatsapp, msg)} target="_blank" rel="noopener" class="kit__cta" data-wa>
+        <Icon name="whatsapp" size={20} />Garantir minha vaga com o kit
+      </a>
+      <p class="kit__cond">{kit.condicao}</p>
+    </div>
+
+    <div class="kit__media rv">
+      <figure class="kit__main">
+        <img src={`${base}${principal.src}`} alt={principal.alt} width={principal.w} height={principal.h} loading="lazy" decoding="async" />
+        <span class="kit__seal" aria-hidden="true"><s>{kit.valor}</s><strong>Grátis</strong></span>
+      </figure>
+      <div class="kit__row">
+        {extras.map((p) => (
+          <figure>
+            <img src={`${base}${p.src}`} alt={p.alt} width={p.w} height={p.h} loading="lazy" decoding="async" />
+            {p.legenda && <figcaption>{p.legenda}</figcaption>}
+          </figure>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .kit { position: relative; padding: clamp(64px, 9vw, 112px) 0; background: linear-gradient(165deg, var(--pd), var(--pdeep) 75%); color: #FFF; overflow: clip; }
+  .kit::before { content: ''; position: absolute; width: 760px; height: 760px; left: -280px; bottom: -420px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--a) 38%, transparent), transparent 62%); pointer-events: none; }
+  .kit__g { position: relative; display: grid; grid-template-columns: .95fr 1.05fr; gap: clamp(32px, 5vw, 64px); align-items: center; }
+  .kit__k { display: inline-block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--a); }
+  .kit__t { margin: 14px 0 0; font-size: clamp(32px, 4.4vw, 54px); font-weight: 760; line-height: 1.04; letter-spacing: -.02em; text-wrap: balance; }
+  .kit__t span { display: block; color: var(--a); }
+  .kit__price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 14px; margin: 24px 0 0; }
+  .kit__price s { font-size: 20px; color: rgba(255, 255, 255, .6); text-decoration-thickness: 2px; }
+  .kit__price strong { font-size: clamp(36px, 4vw, 48px); font-weight: 800; line-height: 1; color: #FFF; }
+  .kit__price span { font-size: 15px; color: rgba(255, 255, 255, .78); }
+  .kit__list { list-style: none; margin: 26px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 22px; }
+  .kit__list li { display: flex; gap: 12px; padding: 13px 0; border-top: 1px solid rgba(255, 255, 255, .16); }
+  .kit__n { flex: none; font-size: 12px; color: var(--a); padding-top: 3px; }
+  .kit__list strong { display: block; font-size: 16px; }
+  .kit__list li span:last-child { font-size: 13.5px; line-height: 1.4; color: rgba(255, 255, 255, .74); }
+  .kit__cta { display: inline-flex; align-items: center; gap: 10px; margin-top: 28px; height: 58px; padding: 0 26px; border-radius: 999px; background: linear-gradient(180deg, var(--a), var(--ab)); color: #FFF; font-weight: 800; font-size: 16.5px; text-decoration: none; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 16px 36px -12px color-mix(in srgb, var(--a) 75%, transparent); transition: transform .3s var(--ease); }
+  .kit__cta:hover { color: #FFF; transform: translateY(-2px); }
+  .kit__cond { margin: 14px 0 0; font-size: 13px; color: rgba(255, 255, 255, .66); max-width: 440px; }
+
+  .kit__media { display: grid; gap: 12px; }
+  .kit__media figure { margin: 0; position: relative; overflow: hidden; border-radius: 20px; background: rgba(255, 255, 255, .06); }
+  .kit__media img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+  .kit__main { aspect-ratio: 16 / 9; box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .7); }
+  .kit__seal { position: absolute; right: 16px; top: 16px; display: grid; place-items: center; text-align: center; width: 104px; height: 104px; border-radius: 50%; background: var(--a); color: #FFF; transform: rotate(-8deg); box-shadow: 0 14px 30px -10px rgba(0, 0, 0, .5); line-height: 1.1; padding-top: 6px; }
+  .kit__seal s { display: block; font-size: 12.5px; opacity: .85; }
+  .kit__seal strong { display: block; font-family: var(--f-disp); font-size: 24px; font-weight: 800; }
+  .kit__row { display: grid; grid-template-columns: 1.4fr 1fr; gap: 12px; }
+  .kit__row figure { aspect-ratio: 4 / 3; }
+  .kit__row figcaption { position: absolute; left: 10px; bottom: 10px; right: 10px; width: fit-content; padding: 5px 10px; border-radius: 999px; background: rgba(0, 0, 0, .55); font-size: 12.5px; font-weight: 600; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+
+  @media (max-width: 900px) {
+    .kit__g { grid-template-columns: 1fr; }
+    .kit__media { order: -1; }
+  }
+  @media (max-width: 520px) {
+    .kit__list { grid-template-columns: 1fr; }
+    .kit__seal { width: 84px; height: 84px; right: 10px; top: 10px; }
+    .kit__seal strong { font-size: 19px; }
+    .kit__cta { width: 100%; justify-content: center; }
+    .kit__row figcaption { font-size: 11px; padding: 4px 8px; left: 8px; bottom: 8px; }
+  }
+</style>

@@ -1,0 +1,161 @@
+---
+// Página de Técnico em Enfermagem: a jornada em fotos reais da TEC Mais
+// (prática desde o início → visitas técnicas → cerimônia do jaleco), no roteiro do material de vendas.
+// Fotos em public/img/tec/enfermagem/. Só use fotos de alunos com autorização de imagem (LGPD).
+interface Props { wa: string }
+const { wa } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const img = (n: string) => `${base}/img/tec/enfermagem/${n}.webp`;
+
+type Foto = { src: string; alt: string; tag: string; w: number; h: number };
+const pratica: Foto[] = [
+  { src: img('pratica-puncao'), tag: 'Punção venosa', alt: 'Aluna treinando punção venosa no laboratório da TEC Mais', w: 619, h: 1100 },
+  { src: img('pratica-sutura'), tag: 'Sutura', alt: 'Aluna de touca e luvas treinando sutura em peça anatômica', w: 720, h: 905 },
+  { src: img('pratica-simulacao'), tag: 'Simulação', alt: 'Alunas em simulação de atendimento com manequim no leito', w: 825, h: 1100 },
+  { src: img('pratica-pintura-anatomica'), tag: 'Pintura anatômica', alt: 'Alunas com músculos pintados no corpo, estudando anatomia no quadro', w: 825, h: 1100 },
+  { src: img('pratica-pecas-reais'), tag: 'Peças reais', alt: 'Professora mostrando um órgão real para a turma no laboratório', w: 825, h: 1100 },
+  { src: img('pratica-curativos'), tag: 'Curativos', alt: 'Turma de jaleco acompanhando aula prática de curativos', w: 825, h: 1100 },
+];
+const visitas: Foto[] = [
+  { src: img('visita-samu'), tag: 'SAMU 192', alt: 'Turma de enfermagem reunida em frente a uma ambulância do SAMU 192', w: 1100, h: 825 },
+  { src: img('visita-bombeiros'), tag: 'Corpo de Bombeiros', alt: 'Turma de uniforme vinho no pátio do Corpo de Bombeiros Militar', w: 619, h: 1100 },
+  { src: img('visita-unidade-saude'), tag: 'Unidade de saúde', alt: 'Alunas ouvindo um profissional durante visita a uma unidade de saúde', w: 1100, h: 619 },
+];
+const jaleco: Foto[] = [
+  { src: img('jaleco-vestido'), tag: 'Vestido por quem acreditou', alt: 'Mãe vestindo o jaleco na formanda durante a cerimônia', w: 1100, h: 734 },
+  { src: img('jaleco-familia'), tag: 'Família na plateia', alt: 'Formanda de jaleco ao lado do pai e da mãe', w: 1100, h: 733 },
+  { src: img('jaleco-nome-bordado'), tag: 'Nome bordado', alt: 'Formanda sorrindo com o jaleco bordado com o próprio nome no braço', w: 733, h: 1100 },
+];
+---
+
+<section class="ej" aria-labelledby="ej-t">
+  <div class="wrap">
+    <header class="ej__head rv">
+      <div class="kicker ej__k">A sua jornada na TEC Mais</div>
+      <h2 id="ej-t" class="disp h2">Imagina o seu nome <span class="serif ej__acc">bordado nesse jaleco.</span></h2>
+      <p class="lead">Quantas vezes você já adiou a enfermagem? Por falta de tempo, por achar que passou da idade, por medo de não dar conta. Dá tempo, sim. E você não vai fazer isso sozinha.</p>
+    </header>
+
+    <!-- 1 · prática -->
+    <div class="ej__cap">
+      <div class="ej__txt rv">
+        <span class="mono ej__n">01 · Prática desde o início</span>
+        <h3 class="disp">Aqui você aprende fazendo.</h3>
+        <p>Um dia, a vida de alguém vai estar nas suas mãos. Por isso você aprende com a professora do lado e a mão na massa: punção, curativos, simulação no leito e anatomia com peças reais.</p>
+      </div>
+      <ul class="ej__grid ej__grid--6 stagger">
+        {pratica.map((p) => (
+          <li class="rv"><figure><img src={p.src} alt={p.alt} width={p.w} height={p.h} loading="lazy" decoding="async" /><figcaption>{p.tag}</figcaption></figure></li>
+        ))}
+      </ul>
+    </div>
+
+    <!-- 2 · visitas técnicas -->
+    <div class="ej__cap ej__cap--rev">
+      <div class="ej__txt rv">
+        <span class="mono ej__n">02 · Visitas técnicas</span>
+        <h3 class="disp">Você vai conhecer a enfermagem de verdade.</h3>
+        <p>SAMU 192, Corpo de Bombeiros e unidades de saúde, vistos por dentro. Aprender com quem salva vidas todos os dias.</p>
+      </div>
+      <ul class="ej__grid ej__grid--3 stagger">
+        {visitas.map((p) => (
+          <li class="rv"><figure><img src={p.src} alt={p.alt} width={p.w} height={p.h} loading="lazy" decoding="async" /><figcaption>{p.tag}</figcaption></figure></li>
+        ))}
+      </ul>
+    </div>
+
+    <!-- 3 · cerimônia do jaleco -->
+    <div class="ej__cap ej__cap--jaleco">
+      <div class="ej__txt rv">
+        <span class="mono ej__n">03 · Cerimônia do jaleco</span>
+        <h3 class="disp">E esse dia vai chegar.</h3>
+        <p>Jaleco no corpo, sua família na plateia e a certeza de que valeu cada noite de estudo. O momento em que a enfermagem deixa de ser sonho e vira compromisso.</p>
+        <a href={wa} target="_blank" rel="noopener" class="ej__btn" data-wa>O próximo nome bordado pode ser o seu<span class="ej__btn-a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+      </div>
+      <div class="ej__jal">
+        <figure class="ej__video rv">
+          <video src={`${base}/video/enfermagem-cerimonia-jaleco.mp4`} poster={img('jaleco-video-poster')} muted loop playsinline preload="none" controls width="540" height="960" aria-label="Vídeo da cerimônia do jaleco: formandas recebendo o jaleco das mãos da família"></video>
+          <figcaption>Cerimônia do jaleco</figcaption>
+        </figure>
+        <ul class="ej__grid ej__grid--jal stagger">
+          {jaleco.map((p) => (
+            <li class="rv"><figure><img src={p.src} alt={p.alt} width={p.w} height={p.h} loading="lazy" decoding="async" /><figcaption>{p.tag}</figcaption></figure></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <figure class="ej__turma rv">
+      <img src={img('jaleco-cerimonia')} alt="Turma de formandas de jaleco branco comemorando no palco da cerimônia da TEC Mais" width="1100" height="733" loading="lazy" decoding="async" />
+      <figcaption><strong class="disp">Cada jaleco aqui começou com uma decisão.</strong><span>Igual à que você pode tomar hoje.</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<script>
+  // o vídeo da cerimônia toca sozinho (sem som) só quando aparece na tela
+  const v = document.querySelector<HTMLVideoElement>('.ej__video video');
+  if (v && 'IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) v.play().catch(() => {});
+      else v.pause();
+    }, { threshold: 0.5 }).observe(v);
+  }
+</script>
+
+<style>
+  .ej { padding: clamp(64px, 9vw, 112px) 0; background: #FFF; }
+  .ej__head { max-width: 760px; }
+  .ej__k { color: var(--ai); }
+  .ej__acc { color: var(--ai); }
+  .ej__btn { display: inline-flex; align-items: center; gap: 12px; margin-top: 24px; height: 54px; padding: 0 7px 0 22px; border-radius: 999px; background: linear-gradient(180deg, var(--a), var(--ab)); color: #FFF; font-weight: 800; font-size: 15.5px; text-decoration: none; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 16px 36px -12px color-mix(in srgb, var(--a) 75%, transparent); transition: transform .3s var(--ease); }
+  .ej__btn:hover { color: #FFF; transform: translateY(-2px); }
+  .ej__btn-a { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 50%; display: grid; place-items: center; background: var(--pdeep); }
+  .ej__head .lead { margin-top: 16px; }
+  .ej__cap { display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(24px, 4vw, 56px); align-items: center; margin-top: clamp(48px, 7vw, 88px); }
+  .ej__cap--rev .ej__txt { order: 2; }
+  .ej__n { display: block; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--ai); }
+  .ej__txt h3 { margin: 10px 0 0; font-size: clamp(26px, 3vw, 38px); font-weight: 760; line-height: 1.08; letter-spacing: -.02em; color: var(--ink, #0B1F5C); text-wrap: balance; }
+  .ej__txt p { margin: 14px 0 0; color: var(--mu, #4A5878); font-size: 16.5px; line-height: 1.55; max-width: 460px; }
+
+  .ej__grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .ej__grid figure, .ej__video, .ej__turma { position: relative; margin: 0; overflow: hidden; border-radius: 18px; background: var(--soft, #F1F1FA); }
+  .ej__grid img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--ease); }
+  .ej__grid figure:hover img { transform: scale(1.04); }
+  .ej__grid figcaption, .ej__video figcaption { position: absolute; left: 10px; bottom: 10px; display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; background: rgba(255, 255, 255, .94); color: var(--pdeep); font-size: 12.5px; font-weight: 700; box-shadow: 0 6px 16px -8px rgba(0, 0, 0, .4); }
+  .ej__grid figcaption::before, .ej__video figcaption::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--a); }
+
+  .ej__grid--6 { grid-template-columns: repeat(3, 1fr); }
+  .ej__grid--6 figure { aspect-ratio: 3 / 4; }
+  .ej__grid--3 { grid-template-columns: 1.3fr 1fr; grid-template-rows: 1fr 1fr; height: clamp(360px, 42vw, 520px); }
+  .ej__grid--3 li:first-child { grid-row: 1 / 3; }
+  .ej__grid--3 li, .ej__grid--3 figure { height: 100%; }
+
+  .ej__cap--jaleco { align-items: start; }
+  .ej__jal { display: grid; grid-template-columns: .75fr 1fr; gap: 10px; }
+  .ej__video { aspect-ratio: 9 / 16; background: #000; }
+  .ej__video video { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+  .ej__video figcaption { top: 10px; bottom: auto; }
+  .ej__grid--jal { grid-template-columns: 1fr; grid-template-rows: repeat(3, 1fr); min-height: 0; }
+  .ej__grid--jal li, .ej__grid--jal figure { height: 100%; }
+  .ej__grid--jal li:last-child img { object-position: 50% 20%; }
+
+  .ej__turma { margin-top: clamp(40px, 6vw, 72px); aspect-ratio: 21 / 9; }
+  .ej__turma img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; }
+  .ej__turma figcaption { position: absolute; inset: auto 0 0 0; padding: clamp(18px, 3vw, 36px); background: linear-gradient(transparent, rgba(0, 0, 40, .85)); color: #FFF; display: grid; gap: 4px; }
+  .ej__turma strong { font-size: clamp(22px, 3vw, 36px); font-weight: 760; line-height: 1.1; }
+  .ej__turma span { font-size: 15px; opacity: .85; }
+
+  @media (max-width: 900px) {
+    .ej__cap { grid-template-columns: 1fr; }
+    .ej__cap--rev .ej__txt { order: 0; }
+  }
+  @media (max-width: 560px) {
+    .ej__grid--6 { grid-template-columns: repeat(2, 1fr); }
+    .ej__grid--3 { height: 420px; grid-template-columns: 1fr 1fr; }
+    .ej__jal { grid-template-columns: 1fr 1fr; }
+    .ej__turma { aspect-ratio: 4 / 3; }
+    .ej__grid figcaption { font-size: 11.5px; padding: 4px 9px; }
+    .ej__btn { width: 100%; justify-content: space-between; font-size: 14px; }
+  }
+</style>

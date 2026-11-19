@@ -54,6 +54,15 @@ export type TechCourse = {
   modules: { title: string; subjects: string[] }[];
 };
 
+export type Kit = {
+  /** Valor de referência do kit, mostrado riscado ao lado de "grátis". */
+  valor: string;
+  /** Quando e como o aluno recebe (aparece em letra menor). */
+  condicao: string;
+  itens: { nome: string; texto: string }[];
+  fotos: { src: string; alt: string; legenda?: string; w: number; h: number }[];
+};
+
 export type Formacao = {
   slug: string;
   /** Cursos técnicos (habilitação técnica de nível médio), com grade e informações da turma. */
@@ -62,6 +71,8 @@ export type Formacao = {
   trust?: string[];
   testimonial?: { quote: string; name: string; role: string; photo: string };
   referral?: { title: string; text: string };
+  /** Kit entregue na matrícula (aparece na página da formação e nas páginas dos cursos técnicos). */
+  kit?: Kit;
   name: string;
   kind: string;
   /** Frase curta para o cartão da página inicial. */
@@ -635,6 +646,22 @@ export const formacoes: Formacao[] = [
       name: 'Daíse Campos',
       role: 'Técnica em Enfermagem, formada pela TEC Mais',
       photo: '/img/tec/daise.webp',
+    },
+    kit: {
+      valor: 'R$ 253,50',
+      condicao: 'Entregue no início do curso, assim que a matrícula é efetivada. Retirada na unidade.',
+      itens: [
+        { nome: 'Mochila TEC+', texto: 'Preta, com a marca TEC+, pra levar tudo pra aula e pro estágio' },
+        { nome: 'Apostilas', texto: 'Material impresso dos módulos que você vai estudar' },
+        { nome: 'Uniforme', texto: 'Logo TEC+ na frente e o nome do seu curso nas costas' },
+        { nome: 'Garrafinha', texto: '“Eu sou TEC, eu sou +”' },
+        { nome: 'Pulseiras', texto: 'Azul e laranja, pra mostrar que você é aluno TEC+' },
+      ],
+      fotos: [
+        { src: '/img/tec/kit/kit-completo.webp', alt: 'Kit do Estudante TEC Mais: duas apostilas, garrafinha, pulseiras e mochila preta com a marca TEC+', w: 1400, h: 781 },
+        { src: '/img/tec/kit/kit-uniforme.webp', alt: 'Aluna de costas com o uniforme azul escrito Técnico em Administração', legenda: 'O nome do seu curso nas costas', w: 1400, h: 786 },
+        { src: '/img/tec/kit/kit-apostilas.webp', alt: 'Apostilas impressas da TEC Mais com pulseiras', legenda: 'Apostilas de todos os módulos', w: 853, h: 1280 },
+      ],
     },
     referral: { title: 'Indique e ganhe R$ 50', text: 'A cada amigo indicado que se matricular, você ganha R$ 50,00. Mande o nome e o telefone dele para a nossa equipe.' },
     technical: [
