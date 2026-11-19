@@ -46,7 +46,7 @@ export type TechCourse = {
   tagline: string;
   photo: string;
   /** Foto do topo da página do curso, integrada ao fundo (sem moldura). Sem ela, o topo usa `photo` em cartão. */
-  heroPhoto?: { src: string; alt: string; w: number; h: number; pos?: string };
+  heroPhoto?: { src: string; alt: string; w: number; h: number; pos?: string; /** true = a foto cobre o topo inteiro (fotos horizontais de turma). */ full?: boolean };
   featured?: boolean;
   hours: string;
   duration: string;
@@ -672,7 +672,7 @@ export const formacoes: Formacao[] = [
         name: 'Técnico em Enfermagem',
         tagline: 'Cuide de vidas com técnica, em hospitais, clínicas e home care.',
         photo: '/img/tec/enfermagem.webp',
-        heroPhoto: { src: '/img/tec/enfermagem/hero-tecnica.webp', alt: 'Técnica em enfermagem formada pela TEC Mais, de jaleco bordado com o nome e estetoscópio na mão, sorrindo', w: 1076, h: 1263, pos: '50% 18%' },
+        heroPhoto: { src: '/img/tec/enfermagem/hero-turma.webp', alt: 'Turma de Técnico em Enfermagem da TEC Mais de jaleco branco, comemorando com os braços para cima no palco da cerimônia', w: 1280, h: 853, pos: '62% 55%', full: true },
         featured: true,
         hours: '1.200 horas',
         duration: '24 meses',
