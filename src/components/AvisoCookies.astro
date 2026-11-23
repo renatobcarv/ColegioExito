@@ -1,4 +1,9 @@
 ---
+interface Props {
+  /** De quem são os anúncios citados no aviso (páginas só da TEC Mais usam "da TEC Mais"). */
+  marca?: string;
+}
+const { marca = 'do Êxito' } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
@@ -19,7 +24,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     </label>
     <label class="ck__opt">
       <input type="checkbox" name="marketing" />
-      <span><strong>Marketing</strong>Google Ads e Pixel da Meta: medir campanhas e mostrar anúncios do Êxito.</span>
+      <span><strong>Marketing</strong>Google Ads e Pixel da Meta: medir campanhas e mostrar anúncios {marca}.</span>
     </label>
   </div>
 

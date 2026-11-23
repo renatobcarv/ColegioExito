@@ -3,9 +3,15 @@
 // Grava no Supabase pela função tec_cadastrar() (supabase/migrations/0005_cadastros.sql) e a equipe
 // vê tudo em /admin/cadastros. Sem Supabase configurado, cai no envio por WhatsApp, como antes.
 // Aceita ?curso=<slug> para já vir com o curso escolhido (ex.: /tec-mais/cadastro?curso=enfermagem).
-import Base from '../../layouts/Base.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
+// Página só da TEC Mais: sem menu, rodapé e marca do Colégio Êxito. Mantém o rastreamento (com consentimento).
+import '@fontsource-variable/bricolage-grotesque/standard.css';
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
+import '@fontsource/instrument-serif/latin-400-italic.css';
+import '@fontsource/instrument-serif/latin-400.css';
+import '../../styles/global.css';
+import Tracking from '../../components/Tracking.astro';
+import AvisoCookies from '../../components/AvisoCookies.astro';
 import Icon from '../../components/Icon.astro';
 import { formacoes, waLink } from '../../data/site';
 
@@ -20,20 +26,53 @@ const env = (...k: string[]) => k.map((x) => process.env[x] ?? (import.meta.env 
 const sbUrl = env('NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_URL', 'PUBLIC_SUPABASE_URL');
 const sbKey = env('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY', 'NEXT_PUBLIC_SUPABASE_ANON_KEY', 'SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_ANON_KEY', 'PUBLIC_SUPABASE_ANON_KEY');
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const titulo = 'Cadastro de estudante | TEC Mais Cursos Técnicos';
+const descricao = 'Faça seu cadastro na TEC Mais em 3 passos: dados, endereço e contato. A equipe te chama no WhatsApp para garantir sua vaga.';
+const og = new URL(`${base}/img/tec/marca/og-cadastro.jpg`, Astro.site);
+const endereco = f.contact.address?.at(-1) ?? 'Valparaíso de Goiás – GO';
+const insta = f.contact.instagram ? `@${f.contact.instagram.split('/').filter(Boolean).pop()}` : '';
 const UFS = ['Acre', 'Alagoas', 'Amapá', 'Amazonas', 'Bahia', 'Ceará', 'Distrito Federal', 'Espírito Santo', 'Goiás', 'Maranhão', 'Mato Grosso', 'Mato Grosso do Sul', 'Minas Gerais', 'Pará', 'Paraíba', 'Paraná', 'Pernambuco', 'Piauí', 'Rio de Janeiro', 'Rio Grande do Norte', 'Rio Grande do Sul', 'Rondônia', 'Roraima', 'Santa Catarina', 'São Paulo', 'Sergipe', 'Tocantins'];
 const INSTRUCAO = ['Ensino Fundamental Incompleto', 'Ensino Fundamental Completo', 'Ensino Médio Incompleto', 'Ensino Médio Completo', 'Ensino Superior Incompleto', 'Ensino Superior Completo', 'Pós-graduação', 'Mestrado', 'Doutorado'];
 ---
 
-<Base title="Cadastro de estudante | TEC Mais Cursos Técnicos" description="Faça seu cadastro na TEC Mais em 3 passos: dados, endereço e contato. A equipe te chama no WhatsApp para garantir sua vaga." noindex>
-  <Header />
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <Tracking />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{titulo}</title>
+    <meta name="description" content={descricao} />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content={t.primaryDark} />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" type="image/png" href={`${base}/img/tec/marca/favicon-tecmais.png`} />
+    <link rel="apple-touch-icon" href={`${base}/img/tec/marca/apple-touch-tecmais.png`} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content="TEC Mais Cursos Técnicos" />
+    <meta property="og:title" content="Cadastro de estudante · TEC Mais" />
+    <meta property="og:description" content="Falta pouco pra sua vaga. Faça seu cadastro em 3 passos." />
+    <meta property="og:image" content={og} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body class="tm">
+    <header class="tm__top" style={vars}>
+      <div class="wrap tm__top-in">
+        <a href={`${base}/tec-mais`} class="tm__brand" aria-label="TEC Mais Cursos Técnicos">
+          <img src={`${base}/img/tec/marca/tec-mais-branco.webp`} alt="TEC Mais Cursos Técnicos" width={f.logo.w} height={f.logo.h} />
+        </a>
+        <a href={waLink(f.contact.whatsapp, f.whatsappMessage)} target="_blank" rel="noopener" class="tm__wa"><Icon name="whatsapp" size={18} /><span>Dúvidas? Fale com a gente</span></a>
+      </div>
+    </header>
   <main id="conteudo" class="cad" style={vars} data-sb-url={sbUrl} data-sb-key={sbKey} data-wa={f.contact.whatsapp}>
     <section class="cad__hero">
       <div class="cad__glow" aria-hidden="true"></div>
       <div class="wrap cad__hero-in">
-        <nav aria-label="Você está em" class="mono cad__crumb">
-          <a href={`${base}/`}>Início</a> <span aria-hidden="true">/</span> <a href={`${base}/tec-mais`}>TEC Mais</a> <span aria-hidden="true">/</span> <span aria-current="page">Cadastro</span>
-        </nav>
-        <img class="cad__logo" src={`${base}${f.logo.src}`} alt={f.logo.alt} width={f.logo.w} height={f.logo.h} />
+        <span class="mono cad__kicker">Matrículas abertas · Valparaíso de Goiás</span>
         <h1 class="disp cad__t">Cadastro de estudante. <span class="serif">Falta pouco pra sua vaga.</span></h1>
         <p class="cad__lead">São 3 passos rápidos. Digite o CEP e a gente preenche o endereço pra você.</p>
       </div>
@@ -179,22 +218,47 @@ const INSTRUCAO = ['Ensino Fundamental Incompleto', 'Ensino Fundamental Completo
       <p class="cad__lock"><Icon name="check" size={16} />Seus dados ficam guardados com segurança e só a equipe da TEC Mais tem acesso.</p>
     </div>
   </main>
-  <Footer cta={false} wa={waLink(f.contact.whatsapp, f.whatsappMessage)} waLabel="Falar com a TEC Mais" />
-</Base>
+  <footer class="tm__foot" style={vars}>
+    <div class="wrap tm__foot-in">
+      <img src={`${base}/img/tec/marca/tec-mais-branco.webp`} alt="TEC Mais Cursos Técnicos" width={f.logo.w} height={f.logo.h} loading="lazy" />
+      <p>{endereco}</p>
+      <p class="tm__links">
+        <a href={waLink(f.contact.whatsapp, f.whatsappMessage)} target="_blank" rel="noopener">WhatsApp</a>
+        {f.contact.instagram && <a href={f.contact.instagram} target="_blank" rel="noopener">{insta}</a>}
+        <a href={`${base}/privacidade`} target="_blank" rel="noopener">Política de Privacidade</a>
+      </p>
+    </div>
+  </footer>
+  <AvisoCookies marca="da TEC Mais" />
+  </body>
+</html>
 
 <script>
   import '../../scripts/cadastro';
 </script>
 
 <style>
+  /* moldura própria da TEC Mais (sem o menu e o rodapé do Colégio Êxito) */
+  :global(body.tm) { background: var(--soft, #F1F1FA); }
+  .tm__top { position: sticky; top: 0; z-index: 30; background: var(--pdeep); border-bottom: 1px solid rgba(255,255,255,.12); }
+  .tm__top-in { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 68px; }
+  .tm__brand { display: inline-flex; }
+  .tm__brand img { display: block; width: 150px; height: auto; }
+  .tm__wa { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 999px; background: #25D366; color: #FFF; font-weight: 700; font-size: 14.5px; text-decoration: none; }
+  .tm__wa:hover { color: #FFF; filter: brightness(1.05); }
+  .tm__foot { background: var(--pdeep); color: rgba(255,255,255,.78); padding: 36px 0 calc(36px + env(safe-area-inset-bottom)); font-size: 14px; }
+  .tm__foot-in { display: grid; justify-items: center; gap: 10px; text-align: center; }
+  .tm__foot img { width: 150px; height: auto; }
+  .tm__foot p { margin: 0; }
+  .tm__links { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; }
+  .tm__links a { color: #FFF; font-weight: 600; }
+  .cad__kicker { display: inline-block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--a); }
+  @media (max-width: 480px) { .tm__wa span { display: none; } .tm__wa { width: 44px; padding: 0; justify-content: center; } }
   .cad { --ink: #0B1F5C; --mu: #4A5878; background: var(--soft); padding-bottom: 72px; }
   .cad__hero { position: relative; overflow: clip; padding: 40px 0 120px; color: #FFF; background: linear-gradient(160deg, var(--pd), var(--pdeep) 70%); }
   .cad__glow { position: absolute; width: 760px; height: 760px; right: -240px; top: -320px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--a) 40%, transparent), transparent 62%); pointer-events: none; }
   .cad__hero-in { position: relative; max-width: 760px; }
-  .cad__crumb { font-size: 12px; color: rgba(255,255,255,.75); }
-  .cad__crumb a { color: #FFF; }
-  .cad__logo { display: block; width: 150px; height: auto; margin-top: 22px; padding: 10px 14px; border-radius: 14px; background: #FFF; }
-  .cad__t { margin: 20px 0 0; font-size: clamp(32px, 4.4vw, 52px); font-weight: 760; line-height: 1.05; letter-spacing: -.02em; text-wrap: balance; }
+  .cad__t { margin: 14px 0 0; font-size: clamp(32px, 4.4vw, 52px); font-weight: 760; line-height: 1.05; letter-spacing: -.02em; text-wrap: balance; }
   .cad__t .serif { display: block; color: var(--a); font-weight: 400; }
   .cad__lead { margin: 14px 0 0; font-size: 17px; color: rgba(255,255,255,.85); }
 
