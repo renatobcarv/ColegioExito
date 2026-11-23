@@ -127,6 +127,29 @@ Itens com `"foto": "<busca>"` no conteúdo ganham imagem no build:
 
 Os protocolos de saúde do APH estão marcados como **Prévia · em validação** até o instrutor assinar.
 
+## Cadastro de estudante TEC Mais (`/tec-mais/cadastro`) e painel da equipe (`/admin/cadastros`)
+
+Substitui o cadastro antigo, que só mandava os dados pelo WhatsApp. O aluno preenche em 3 passos (dados, endereço com CEP automático, contato), aceita o uso dos dados (LGPD) e o cadastro fica salvo no Supabase. A equipe vê, filtra, muda o status (Novo, Em contato, Matriculado, Não fechou), anota observações, chama no WhatsApp e baixa planilha em `/admin/cadastros`.
+
+- Link com o curso já escolhido: `/tec-mais/cadastro?curso=enfermagem` (também `seguranca-do-trabalho`, `administracao`, `aph`, `injetaveis`).
+- A página fica fora do Google (`noindex`) e do sitemap: é para mandar o link para quem já demonstrou interesse.
+- Se o Supabase estiver fora do ar, o formulário manda a ficha completa pelo WhatsApp, como o antigo. Nenhum aluno se perde.
+- O site público só consegue **inserir** cadastros (função `tec_cadastrar`, com validação e freio contra robôs). Ninguém de fora lê, altera ou apaga.
+
+### Configurar uma vez
+1. **Supabase → SQL Editor:** rode `supabase/migrations/0005_cadastros.sql`.
+2. **Authentication → Users → Add user:** e-mail e senha de cada pessoa da equipe ("Auto Confirm User").
+3. **Table Editor → `tec_equipe` → Insert row:** o mesmo e-mail.
+4. Entre em `/admin/cadastros`.
+
+Pedido de exclusão de dados (LGPD): abra o cadastro no painel e use **Apagar cadastro**. A planilha baixada tem dados pessoais: não compartilhe fora da equipe.
+
+| O que | Onde |
+| --- | --- |
+| Formulário | `src/pages/tec-mais/cadastro.astro` e `src/scripts/cadastro.ts` |
+| Painel da equipe | `src/pages/admin/cadastros.astro` e `src/scripts/cadastros-admin.ts` |
+| Tabelas e regras de acesso | `supabase/migrations/0005_cadastros.sql` |
+
 ## Cofre de senhas da equipe (`/admin/cofre`)
 
 Guarda as senhas das contas da escola (Instagram, Gmail, Meta, domínio, sistemas, bancos). Sem link no site, fora do sitemap, com `noindex`, sem nenhuma tag de rastreamento e com regras de segurança próprias no `vercel.json`.
