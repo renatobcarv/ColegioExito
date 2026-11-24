@@ -70,6 +70,9 @@ const INSTRUCAO = ['Ensino Fundamental Incompleto', 'Ensino Fundamental Completo
     </header>
   <main id="conteudo" class="cad" style={vars} data-sb-url={sbUrl} data-sb-key={sbKey} data-wa={f.contact.whatsapp}>
     <section class="cad__hero">
+      <div class="cad__bg" aria-hidden="true">
+        <img src={`${base}/img/tec/enfermagem/hero-turma.webp`} alt="" width="1280" height="853" decoding="async" fetchpriority="high" />
+      </div>
       <div class="cad__glow" aria-hidden="true"></div>
       <div class="wrap cad__hero-in">
         <span class="mono cad__kicker">Matrículas abertas · Valparaíso de Goiás</span>
@@ -255,8 +258,15 @@ const INSTRUCAO = ['Ensino Fundamental Incompleto', 'Ensino Fundamental Completo
   .cad__kicker { display: inline-block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--a); }
   @media (max-width: 480px) { .tm__wa span { display: none; } .tm__wa { width: 44px; padding: 0; justify-content: center; } }
   .cad { --ink: #0B1F5C; --mu: #4A5878; background: var(--soft); padding-bottom: 72px; }
-  .cad__hero { position: relative; overflow: clip; padding: 40px 0 120px; color: #FFF; background: linear-gradient(160deg, var(--pd), var(--pdeep) 70%); }
-  .cad__glow { position: absolute; width: 760px; height: 760px; right: -240px; top: -320px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--a) 40%, transparent), transparent 62%); pointer-events: none; }
+  .cad__hero { position: relative; overflow: clip; padding: 72px 0 150px; min-height: 460px; color: #FFF; background: var(--pdeep); }
+  /* foto da turma integrada ao fundo: azul à esquerda (texto) e embaixo (etapas), turma à direita */
+  .cad__bg { position: absolute; inset: 0; pointer-events: none; }
+  .cad__bg img { width: 100%; height: 100%; object-fit: cover; object-position: 70% 42%; }
+  .cad__bg::after { content: ''; position: absolute; inset: 0; background:
+    linear-gradient(90deg, var(--pdeep) 0%, color-mix(in srgb, var(--pdeep) 92%, transparent) 30%, color-mix(in srgb, var(--pdeep) 45%, transparent) 58%, color-mix(in srgb, var(--pdeep) 10%, transparent) 100%),
+    linear-gradient(0deg, var(--pdeep) 0%, color-mix(in srgb, var(--pdeep) 60%, transparent) 22%, transparent 45%),
+    linear-gradient(180deg, color-mix(in srgb, var(--pdeep) 50%, transparent) 0%, transparent 20%); }
+  .cad__glow { opacity: .5; position: absolute; width: 760px; height: 760px; right: -240px; top: -320px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--a) 40%, transparent), transparent 62%); pointer-events: none; }
   .cad__hero-in { position: relative; max-width: 760px; }
   .cad__t { margin: 14px 0 0; font-size: clamp(32px, 4.4vw, 52px); font-weight: 760; line-height: 1.05; letter-spacing: -.02em; text-wrap: balance; }
   .cad__t .serif { display: block; color: var(--a); font-weight: 400; }
@@ -327,7 +337,10 @@ const INSTRUCAO = ['Ensino Fundamental Incompleto', 'Ensino Fundamental Completo
   .cad__lock { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 18px 0 0; color: var(--mu); font-size: 13.5px; text-align: center; }
 
   @media (max-width: 640px) {
-    .cad__hero { padding: 28px 0 104px; }
+    .cad__hero { padding: 238px 0 104px; min-height: 0; }
+    .cad__bg { bottom: auto; height: 320px; }
+    .cad__bg img { object-position: 62% 40%; }
+    .cad__bg::after { background: linear-gradient(0deg, var(--pdeep) 0%, color-mix(in srgb, var(--pdeep) 55%, transparent) 40%, transparent 75%), linear-gradient(180deg, color-mix(in srgb, var(--pdeep) 45%, transparent) 0%, transparent 25%); }
     .cad__grid, .cad__prio { grid-template-columns: 1fr; }
     .cad__steps li { flex-direction: column; gap: 4px; padding: 10px 6px; font-size: 12.5px; text-align: center; }
     .cad__acts { flex-direction: column-reverse; align-items: stretch; }
