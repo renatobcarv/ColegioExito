@@ -105,6 +105,9 @@
   var SB = CFG.sb || {};
   var PUB = CFG.mods || [];   // módulos publicados neste deploy (com conteúdo cifrado)
   var KEYS = {}, SOON = {}, LOADED = {}, AT = null, EMAIL = '';
+  // login coletivo (ex.: um acesso para toda a turma do APH): marcado pela equipe no Supabase em
+  // app_metadata.compartilhada (a aluna não consegue alterar). Nele não aparece "Trocar senha".
+  var SHARED = false;
   function u8(b) { return Uint8Array.from(atob(b), function (c) { return c.charCodeAt(0); }); }
   function api(path, opt) {
     opt = opt || {};
@@ -117,7 +120,7 @@
       });
     });
   }
-  function session(j) { AT = j.access_token; EMAIL = (j.user && j.user.email) || EMAIL; LS.set('tma-rt', j.refresh_token); LS.set('tma-email', EMAIL); }
+  function session(j) { AT = j.access_token; EMAIL = (j.user && j.user.email) || EMAIL; SHARED = !!(j.user && j.user.app_metadata && j.user.app_metadata.compartilhada); LS.set('tma-rt', j.refresh_token); LS.set('tma-email', EMAIL); }
   function login(email, senha) { return api('/auth/v1/token?grant_type=password', { method: 'POST', anon: true, body: { email: email, password: senha } }).then(session); }
   function refresh() {
     var rt = LS.get('tma-rt', '');
@@ -162,7 +165,7 @@
           (st === 'ok' ? '<div class="bar' + (c === m.aulas.length ? ' bar--g' : '') + '"><i style="width:' + pct(c, m.aulas.length) + '%"></i></div>' : '<small class="sm__s">' + (st === 'soon' ? 'Libera em ' + fmtDate(SOON[m.id]) : STATE_TXT[st]) + '</small>') + '</a>';
       });
     });
-    h += '</nav><div class="side__foot"><span class="side__me">' + ic('user') + '<span>' + esc(EMAIL) + '</span></span><a class="nl" href="https://wa.me/' + C.whatsapp + '?text=' + encodeURIComponent('Olá! Sou aluno(a) da TEC Mais Academy e preciso de ajuda com o portal.') + '" target="_blank" rel="noopener">' + ic('chat') + 'Suporte no WhatsApp</a><button class="nl nl--b" type="button" data-senha>' + ic('lock') + 'Trocar senha</button><button class="nl nl--b" type="button" data-sair>' + ic('logout') + 'Sair do portal</button></div>';
+    h += '</nav><div class="side__foot"><span class="side__me">' + ic('user') + '<span>' + esc(EMAIL) + '</span></span><a class="nl" href="https://wa.me/' + C.whatsapp + '?text=' + encodeURIComponent('Olá! Sou aluno(a) da TEC Mais Academy e preciso de ajuda com o portal.') + '" target="_blank" rel="noopener">' + ic('chat') + 'Suporte no WhatsApp</a>' + (SHARED ? '' : '<button class="nl nl--b" type="button" data-senha>' + ic('lock') + 'Trocar senha</button>') + '<button class="nl nl--b" type="button" data-sair>' + ic('logout') + 'Sair do portal</button></div>';
     $('#side').innerHTML = h;
     var t = [['#/', 'Início', 'home', route.name === 'home'], ['#/modulos', 'Cursos', 'grid', route.name === 'modulos' || route.name === 'aula' || route.name === 'modulo'], ['#/ferramentas', 'Ferramentas', 'tool', route.name === 'ferramentas']];
     var th = '';
@@ -677,6 +680,7 @@
     $('#mskip', w).addEventListener('click', function () { close(''); });
   }
   function trocarSenha() {
+    if (SHARED) return;
     var w = modal('<span class="k">Sua conta · ' + esc(EMAIL) + '</span><h2 class="disp" id="mt">Trocar senha</h2><p>Use pelo menos 8 caracteres.</p><form><input class="in" id="s1" type="password" autocomplete="new-password" placeholder="Nova senha" minlength="8" required><input class="in" id="s2" type="password" autocomplete="new-password" placeholder="Repita a nova senha" required><p class="form-err" id="se" role="alert"></p><button class="btn btn--or" type="submit">Salvar nova senha</button><button class="btn btn--gh btn--sm" type="button" id="sx">Cancelar</button></form>');
     setTimeout(function () { $('#s1', w).focus(); }, 50);
     $('#sx', w).addEventListener('click', function () { w.remove(); });

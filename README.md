@@ -111,6 +111,14 @@ Cada aluno entra com **e-mail e senha próprios** e só abre os bônus liberados
 
 O aluno troca a própria senha no portal ("Trocar senha"). Se esquecer, a secretaria define uma nova no Supabase.
 
+### Login coletivo da turma (ex.: APH)
+Um único e-mail e senha para todos os alunos do mesmo curso, com os bônus liberados de uma vez:
+1. **Authentication → Users → Add user:** um e-mail só da turma (ex.: `aph@...`) e uma senha forte, com "Auto Confirm User".
+2. **SQL Editor:** rode o bloco "Login coletivo" que está no fim de `supabase/migrations/0003_academy.sql`, trocando o e-mail. Ele libera os 4 bônus e marca o login como coletivo.
+3. Mande e-mail e senha para a turma. O progresso e o nome ficam salvos no celular de cada aluno, sem misturar.
+
+No login coletivo não aparece "Trocar senha", para ninguém trancar a turma para fora. Se a senha vazar (ex.: postada em grupo aberto), troque em Authentication → Users e avise só quem está matriculado.
+
 ### Onde editar
 | O que | Onde |
 | --- | --- |
