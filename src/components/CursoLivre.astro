@@ -25,7 +25,7 @@ let sec = 0;
 const n = () => num(sec++);
 ---
 
-<Base title={`${c.nome} em Valparaíso de Goiás | TEC Mais · ${school.name}`} description={`${c.nome} na TEC Mais: um dia de teoria e prática, apostila, lanche, mimo e acesso à plataforma exclusiva TEC Mais Academy.${c.preco.valor ? ` Turma fundadora por ${c.preco.valor}.` : ''}`}>
+<Base title={`${c.nome} em Valparaíso de Goiás | TEC Mais · ${school.name}`} description={`${c.nome} na TEC Mais: um dia de teoria e prática, apostila, lanche, mimo e acesso à plataforma exclusiva TEC Mais Academy.${c.preco.valor ? ` ${c.preco.selo ?? 'Por'} ${c.preco.valor}.` : ''}`}>
   <Header />
   <main id="conteudo" class="cl">
 
@@ -217,7 +217,7 @@ const n = () => num(sec++);
             <p class="cl-k">{n()} — Investimento</p>
             {c.preco.valor ? (
               <>
-                <h2 class="cl-h2">Turma fundadora: <em>{c.preco.valor}.</em></h2>
+                <h2 class="cl-h2">{c.preco.selo ?? 'Investimento'}: <em>{c.preco.valor}.</em></h2>
                 <p class="cl-p">{c.preco.nota}</p>
               </>
             ) : (
@@ -234,7 +234,7 @@ const n = () => num(sec++);
               {c.bonus.map((b) => <li><span>{b.titulo}</span><b>{b.valor ? <s>{b.valor}</s> : 'incluso'}</b></li>)}
             </ul>
             {c.preco.valor ? (
-              <p class="cl-inv__t"><span>{total ? <>De <s>R$ {total}</s> só em bônus, por</> : 'Por'}</span><strong>{c.preco.valor}</strong><small>valor exclusivo da primeira turma</small></p>
+              <p class="cl-inv__t"><span>{total ? <>De <s>R$ {total}</s> só em bônus, por</> : 'Por'}</span><strong>{c.preco.valor}</strong>{c.preco.legenda && <small>{c.preco.legenda}</small>}</p>
             ) : (
               <p class="cl-inv__t"><span>Valores e formas de pagamento</span><strong class="cl-inv__ask">pelo WhatsApp</strong></p>
             )}

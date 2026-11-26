@@ -599,7 +599,7 @@ export const formacoes: Formacao[] = [
     ],
     areas: [
       { title: 'Primeiros Socorros', courses: 'Reconhecer a emergência, ligar para o 192 e agir certo até o socorro chegar. Carga horária de 8h.', icon: 'heart' },
-      { title: 'APH: Atendimento Pré-Hospitalar', courses: 'Um dia de teoria e prática, com 4 bônus na plataforma TEC Mais Academy. Turma fundadora por R$ 99.', icon: 'bolt', href: '/tec-mais/aph', badge: 'Turma fundadora · R$ 99' },
+      { title: 'APH: Atendimento Pré-Hospitalar', courses: 'Um dia de teoria e prática, com 4 bônus na plataforma TEC Mais Academy. Curso completo por R$ 149.', icon: 'bolt', href: '/tec-mais/aph', badge: 'R$ 149 · com 4 bônus' },
       { title: 'Feridas e Curativos', courses: 'Avaliação, limpeza e cuidado correto de feridas.', icon: 'tool' },
       { title: 'Cuidador de Idoso', courses: 'Rotina, segurança e dignidade no cuidado com a pessoa idosa.', icon: 'heart' },
       { title: 'Combate a Incêndio', courses: 'Prevenção, uso de extintores e evacuação segura.', icon: 'bolt' },

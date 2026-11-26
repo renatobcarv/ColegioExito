@@ -14,7 +14,7 @@ export type CursoLivre = {
   lead: string;
   fotoHero: { src: string; alt: string };
   turma: { data: string | null; horario: string; intervalo: string; local: string; carga: string };
-  preco: { valor: string | null; nota: string; selo?: string; ancora?: string } ;
+  preco: { valor: string | null; nota: string; selo?: string; ancora?: string; /** linha pequena sob o valor no quadro de investimento */ legenda?: string } ;
   programacao: { inicio: string; fim?: string; titulo: string; texto: string }[];
   conteudo: { titulo: string; texto: string }[];
   destaqueConteudo?: { label: string; valor: string };
@@ -125,17 +125,18 @@ export const cursosLivres: CursoLivre[] = [
     slug: 'aph',
     nome: 'APH · Atendimento Pré-Hospitalar',
     nomeCurto: 'APH',
-    kicker: 'TEC Mais · Experiência prática · Turma fundadora',
+    kicker: 'TEC Mais · Experiência prática · Valparaíso de Goiás',
     titulo: 'Quando acontece dentro da sua casa, não dá tempo de procurar no Google.',
     acento: 'Saia sabendo o que fazer.',
     lead: 'Um dia de teoria e prática em Atendimento Pré-Hospitalar, com apostila, lanche e mimo especial. E acesso à TEC Mais Academy com 4 bônus: peçonhentos, RCP para bebê, criança, adulto e idoso, emergências domésticas e APH no currículo.',
     fotoHero: { src: '/img/cursos/injetaveis-pratica-3.webp', alt: 'Turma da TEC Mais em aula prática com simuladores' },
     turma: { data: null, ...TURMA_BASE },
     preco: {
-      valor: 'R$ 99',
-      selo: 'Turma fundadora',
+      valor: 'R$ 149',
+      selo: 'Curso completo',
       ancora: 'Só os 4 bônus da plataforma valem R$ 388',
-      nota: 'Esta é a primeira turma de APH da TEC Mais. Por isso, ela sai por apenas R$ 99. O valor vale só para a turma fundadora.',
+      legenda: 'curso completo, com os 4 bônus inclusos',
+      nota: 'Um dia inteiro de teoria e prática com simuladores, apostila, lanche, mimo e os 4 bônus da plataforma, que sozinhos valem R$ 388. Tudo numa única inscrição.',
     },
     programacao: DIA,
     conteudo: [
@@ -152,7 +153,7 @@ export const cursosLivres: CursoLivre[] = [
       { titulo: 'Prática com simuladores', texto: 'Treino das técnicas em manequins e simulações, com supervisão.', icone: 'tool' },
       { titulo: 'Lanche durante o intervalo', texto: 'Um lanche especial no intervalo, para recarregar as energias antes da prática.', icone: 'heart' },
       { titulo: 'Mimo especial da turma', texto: 'Uma lembrancinha exclusiva TEC Mais, entregue no encerramento do dia.', icone: 'cap' },
-      { titulo: 'Acesso à TEC Mais Academy', texto: 'Login individual na plataforma exclusiva, com os 4 bônus do APH no seu celular.', icone: 'monitor' },
+      { titulo: 'Acesso à TEC Mais Academy', texto: 'Acesso à plataforma exclusiva, com os 4 bônus do APH no seu celular.', icone: 'monitor' },
     ],
     pratica: {
       intro: 'Na hora H, o corpo faz o que treinou.',
@@ -167,15 +168,15 @@ export const cursosLivres: CursoLivre[] = [
         { src: '/img/cursos/injetaveis-pratica-1.webp', alt: 'Turma da TEC Mais em aula prática' },
         { src: '/img/cursos/injetaveis-turma.webp', alt: 'Turma da TEC Mais no laboratório' },
       ],
-      fotosNota: 'Fotos de turmas da TEC Mais no laboratório. A turma fundadora de APH será a primeira deste curso.',
+      fotosNota: 'Fotos de turmas da TEC Mais no laboratório.',
     },
     etapas: ['Entender', 'Ver a técnica', 'Treinar em duplas', 'Simular a situação', 'Tirar dúvidas', 'Encerrar'],
     bonusIntro: 'O que você aprende num dia, você revisa a vida inteira. Os bônus ficam na plataforma, no seu celular, para a hora em que você mais precisar.',
     bonus: [
-      { titulo: 'Guia de Acidentes com Animais Peçonhentos', texto: 'Escorpião, cobra, aranha, abelha, água-viva e taturana: o que fazer, o que nunca fazer e um card de bolso para salvar no celular.', valor: 'R$ 97', libera: 'Liberado na matrícula' },
-      { titulo: 'RCP por Fase da Vida', texto: 'Bebê, criança, adulto e idoso, num quadro só para imprimir. Com um metrônomo para treinar o ritmo certo.', valor: 'R$ 127', libera: 'Liberado na 1ª semana' },
-      { titulo: 'Guia de Emergências Domésticas', texto: 'Queimadura, convulsão, desmaio, intoxicação, choque elétrico e sangramento. Mais os telefones de emergência para colar na geladeira.', valor: 'R$ 97', libera: 'Liberado na matrícula' },
-      { titulo: 'APH no Currículo', texto: 'Onde o APH é diferencial, textos prontos para o currículo e o LinkedIn e como contar um atendimento na entrevista.', valor: 'R$ 67', libera: 'Liberado no fim do curso' },
+      { titulo: 'Guia de Acidentes com Animais Peçonhentos', texto: 'Escorpião, cobra, aranha, abelha, água-viva e taturana: o que fazer, o que nunca fazer e um card de bolso para salvar no celular.', valor: 'R$ 97', libera: 'Liberado com o acesso' },
+      { titulo: 'RCP por Fase da Vida', texto: 'Bebê, criança, adulto e idoso, num quadro só para imprimir. Com um metrônomo para treinar o ritmo certo.', valor: 'R$ 127', libera: 'Liberado com o acesso' },
+      { titulo: 'Guia de Emergências Domésticas', texto: 'Queimadura, convulsão, desmaio, intoxicação, choque elétrico e sangramento. Mais os telefones de emergência para colar na geladeira.', valor: 'R$ 97', libera: 'Liberado com o acesso' },
+      { titulo: 'APH no Currículo', texto: 'Onde o APH é diferencial, textos prontos para o currículo e o LinkedIn e como contar um atendimento na entrevista.', valor: 'R$ 67', libera: 'Liberado com o acesso' },
     ],
     telas: [
       { src: '/img/cursos/plataforma-aph-fichas.webp', alt: 'Fichas de animais peçonhentos na TEC Mais Academy', legenda: 'Fichas por animal: o que fazer e o que nunca fazer' },
@@ -187,14 +188,14 @@ export const cursosLivres: CursoLivre[] = [
     ],
     faq: [
       { q: 'Preciso ser da área da saúde?', a: 'Não. O APH é para qualquer pessoa: mães, pais, avós, cuidadores, professores, profissionais de academia, condomínio, eventos e quem quer se preparar para uma emergência.' },
-      { q: 'Por que custa só R$ 99?', a: 'Porque é a primeira turma de APH da TEC Mais. A turma fundadora entra com preço de lançamento. O valor não vale para as próximas turmas.' },
+      { q: 'Quanto custa e o que está incluso?', a: 'R$ 149 pelo curso completo: aula teórica, aula prática com simuladores, apostila, lanche, mimo e os 4 bônus da plataforma, que sozinhos valem R$ 388. As formas de pagamento você vê com a equipe pelo WhatsApp.' },
       { q: 'A prática é de verdade?', a: 'Sim. À tarde, a turma treina as técnicas em manequins e simulações, com supervisão.' },
-      { q: 'Como funciona o acesso à plataforma?', a: 'Você recebe um login individual (e-mail e senha) para a TEC Mais Academy. Os bônus são liberados em etapas: dois na matrícula, um na primeira semana e o último no fim do curso.' },
+      { q: 'Como funciona o acesso à plataforma?', a: 'Você recebe o e-mail e a senha da TEC Mais Academy. Os 4 bônus ficam liberados no seu celular, para revisar sempre que precisar, e o seu progresso fica salvo no aparelho.' },
       { q: 'Isso me dá emprego?', a: 'O APH é um diferencial no currículo em áreas como brigada, segurança do trabalho, eventos, escolas, academias e cuidado de idosos. Não prometemos vaga, mas o bônus 4 mostra exatamente como usar o curso a seu favor.' },
     ],
     frase: 'Você não vai sair só com um certificado. Vai sair sabendo o que fazer quando acontecer dentro da sua casa.',
-    finalTitulo: 'A primeira turma de APH da TEC Mais é por R$ 99.',
-    finalTexto: 'Aula teórica, aula prática, apostila, lanche, mimo e 4 bônus na plataforma. Garanta sua vaga na turma fundadora.',
-    whatsappMessage: 'Olá! Vi a página do curso de APH e quero garantir minha vaga na turma fundadora por R$ 99.',
+    finalTitulo: 'O curso completo de APH sai por R$ 149.',
+    finalTexto: 'Aula teórica, aula prática, apostila, lanche, mimo e 4 bônus na plataforma. Garanta sua vaga na próxima turma.',
+    whatsappMessage: 'Olá! Vi a página do curso de APH (R$ 149) e quero garantir minha vaga.',
   },
 ];
