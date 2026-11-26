@@ -93,7 +93,6 @@ var TMA_MODULOS = [
     cor: 'orange',
     icone: 'alert',
     valor: 'R$ 97',
-    previa: 'Protocolos em validação pelo instrutor de APH.',
     aulas: [
       { id: 'pec-intro', titulo: 'Por que o escorpião é o nº 1', h: ['O acidente nº 1 do Brasil', 'mora no seu quintal.'], kk: 'Bônus 1 · Peçonhentos', tipo: 'pecIntro', min: '5 min' },
       { id: 'pec-fichas', titulo: 'Ficha de cada animal', h: ['O que fazer', 'e o que nunca fazer.'], kk: 'Bônus 1 · Fichas por animal', tipo: 'pecFichas', min: '8 min' },
@@ -110,7 +109,6 @@ var TMA_MODULOS = [
     cor: 'red',
     icone: 'heart',
     valor: 'R$ 127',
-    previa: 'Parâmetros em validação pelo instrutor de APH.',
     aulas: [
       { id: 'rcp-reconhecer', titulo: 'Reconhecer a parada', h: ['Reconhecer a parada', 'em 10 segundos.'], kk: 'Bônus 2 · RCP', tipo: 'rcpRec', min: '4 min' },
       { id: 'rcp-bebe', titulo: 'RCP e engasgo no bebê', h: ['Bebê:', 'RCP e engasgo.'], kk: 'Bônus 2 · Menos de 1 ano', tipo: 'rcpFase', fase: 0, min: '6 a 8 min' },
@@ -129,7 +127,6 @@ var TMA_MODULOS = [
     cor: 'blue',
     icone: 'home',
     valor: 'R$ 97',
-    previa: 'Condutas em validação pelo instrutor de APH.',
     aulas: [
       { id: 'dom-situacoes', titulo: '7 emergências dentro de casa', h: ['Situação →', 'o que fazer.'], kk: 'Bônus 3 · Emergências domésticas', tipo: 'domSit', min: '10 min' },
       { id: 'dom-telefones', titulo: 'Telefones da geladeira', h: ['Imprima e cole', 'na geladeira.'], kk: 'Bônus 3 · Telefones de emergência', tipo: 'domTel', min: 'Ferramenta' },
