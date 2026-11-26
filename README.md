@@ -100,7 +100,7 @@ Cada aluno entra com **e-mail e senha próprios** e só abre os bônus liberados
 
 ### Configurar uma vez
 1. **Supabase → SQL Editor:** rode `supabase/migrations/0003_academy.sql`. Ele cria as chaves de cada módulo e as regras de acesso.
-2. **Vercel → Settings → Environment Variables:** confira se existe `SUPABASE_SERVICE_ROLE_KEY` (a integração Supabase da Vercel costuma criar). Ela fica só no build, nunca vai para o navegador. A antiga `ACADEMY_PASSWORD` pode ser apagada.
+2. **Vercel → Settings → Environment Variables:** precisa existir `SUPABASE_SECRET_KEY` (chave nova, começa com `sb_secret_`, em Supabase → Project Settings → API Keys) ou `SUPABASE_SERVICE_ROLE_KEY` (chave antiga). Ela fica só no build, nunca vai para o navegador. A antiga `ACADEMY_PASSWORD` pode ser apagada.
 3. Faça um **Redeploy**. No log do build deve aparecer `Portal do Aluno: 7 módulos cifrados`.
 
 ### Liberar um aluno

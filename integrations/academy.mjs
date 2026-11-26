@@ -32,16 +32,30 @@ async function encrypt(bytes, keyB64) {
 
 async function loadKeys(sbUrl, logger) {
   if (process.env.ACADEMY_KEYS_JSON) return JSON.parse(process.env.ACADEMY_KEYS_JSON);
-  const secret = env('SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_SECRET_KEY');
-  if (!sbUrl || !secret) { logger.warn('Sem SUPABASE_SERVICE_ROLE_KEY: módulos publicados sem conteúdo (aparecem "em preparação").'); return {}; }
-  try {
-    const r = await fetch(`${sbUrl}/rest/v1/academy_chaves?select=modulo,chave`, { headers: { apikey: secret, Authorization: `Bearer ${secret}` }, signal: AbortSignal.timeout(15000) });
-    if (!r.ok) throw new Error(`HTTP ${r.status} ${await r.text()}`);
-    return Object.fromEntries((await r.json()).map((x) => [x.modulo, x.chave]));
-  } catch (e) {
-    logger.warn(`Não consegui ler as chaves do Supabase (${e.message}). Rode supabase/migrations/0003_academy.sql.`);
+  // Aceita a chave nova do Supabase (sb_secret_…, variável SUPABASE_SECRET_KEY) e a antiga (service_role, um JWT).
+  // A nova só vai no cabeçalho apikey: no Authorization o Supabase recusa, porque não é um JWT.
+  const nomes = ['SUPABASE_SECRET_KEY', 'SUPABASE_SERVICE_ROLE_KEY'].filter((k) => process.env[k]);
+  if (!sbUrl || !nomes.length) {
+    logger.warn('Sem SUPABASE_SECRET_KEY nem SUPABASE_SERVICE_ROLE_KEY na Vercel: módulos publicados sem conteúdo (aparecem "em preparação").');
     return {};
   }
+  const erros = [];
+  for (const nome of nomes) {
+    const secret = process.env[nome].trim();
+    const headers = { apikey: secret };
+    if (secret.startsWith('eyJ')) headers.Authorization = `Bearer ${secret}`;
+    try {
+      const r = await fetch(`${sbUrl}/rest/v1/academy_chaves?select=modulo,chave`, { headers, signal: AbortSignal.timeout(15000) });
+      if (!r.ok) throw new Error(`HTTP ${r.status} ${(await r.text()).slice(0, 160)}`);
+      const lista = await r.json();
+      logger.info(`Chaves do Portal do Aluno lidas com ${nome} (${lista.length} módulos).`);
+      return Object.fromEntries(lista.map((x) => [x.modulo, x.chave]));
+    } catch (e) {
+      erros.push(`${nome}: ${e.message}`);
+    }
+  }
+  logger.warn(`Não consegui ler as chaves do Supabase (${erros.join(' | ')}). Confira a chave na Vercel e se supabase/migrations/0003_academy.sql foi rodado.`);
+  return {};
 }
 
 /** Resolve { foto: "busca" } → { img: { src, credito, link } } (foto própria > Openverse > nada). */
