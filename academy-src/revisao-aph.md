@@ -46,3 +46,7 @@
 | As 13 imagens seguem o mesmo formato e tratamento visual? | Sim. São arquivos JPG de 1254 × 1254, com luz suave, enquadramento central e paleta natural. |
 
 Os JPGs estão em `academy-src/img/aph-revisao/`. As capas ilustrativas já usadas na vitrine estão em `public/img/academy/`.
+
+## Publicação
+
+Aprovado pelo instrutor de APH. As 13 imagens foram convertidas para WebP (900 px) em `academy-src/img/<nome>.webp` e estão no portal: fichas de peçonhentos e cards de emergências domésticas, com a legenda "Imagem ilustrativa". A etiqueta "Prévia · em validação" saiu dos bônus 1, 2 e 3. Os originais em JPG continuam em `academy-src/img/aph-revisao/`.

@@ -58,7 +58,7 @@ async function makePhotos(out, src, logger) {
     let res = null;
     if (mine) {
       await copyFile(path.join(src, 'img', mine), path.join(dir, mine));
-      res = { src: `img/${mine}`, credito: 'Foto: TEC Mais' }; fromOwn++;
+      res = { src: `img/${mine}`, credito: 'Imagem ilustrativa' }; fromOwn++;
     } else {
       try {
         const r = await fetch(`https://api.openverse.org/v1/images/?q=${encodeURIComponent(q)}&license=${LICENSES}&page_size=5&mature=false`, { headers: { 'User-Agent': 'TecMaisAcademy/1.0 (site escolar)' }, signal: AbortSignal.timeout(12000) });
