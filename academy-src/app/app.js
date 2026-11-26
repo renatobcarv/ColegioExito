@@ -287,7 +287,9 @@
     var m = a.mod, L = ACC(), idx = L.indexOf(a), prev = L[idx - 1], next = L[idx + 1], c = modCount(m);
     LS.set('tma-last', a.id);
     var h = '<nav class="crumb" aria-label="Você está em"><a href="#/">Início</a>/<a href="#/modulos">' + esc(m.p.titulo) + '</a>/<span>' + esc(m.titulo) + '</span></nav><div class="lesson' + (WIDE[a.tipo] ? ' lesson--wide' : '') + '"><div><header class="lh' + (a.num ? ' lh--num' : '') + '"><div><span class="kk">' + esc(a.kk || ('Aula ' + (a.i + 1))) + '</span><h1 class="disp">' + (a.h ? esc(a.h[0]) + ' <span class="serif grad">' + esc(a.h[1]) + '</span>' : esc(a.titulo)) + '</h1><div class="lh__m"><span class="chip chip--w2">Aula ' + (a.i + 1) + ' de ' + m.aulas.length + '</span><span class="chip chip--' + ({ orange: 'or', blue: 'bl', green: 'gr', red: 'or' }[m.cor]) + '">' + esc(a.min) + '</span>' + (m.previa ? '<span class="chip chip--or">Prévia · em validação</span>' : '') + (isDone(a.id) ? '<span class="chip chip--gr">' + ic('check') + ' Concluída</span>' : '') + '</div></div>' + (a.num ? '<span class="bignum" aria-hidden="true">' + a.num + '</span>' : '') + '</header>';
-    h += '<div class="lbody" id="lbody">' + (R[a.tipo] ? R[a.tipo].html(a) : '') + aphStudy(a) + '</div>';
+    var study = (D[m.id + '-estudo'] || {})[a.id];
+    h += '<div class="lbody" id="lbody">' + (study ? aphCase(a, study.caso) : '') +
+      (R[a.tipo] ? R[a.tipo].html(a) : '') + (study ? aphStudy(m, study) : '') + '</div>';
     h += '<div class="lnav">' + (prev ? '<a class="btn btn--gh" href="#/aula/' + prev.id + '" aria-label="Aula anterior">' + ic('left') + '<span class="lbl">Anterior</span></a>' : '<span></span>') +
       '<button class="btn done-btn ' + (isDone(a.id) ? '' : 'btn--gh') + '" type="button" aria-pressed="' + isDone(a.id) + '" id="donebtn">' + ic('check') + '<span>' + (isDone(a.id) ? 'Concluída' : 'Concluir aula') + '</span></button>' +
       (next ? '<a class="btn btn--or" href="#/aula/' + next.id + '" aria-label="Próxima aula"><span class="lbl">Próxima</span><span class="btn__a">' + ic('right') + '</span></a>' : '<a class="btn btn--or" href="#/"><span class="lbl">Início</span><span class="btn__a">' + ic('home') + '</span></a>') + '</div></div>';
@@ -707,19 +709,19 @@
     return note ? '<p class="aph-note">' + ic('clipboard') + '<span>' + esc(note) + '</span></p>' : '';
   }
 
-  function aphStudy(a) {
-    var study = (D[a.mod.id + '-estudo'] || {})[a.id];
-    if (!study) return '';
-    var caso = study.caso;
-    var refs = APH_SOURCES[a.mod.id] || [];
-    return '<section class="aph-study" aria-label="Aplicação prática"><h2 class="subh">Na prática</h2><div class="aph-study__cards">' +
+  function aphCase(a, caso) {
+    return '<article class="aph-case"><div class="aph-case__cover">' + photo(APH_CASE_PHOTOS[a.id] || a.mod.capa) + '</div><div class="aph-case__body">' +
+      '<p class="k">Caso prático</p><h2>' + esc(caso[0]) + '</h2><p>' + esc(caso[1]) +
+      '</p><details><summary>Ver resposta comentada</summary><p>' + esc(caso[2]) + '</p></details></div></article>';
+  }
+
+  function aphStudy(module, study) {
+    var refs = APH_SOURCES[module.id] || [];
+    return '<section class="aph-study" aria-label="Aplicação prática"><h2 class="subh">O que observar na prática</h2><div class="aph-study__cards">' +
       study.cartoes.map(function (card) {
         return '<article class="card aph-study__card">' + gic(card[0], 'bl', true) +
           '<h3>' + esc(card[1]) + '</h3><p>' + esc(card[2]) + '</p></article>';
-      }).join('') +
-      '</div><article class="aph-case"><div class="aph-case__cover">' + photo(APH_CASE_PHOTOS[a.id] || a.mod.capa) + '</div><div class="aph-case__body">' +
-      '<p class="k">Decida antes de ver a resposta</p><h3>' + esc(caso[0]) + '</h3><p>' + esc(caso[1]) +
-      '</p><details><summary>Ver resposta comentada</summary><p>' + esc(caso[2]) + '</p></details></div></article>' +
+      }).join('') + '</div>' +
       (refs.length ? '<nav class="aph-references" aria-label="Fontes da aula">' + refs.map(function (ref) {
         return '<a href="' + esc(ref[1]) + '" target="_blank" rel="noopener">' + esc(ref[0]) + '</a>';
       }).join('') + '</nav>' : '') + '</section>';

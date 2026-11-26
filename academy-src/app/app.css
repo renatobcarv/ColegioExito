@@ -815,9 +815,9 @@ textarea.in{min-height:92px;resize:vertical}
 .aph-study__cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .aph-study__card{padding:20px}
 .aph-study__card .gi{margin-bottom:10px}
-.aph-study__card h3,.aph-case h3{margin:0 0 8px;font:750 1.25rem/1.2 var(--f-disp)}
+.aph-study__card h3,.aph-case h2{margin:0 0 8px;font:750 1.25rem/1.2 var(--f-disp)}
 .aph-study__card p,.aph-case p{margin:0;color:var(--mu)}
-.aph-case{display:grid;grid-template-columns:minmax(140px,1fr) minmax(0,2fr);margin-top:16px;border:1px solid var(--line2);border-radius:20px;overflow:hidden;background:#161833}
+.aph-case{display:grid;grid-template-columns:minmax(140px,1fr) minmax(0,2fr);margin:0 0 26px;border:1px solid var(--line2);border-radius:20px;overflow:hidden;background:#161833}
 .aph-case__cover{position:relative;min-height:145px}
 .aph-case__cover img{position:absolute;inset:0}
 .aph-case__body{padding:20px}
@@ -836,3 +836,5 @@ textarea.in{min-height:92px;resize:vertical}
 .aph-scene img{object-position:center}
 .aph-scene figcaption{font-size:.75rem}
 .aph-card-title small{color:var(--mu)}
+
+.aph-case h2{font-size:clamp(1.45rem,2.8vw,2rem);color:var(--tx)}
