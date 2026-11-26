@@ -71,4 +71,11 @@ revoke insert, update, delete on public.academy_chaves, public.academy_acessos f
 --     ('aluno@email.com', 'aph-rcp', now() + interval '7 days'),
 --     ('aluno@email.com', 'aph-curriculo', '2026-12-20');
 -- Bloquear de novo: apague a linha do aluno naquele módulo.
+-- Login coletivo (um acesso para a turma toda, ex.: APH). Crie o usuário em Authentication → Users e rode:
+--   insert into academy_acessos (email, modulo)
+--   select 'aph@exemplo.com', unnest(array['aph-peconhentos','aph-rcp','aph-domesticas','aph-curriculo'])
+--   on conflict (email, modulo) do nothing;
+--   update auth.users set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb) || '{"compartilhada": true}'
+--   where email = 'aph@exemplo.com';
+-- Com "compartilhada", o portal esconde "Trocar senha" (ninguém tranca a turma para fora).
 -- ---------------------------------------------------------------------
