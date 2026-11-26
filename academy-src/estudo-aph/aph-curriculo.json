@@ -1,0 +1,59 @@
+{
+  "cur-onde": {
+    "cartoes": [
+      [
+        "search",
+        "Leia os requisitos da vaga",
+        "Separe as exigências da vaga das qualificações desejáveis. Em escolas, academias e eventos, a formação pode complementar a experiência de atendimento ao público."
+      ],
+      [
+        "clipboard",
+        "Relacione a formação com uma tarefa",
+        "Para uma vaga em condomínio, destaque comunicação, endereço e acionamento da equipe. Em eventos, descreva como praticou divisão de tarefas na simulação."
+      ]
+    ],
+    "caso": [
+      "A vaga pede registro profissional",
+      "O certificado de APH permite preencher o requisito de Técnico em Enfermagem?",
+      "Informe o APH em cursos complementares. Confira separadamente a formação e o registro exigidos para a função."
+    ]
+  },
+  "cur-texto": {
+    "cartoes": [
+      [
+        "clipboard",
+        "Confira o certificado antes de copiar",
+        "Use a denominação, a instituição e a carga horária que aparecem no certificado. Acrescente mês e ano se o formulário pedir."
+      ],
+      [
+        "check",
+        "Escreva com verbos que você pode demonstrar",
+        "Use “treinei”, “simulei” ou “pratiquei” para relatar exercícios. No LinkedIn, descreva uma atividade concreta, como o acionamento do socorro em cenário simulado."
+      ]
+    ],
+    "caso": [
+      "O modelo cita uma prática que você não fez",
+      "Você usaria o texto pronto sem editar?",
+      "Retire a prática que não realizou. Acrescente uma atividade real da sua turma que consegue descrever numa entrevista."
+    ]
+  },
+  "cur-entrevista": {
+    "cartoes": [
+      [
+        "users",
+        "Mostre sua contribuição na equipe",
+        "Diga o que você fez, o que outra pessoa assumiu e como se comunicaram. Se o cenário foi simulado, fale isso logo na primeira frase."
+      ],
+      [
+        "clipboard",
+        "Feche com aprendizado verificável",
+        "Dê um exemplo de ajuste feito depois do comentário do instrutor. Um detalhe específico é mais fácil de explicar do que uma frase genérica sobre lidar com pressão."
+      ]
+    ],
+    "caso": [
+      "“Você já participou de um atendimento?”",
+      "Sua experiência foi somente em laboratório. Como responder?",
+      "Diga que praticou em simulação. Descreva o cenário, sua tarefa e o que ajustou após a orientação do instrutor."
+    ]
+  }
+}

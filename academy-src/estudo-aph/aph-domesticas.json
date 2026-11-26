@@ -1,0 +1,49 @@
+{
+  "dom-situacoes": {
+    "cartoes": [
+      [
+        "shield",
+        "Cena insegura muda a ordem",
+        "Num acidente elétrico, a energia precisa estar desligada antes do contato. Se o risco persistir, mantenha distância e ligue 193."
+      ],
+      [
+        "droplet",
+        "Reconheça sangramento intenso",
+        "Sangue acumulando, saindo rapidamente ou que continua apesar da pressão são sinais de gravidade. Mantenha a pressão enquanto alguém chama o 192."
+      ]
+    ],
+    "caso": [
+      "Convulsão na sala de casa",
+      "Uma pessoa cai e tem movimentos involuntários. Alguém sugere colocar uma colher na boca. O que você faz?",
+      "Não coloque objetos na boca. Afaste móveis, proteja a cabeça sem conter os movimentos e marque o tempo. Ligue 192 se for a primeira crise ou houver outro sinal de alerta da ficha."
+    ],
+    "fichas": {
+      "fogo": "Antes de cobrir, retire anéis ou relógio próximos da área, se saírem facilmente. Deixe roupas grudadas na pele no lugar.",
+      "raio": "Depois dos movimentos, acompanhe a respiração até a pessoa voltar ao normal ou o socorro chegar. Evite oferecer água enquanto ela estiver sonolenta.",
+      "desmaio": "Anote se houve dor no peito, falta de ar ou queda com batida na cabeça. Passe essa informação ao 192.",
+      "frasco2": "Leia o nome do produto, a concentração se estiver escrita e a quantidade aproximada. Diga se foi inalado, engolido ou se atingiu a pele.",
+      "tomada": "Com fio caído ou rede externa, mantenha distância. Informe ao resgate onde está o fio e se alguém ainda está em contato.",
+      "nariz": "Respire pela boca e mantenha a parte mole apertada durante todo o intervalo. Use um relógio para evitar soltar cedo demais.",
+      "gota": "Use gaze ou pano limpo. Pressione diretamente sobre o ferimento e mantenha a pressão enquanto outra pessoa faz a ligação."
+    }
+  },
+  "dom-telefones": {
+    "cartoes": [
+      [
+        "pin",
+        "O endereço vem com detalhes úteis",
+        "Diga município, bairro, rua, número e ponto de referência. Explique como entrar no condomínio ou achar a casa de fundos."
+      ],
+      [
+        "phone",
+        "Decida qual número chamar",
+        "Use 192 para emergência de saúde. Use 193 quando houver necessidade de resgate, como risco elétrico persistente. Para orientação toxicológica, use 0800 722 6001."
+      ]
+    ],
+    "caso": [
+      "A embalagem está na bancada",
+      "Uma criança teve contato com produto de limpeza e está com falta de ar. Qual ligação vem primeiro?",
+      "Ligue 192. Mantenha a embalagem por perto para informar o produto e siga a orientação do atendente."
+    ]
+  }
+}

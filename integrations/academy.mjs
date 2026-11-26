@@ -125,6 +125,8 @@ export default function academy() {
           const mod = f.replace(/\.json$/, '');
           if (!keys[mod]) { logger.warn(`Módulo "${mod}" sem chave: não publicado.`); continue; }
           const data = JSON.parse(await readFile(path.join(src, 'conteudo', f), 'utf8'));
+          const estudo = path.join(src, 'estudo-aph', f);
+          if (existsSync(estudo)) data[mod + '-estudo'] = JSON.parse(await readFile(estudo, 'utf8'));
           await photos.walk(data);
           await writeFile(path.join(out, 'm', `${mod}.bin`), await encrypt(Buffer.from(JSON.stringify(data)), keys[mod]));
           published.push(mod);

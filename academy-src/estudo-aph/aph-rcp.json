@@ -1,0 +1,116 @@
+{
+  "rcp-reconhecer": {
+    "cartoes": [
+      [
+        "heart",
+        "Suspiros isolados podem confundir",
+        "Uma pessoa inconsciente pode fazer ruídos ou puxar o ar de forma isolada. Se não respira normalmente, trate como possível parada e siga a orientação do 192."
+      ],
+      [
+        "users",
+        "Dê uma tarefa a cada pessoa",
+        "Aponte alguém para ligar 192 e outra pessoa para buscar o DEA. Se estiver só e tiver celular, use o viva-voz para manter as mãos livres."
+      ]
+    ],
+    "caso": [
+      "Queda repentina em uma academia",
+      "A pessoa não responde e só dá suspiros espaçados. O que você faz?",
+      "Peça ajuda, acione 192, inicie compressões e peça a alguém que busque o DEA. Suspiros isolados não contam como respiração normal."
+    ]
+  },
+  "rcp-bebe": {
+    "cartoes": [
+      [
+        "hand",
+        "Separe engasgo de parada",
+        "Os impulsos para desengasgar um bebê consciente fazem parte de uma sequência diferente da RCP. Se ficar inconsciente, inicie RCP e siga o 192."
+      ],
+      [
+        "alert",
+        "A tosse muda a decisão",
+        "Observe se o bebê ainda consegue tossir ou chorar com força. A incapacidade de tossir, chorar ou respirar indica obstrução grave."
+      ]
+    ],
+    "caso": [
+      "Bebê tossindo com força após comer",
+      "O choro está audível e o bebê continua respirando. É hora de dar golpes nas costas?",
+      "Observe de perto enquanto a tosse continua eficaz. Se a tosse ficar fraca ou o bebê não conseguir chorar ou respirar, acione 192 e aja conforme o quadro da aula."
+    ]
+  },
+  "rcp-crianca": {
+    "cartoes": [
+      [
+        "heart",
+        "Ventilações têm importância na criança",
+        "Em crianças, problemas respiratórios frequentemente antecedem a parada. Combine compressões e ventilações se tiver treinamento. Se não conseguir ventilar, comece pelas compressões."
+      ],
+      [
+        "shield",
+        "O DEA pode ser usado na criança",
+        "Prefira o modo ou as pás pediátricas, quando disponíveis. Ligue o aparelho e siga suas instruções sem interromper as compressões além do necessário."
+      ]
+    ],
+    "caso": [
+      "O objeto saiu, mas a criança perdeu a consciência",
+      "A criança não responde e não respira normalmente. O que muda?",
+      "Inicie RCP e acione 192 se ninguém ligou. Se houver um DEA, ligue-o e siga as instruções."
+    ]
+  },
+  "rcp-adulto": {
+    "cartoes": [
+      [
+        "heart",
+        "Compressão de qualidade",
+        "Use uma superfície firme quando possível. Deixe o tórax retornar após cada compressão e reduza as pausas. Troque de socorrista se você cansar e houver alguém preparado."
+      ],
+      [
+        "shield",
+        "Quando o DEA analisa",
+        "Peça que todos se afastem durante a análise e o choque, se indicado. Retome as compressões imediatamente quando o aparelho orientar."
+      ]
+    ],
+    "caso": [
+      "O DEA diz que não recomenda choque",
+      "A pessoa segue sem respirar normalmente. Você deve parar?",
+      "Retome as compressões conforme as instruções do DEA. O aparelho reavalia o ritmo e o 192 orienta os próximos passos."
+    ]
+  },
+  "rcp-idoso": {
+    "cartoes": [
+      [
+        "heart",
+        "Profundidade e ritmo seguem os do adulto",
+        "Fragilidade não muda a meta de 5 a 6 cm e 100 a 120 compressões por minuto em uma parada. Deixe o tórax voltar completamente."
+      ],
+      [
+        "users",
+        "Organize o ambiente",
+        "Peça a alguém que afaste obstáculos e receba a equipe. Se outra pessoa puder assumir as compressões, combine a troca para diminuir a pausa."
+      ]
+    ],
+    "caso": [
+      "Você suspeita que uma costela se machucou",
+      "A pessoa segue inconsciente e sem respiração normal. A suspeita muda a conduta?",
+      "Continue as compressões. Mantenha o 192 no viva-voz e siga as orientações."
+    ]
+  },
+  "rcp-quadro": {
+    "cartoes": [
+      [
+        "search",
+        "Compare o que muda",
+        "Use o quadro para comparar profundidade e posição das mãos. Depois confira as manobras de engasgo separadamente por idade."
+      ],
+      [
+        "clipboard",
+        "Treine a sequência de memória",
+        "Cubra uma coluna e tente dizer como comprimir, a profundidade e o ritmo. Confira em seguida e leve suas dúvidas para a simulação."
+      ]
+    ],
+    "caso": [
+      "Qual parâmetro permanece igual?",
+      "Bebê, criança e adulto têm técnicas e profundidades diferentes. O que permanece igual?",
+      "O ritmo é de 100 a 120 compressões por minuto. A profundidade e a posição das mãos mudam."
+    ]
+  }
+}

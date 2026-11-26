@@ -287,7 +287,7 @@
     var m = a.mod, L = ACC(), idx = L.indexOf(a), prev = L[idx - 1], next = L[idx + 1], c = modCount(m);
     LS.set('tma-last', a.id);
     var h = '<nav class="crumb" aria-label="Você está em"><a href="#/">Início</a>/<a href="#/modulos">' + esc(m.p.titulo) + '</a>/<span>' + esc(m.titulo) + '</span></nav><div class="lesson' + (WIDE[a.tipo] ? ' lesson--wide' : '') + '"><div><header class="lh' + (a.num ? ' lh--num' : '') + '"><div><span class="kk">' + esc(a.kk || ('Aula ' + (a.i + 1))) + '</span><h1 class="disp">' + (a.h ? esc(a.h[0]) + ' <span class="serif grad">' + esc(a.h[1]) + '</span>' : esc(a.titulo)) + '</h1><div class="lh__m"><span class="chip chip--w2">Aula ' + (a.i + 1) + ' de ' + m.aulas.length + '</span><span class="chip chip--' + ({ orange: 'or', blue: 'bl', green: 'gr', red: 'or' }[m.cor]) + '">' + esc(a.min) + '</span>' + (m.previa ? '<span class="chip chip--or">Prévia · em validação</span>' : '') + (isDone(a.id) ? '<span class="chip chip--gr">' + ic('check') + ' Concluída</span>' : '') + '</div></div>' + (a.num ? '<span class="bignum" aria-hidden="true">' + a.num + '</span>' : '') + '</header>';
-    h += '<div class="lbody" id="lbody">' + (R[a.tipo] ? R[a.tipo].html(a) : '') + '</div>';
+    h += '<div class="lbody" id="lbody">' + (R[a.tipo] ? R[a.tipo].html(a) : '') + aphStudy(a) + '</div>';
     h += '<div class="lnav">' + (prev ? '<a class="btn btn--gh" href="#/aula/' + prev.id + '" aria-label="Aula anterior">' + ic('left') + '<span class="lbl">Anterior</span></a>' : '<span></span>') +
       '<button class="btn done-btn ' + (isDone(a.id) ? '' : 'btn--gh') + '" type="button" aria-pressed="' + isDone(a.id) + '" id="donebtn">' + ic('check') + '<span>' + (isDone(a.id) ? 'Concluída' : 'Concluir aula') + '</span></button>' +
       (next ? '<a class="btn btn--or" href="#/aula/' + next.id + '" aria-label="Próxima aula"><span class="lbl">Próxima</span><span class="btn__a">' + ic('right') + '</span></a>' : '<a class="btn btn--or" href="#/"><span class="lbl">Início</span><span class="btn__a">' + ic('home') + '</span></a>') + '</div></div>';
@@ -556,15 +556,15 @@
       html: function () {
         return '<div class="stats">' + D.pecDados.map(function (x) { return '<article class="card stat"><b class="disp">' + esc(x.n) + '</b><p>' + esc(x.t) + '</p><small>Fonte: ' + esc(x.f) + '</small></article>'; }).join('') + '</div>' +
           '<section class="gold"><div><h2 class="disp">Procure atendimento <span class="serif">imediatamente.</span></h2><ul class="arrows">' + D.pecRegra.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div><div class="phones">' + phones(D.pecTelefones) + '</div></section>' +
-          videoPh(D.pecVideo.t, D.pecVideo.d) + avisoAph();
+          avisoAph();
       },
     },
     pecFichas: {
       html: function () {
         return '<p class="lead">Encontre os primeiros passos e saiba quando ligar para o 192. Se houver risco no local, ligue 193 para pedir resgate.</p><div class="pets">' +
-          D.pecAnimais.map(function (x) { return '<article class="card pet pet--' + x.c + '"><div class="pet__h">' + art(x) + '<div><h3>' + esc(x.t) + '</h3>' + (x.sub ? '<small>' + esc(x.sub) + '</small>' : '') + '</div></div>' +
+          D.pecAnimais.map(function (x) { return '<article class="card pet pet--' + x.c + '">' + aphCardHeader(x) +
             '<div class="pet__c"><div><span class="tag tag--yes">Faça</span><ul class="oks">' + x.fazer.map(function (y) { return '<li>' + esc(y) + '</li>'; }).join('') + '</ul></div><div><span class="tag tag--no">Nunca faça</span><ul class="xs">' + x.nunca.map(function (y) { return '<li>' + esc(y) + '</li>'; }).join('') + '</ul></div></div>' +
-            '<p class="pet__a">' + ic('alert') + esc(x.alerta) + '</p></article>'; }).join('') + '</div>' + avisoAph();
+            '<p class="pet__a">' + ic('alert') + esc(x.alerta) + '</p>' + aphNote('aph-peconhentos', 'pec-fichas', x.il) + '</article>'; }).join('') + '</div>' + avisoAph();
       },
     },
     pecPrev: {
@@ -605,8 +605,7 @@
       html: function (a) {
         var f = D.rcpFases[a.fase];
         return '<section class="fase-h fase--' + f.c + '"><div class="mat__art">' + ilus(f.il) + '</div><div><span class="kk">' + esc(f.faixa) + '</span><p class="lead">' + esc(f.nota) + '</p></div></section>' +
-          '<div class="params">' + D.rcpLinhas.map(function (l) { return '<article class="card param' + (l[0] === 'engasgo' ? ' param--wide' : '') + '"><span class="num">' + String(i + 1).padStart(2, '0') + '</span><h3>' + esc(l[1]) + '</h3><p>' + esc(f[l[0]]) + '</p></article>'; }).join('') + '</div>' +
-          videoPh('Videoaula: RCP ' + (f.id === 'bebe' ? 'e engasgo no bebê' : f.id === 'crianca' ? 'e engasgo na criança' : f.id === 'adulto' ? 'no adulto e uso do DEA' : 'no idoso'), f.video) +
+          '<div class="params">' + D.rcpLinhas.map(function (l) { return '<article class="card param' + (l[0] === 'engasgo' ? ' param--wide' : '') + '"><h3>' + esc(l[1]) + '</h3><p>' + esc(f[l[0]]) + '</p></article>'; }).join('') + '</div>' +
           '<p class="note">' + esc(D.rcpBase) + '. <a href="#/aula/rcp-quadro">Ver o quadro com as 4 fases →</a></p>' + avisoAph();
       },
     },
@@ -622,8 +621,8 @@
     domSit: {
       html: function () {
         return '<p class="lead">O que fazer em 7 emergências que podem acontecer em casa.</p><div class="sits">' +
-          D.domSituacoes.map(function (x) { return '<article class="card sit pet--' + x.c + '"><div class="pet__h">' + art(x) + '<div><h3>' + esc(x.t) + '</h3>' + (x.sub ? '<small>' + esc(x.sub) + '</small>' : '') + '</div></div><div class="sit__do"><span class="tag tag--yes">Faça</span><ol>' + x.fazer.split('\n').map(function (step) { return '<li>' + esc(step) + '</li>'; }).join('') + '</ol></div><div class="sit__no"><span class="tag tag--no">Evite</span><ul>' + x.erro.split('\n').map(function (step) { return '<li>' + esc(step) + '</li>'; }).join('') + '</ul></div></article>'; }).join('') + '</div>' +
-          videoPh('Vídeos: situação → o que fazer', D.domVideos) + avisoAph();
+          D.domSituacoes.map(function (x) { return '<article class="card sit pet--' + x.c + '">' + aphCardHeader(x) + '<div class="sit__do"><span class="tag tag--yes">Faça</span><ol>' + x.fazer.split('\n').map(function (step) { return '<li>' + esc(step) + '</li>'; }).join('') + '</ol></div><div class="sit__no"><span class="tag tag--no">Evite</span><ul>' + x.erro.split('\n').map(function (step) { return '<li>' + esc(step) + '</li>'; }).join('') + '</ul></div>' + aphNote('aph-domesticas', 'dom-situacoes', x.il) + '</article>'; }).join('') + '</div>' +
+          avisoAph();
       },
     },
     domTel: {
@@ -639,8 +638,8 @@
     /* ----- APH · Bônus 4: APH no currículo ----- */
     curOnde: {
       html: function () {
-        return '<p class="lead">O APH é um diferencial em qualquer lugar onde há pessoas. Estas são as áreas em que ele mais pesa na hora de escolher um candidato.</p><div class="areas">' + D.curAreas.map(function (x, i) { return '<span class="area area--' + TONES[i % 5] + '">' + ic('check') + esc(x) + '</span>'; }).join('') + '</div>' +
-          alertBox('bl', 'Diferencial, não garantia.', 'O APH fortalece o seu currículo, mas nenhuma capacitação garante vaga ou salário. O que garante é você aparecer, com o currículo certo e a postura certa.', 'spark');
+        return '<p class="lead">Encontre áreas em que a formação em APH pode complementar sua experiência.</p><div class="areas">' + D.curAreas.map(function (x, i) { return '<span class="area area--' + TONES[i % 5] + '">' + ic('check') + esc(x) + '</span>'; }).join('') + '</div>' +
+          alertBox('bl', 'Confira os requisitos da função.', 'Inclua o APH em cursos complementares e confira as exigências de habilitação de cada vaga.', 'clipboard');
       },
     },
     curTexto: {
@@ -660,7 +659,7 @@
     },
     curEntrev: {
       html: function () {
-        return '<p class="lead">Na entrevista, conte um atendimento real ou simulado em 3 partes. É o formato que recrutadores usam para avaliar se você age bem sob pressão.</p><div class="star">' + D.curStar.map(function (x, i) { return '<article class="card star__s"><b class="disp">' + 'SAR'[i] + '</b><h3>' + esc(x.k) + '</h3><p>' + esc(x.d) + '</p></article>'; }).join('') + '</div>' +
+        return '<p class="lead">Conte uma situação em três partes. Se aconteceu em aula, apresente como simulação.</p><div class="star">' + D.curStar.map(function (x, i) { return '<article class="card star__s"><b class="disp">' + 'SAR'[i] + '</b><h3>' + esc(x.k) + '</h3><p>' + esc(x.d) + '</p></article>'; }).join('') + '</div>' +
           '<h3 class="subh">O APH é a porta de entrada</h3><p class="lead">Gostou de agir em emergência? Estes são os próximos passos naturais na TEC Mais.</p><div class="g2">' + D.curTrilhas.map(function (x, i) { return '<a class="card box nextc" href="' + x.u + '" target="_blank" rel="noopener"><span class="sq sq--' + ['or', 'te'][i] + '">' + ilus(['capelo', 'epi'][i]) + '</span><h3>' + esc(x.t) + '</h3><p>' + esc(x.d) + '</p><span class="nextc__l">Conhecer o curso ' + ic('external') + '</span></a>'; }).join('') + '</div>';
       },
     },
@@ -668,9 +667,66 @@
   };
 
   /* ---------- peças do APH ---------- */
+  var APH_SOURCES = {
+    'aph-peconhentos': [['Ministério da Saúde · primeiros socorros', 'https://miniapps.saude.gov.br/animais-peconhentos/primeiros-socorros-e-prevencao/o-que-fazer']],
+    'aph-rcp': [
+      ['AHA 2025 · suporte básico de vida no adulto', 'https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support'],
+      ['AHA/AAP 2025 · suporte básico de vida pediátrico', 'https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/pediatric-basic-life-support']
+    ],
+    'aph-domesticas': [
+      ['AHA/Red Cross · primeiros socorros', 'https://cpr.heart.org/en/resuscitation-science/2024-first-aid-guidelines'],
+      ['Ministério da Saúde · SAMU 192', 'https://www.gov.br/saude/pt-br/composicao/saes/samu-192/'],
+      ['Anvisa · Disque-Intoxicação', 'https://www.gov.br/anvisa/pt-br/assuntos/agrotoxicos/disque-intoxicacao']
+    ]
+  };
+
+  var APH_CASE_PHOTOS = {
+    'pec-intro': 'academy/peconhentos.webp',
+    'pec-prevencao': 'academy/domesticas.webp',
+    'pec-card': 'tec/enfermagem/visita-samu.webp',
+    'rcp-reconhecer': 'tec/enfermagem/visita-samu.webp',
+    'rcp-bebe': 'tec/enfermagem/pratica-simulacao.webp',
+    'rcp-adulto': 'academy/rcp.webp',
+    'rcp-quadro': 'academy/calculo.webp',
+    'dom-situacoes': 'academy/domesticas.webp',
+    'dom-telefones': 'tec/enfermagem/visita-samu.webp',
+    'cur-onde': 'tec/enfermagem/jaleco-vestido.webp',
+    'cur-texto': 'academy/calculo.webp',
+    'cur-entrevista': 'academy/carreira.webp'
+  };
+  function aphCardHeader(x) {
+    var title = '<div><h3>' + esc(x.t) + '</h3>' + (x.sub ? '<small>' + esc(x.sub) + '</small>' : '') + '</div>';
+    return x.img
+      ? art(x, 'aph-scene') + '<div class="aph-card-title">' + title + '</div>'
+      : '<div class="pet__h">' + art(x) + title + '</div>';
+  }
+
+  function aphNote(moduleId, lessonId, code) {
+    var lesson = (D[moduleId + '-estudo'] || {})[lessonId];
+    var note = lesson && lesson.fichas && lesson.fichas[code];
+    return note ? '<p class="aph-note">' + ic('clipboard') + '<span>' + esc(note) + '</span></p>' : '';
+  }
+
+  function aphStudy(a) {
+    var study = (D[a.mod.id + '-estudo'] || {})[a.id];
+    if (!study) return '';
+    var caso = study.caso;
+    var refs = APH_SOURCES[a.mod.id] || [];
+    return '<section class="aph-study" aria-label="Aplicação prática"><h2 class="subh">Na prática</h2><div class="aph-study__cards">' +
+      study.cartoes.map(function (card) {
+        return '<article class="card aph-study__card">' + gic(card[0], 'bl', true) +
+          '<h3>' + esc(card[1]) + '</h3><p>' + esc(card[2]) + '</p></article>';
+      }).join('') +
+      '</div><article class="aph-case"><div class="aph-case__cover">' + photo(APH_CASE_PHOTOS[a.id] || a.mod.capa) + '</div><div class="aph-case__body">' +
+      '<p class="k">Decida antes de ver a resposta</p><h3>' + esc(caso[0]) + '</h3><p>' + esc(caso[1]) +
+      '</p><details><summary>Ver resposta comentada</summary><p>' + esc(caso[2]) + '</p></details></div></article>' +
+      (refs.length ? '<nav class="aph-references" aria-label="Fontes da aula">' + refs.map(function (ref) {
+        return '<a href="' + esc(ref[1]) + '" target="_blank" rel="noopener">' + esc(ref[0]) + '</a>';
+      }).join('') + '</nav>' : '') + '</section>';
+  }
+
   function avisoAph() { return '<p class="note prod__av">' + ic('alert') + 'Conteúdo educativo. Não substitui atendimento médico. Em emergência, ligue 192.</p>'; }
   function phones(list) { return list.map(function (x) { return '<a class="tel" href="tel:' + x.n.replace(/\D/g, '') + '"><b>' + esc(x.n) + '</b><span>' + esc(x.t) + '</span></a>'; }).join(''); }
-  function videoPh(t, d) { return '<article class="vid"><span class="vid__p">' + ic('play') + '</span><div><span class="k">Videoaula · em produção</span><h3>' + esc(t) + '</h3><p>' + esc(d) + '. O vídeo aparece aqui assim que for gravado com o instrutor.</p></div></article>'; }
   function baixarCard() {
     var W = 1080, H = 1920, cv2 = document.createElement('canvas'); cv2.width = W; cv2.height = H;
     var g = cv2.getContext('2d'), gr = g.createLinearGradient(0, 0, W, H);

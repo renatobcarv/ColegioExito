@@ -1,0 +1,86 @@
+{
+  "pec-intro": {
+    "cartoes": [
+      [
+        "shield",
+        "Antes de chegar perto",
+        "Olhe onde a pessoa estava e mantenha crianças e animais domésticos longe. Uma segunda picada ocupa o tempo de quem poderia chamar ajuda."
+      ],
+      [
+        "phone",
+        "O que contar no atendimento",
+        "Informe horário, local da picada, idade da pessoa e sintomas. Diga o que já foi feito e descreva o animal se você o viu."
+      ]
+    ],
+    "caso": [
+      "Criança picada no quintal",
+      "A criança chora, mas ainda não tem outros sintomas. Você deve esperar?",
+      "Procure atendimento imediatamente. Em especial em crianças, esperar piorar pode atrasar a avaliação. Se o transporte for inseguro, ligue 192."
+    ]
+  },
+  "pec-fichas": {
+    "cartoes": [
+      [
+        "alert",
+        "Sintomas que podem começar longe da picada",
+        "Vômitos repetidos, dificuldade para respirar, desmaio ou mal-estar intenso indicam gravidade. Ligue 192 e descreva os sintomas ao atendente."
+      ],
+      [
+        "search",
+        "Reconhecimento sem se expor",
+        "A espécie nem sempre é visível. Informe aparência, horário e ambiente. A foto à distância pode ajudar se for segura, mas o atendimento vem primeiro."
+      ]
+    ],
+    "caso": [
+      "A picada de aranha quase não doeu",
+      "Horas depois, a pessoa percebe uma marca maior. A dor inicial leve muda a necessidade de atendimento?",
+      "Procure atendimento. A intensidade da dor logo após a picada não é suficiente para avaliar a gravidade."
+    ],
+    "fichas": {
+      "escorpiao": "Inspecione roupas, calçados e frestas. Após uma picada, informe se surgiram suor intenso, vômitos ou agitação.",
+      "cobra": "Observe de longe onde ocorreu o acidente. Remova acessórios antes que o inchaço dificulte a retirada.",
+      "aranha": "Informe se a lesão mudou de cor ou tamanho. Uma foto da lesão, com horário, pode ajudar na avaliação.",
+      "abelha": "Ferrões podem ficar na pele após picada de abelha. Falta de ar, voz alterada ou inchaço no rosto exigem atenção imediata.",
+      "aguaviva": "Mesmo tentáculos na areia podem machucar. Oriente outras pessoas a manter distância e avise o guarda-vidas se houver.",
+      "taturana": "As lagartas podem se confundir com a casca de uma árvore. Informe ao serviço de saúde se houve contato com várias de uma vez."
+    }
+  },
+  "pec-prevencao": {
+    "cartoes": [
+      [
+        "home",
+        "Revise três pontos da casa",
+        "Comece pela área de serviço, quintal e quarto. Procure frestas, ralos sem tela e objetos acumulados. Use calçado fechado e luvas grossas na limpeza."
+      ],
+      [
+        "ban",
+        "Quando encontrar um escorpião",
+        "Afaste crianças e animais. Evite manipular o escorpião. Consulte a vigilância ambiental do município para saber como comunicar o aparecimento."
+      ]
+    ],
+    "caso": [
+      "Sapatos guardados no chão",
+      "Você vai calçar um sapato que ficou no quintal durante a noite. O que vale fazer antes?",
+      "Inspecione e sacuda o sapato antes de colocar o pé. Evite enfiar a mão onde não consegue enxergar."
+    ]
+  },
+  "pec-card": {
+    "cartoes": [
+      [
+        "phone",
+        "Pratique uma ligação com alguém da casa",
+        "Combine quem dá o endereço, quem fica com a pessoa e quem recebe a equipe. Tenha número, bairro e referência prontos."
+      ],
+      [
+        "clipboard",
+        "Anote sem atrasar o cuidado",
+        "Registre o horário aproximado da picada e quando os sintomas começaram. Se alguém já passou um produto na pele, informe isso à equipe."
+      ]
+    ],
+    "caso": [
+      "Você só viu o animal por um instante",
+      "É melhor voltar ao quintal para conseguir uma foto nítida?",
+      "Use a descrição que você tem. Fotografe apenas se for seguro e sem atrasar a saída para o atendimento."
+    ]
+  }
+}
