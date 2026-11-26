@@ -146,8 +146,6 @@
   function nome() { var n = LS.get('tma-nome', '') || (OP.get('cv', {}).nome || ''); return String(n).trim().split(/\s+/)[0] || ''; }
 
   /* ---------- casca: menu lateral e abas ---------- */
-  var COVER = { orange: 'orange', blue: 'blue', green: 'green', red: 'red' };
-  var COVER_TONE = { orange: 'yel', blue: 'or', green: 'yel', red: 'yel' };
   var STATE_TXT = { lock: 'Bloqueado', soon: 'Em breve', prep: 'Em preparação' };
   function shell(route) {
     var cur = route.lesson ? route.lesson.mod.id : route.mod ? route.mod.id : '';
@@ -172,18 +170,32 @@
   }
   function firstOpen(m) { for (var i = 0; i < m.aulas.length; i++) if (!isDone(m.aulas[i].id)) return m.aulas[i]; return m.aulas[0]; }
 
-  function modCard(m) {
-    var st = stateOf(m), c = modCount(m), t = m.aulas.length, nx = nextLesson(), isNext = st === 'ok' && nx && nx.mod === m;
-    var chips = '<span class="chip chip--w">Bônus 0' + m.n + '</span>' + (m.valor ? '<span class="chip chip--w">Vale ' + esc(m.valor) + '</span>' : '') + (m.previa && st === 'ok' ? '<span class="chip chip--w">Prévia</span>' : '') + (st === 'ok' && c === t ? '<span class="chip chip--w">' + ic('check') + ' Concluído</span>' : '');
-    var foot = st === 'ok'
-      ? '<div class="bar' + (c === t ? ' bar--g' : '') + '"><i style="width:' + pct(c, t) + '%"></i></div><div class="mod__p"><span>' + c + ' de ' + t + ' aulas</span><span>' + (isNext ? '✱ Próximo passo' : c === 0 ? 'Começar' : c === t ? 'Rever' : 'Continuar') + ' →</span></div>'
-      : '<div class="mod__p mod__p--lock"><span>' + ic('lock') + (st === 'soon' ? ' Libera em ' + fmtDate(SOON[m.id]) : ' ' + STATE_TXT[st]) + '</span><span>' + t + ' aulas</span></div>';
-    return '<a class="card mod' + (isNext ? ' mod--next' : '') + (st !== 'ok' ? ' mod--lock' : '') + '" href="#/modulo/' + m.id + '"><div class="cover cover--' + COVER[m.cor] + '"><div class="cover__b">' + chips + '</div>' + gic(st === 'ok' ? m.icone : 'lock', COVER_TONE[m.cor], true) + '<span class="cover__n" aria-hidden="true">0' + m.n + '</span>' + (st !== 'ok' ? '<span class="cover__lock">' + ic('lock') + '</span>' : '') + '</div>' +
-      '<div class="mod__b"><h3>' + esc(m.titulo) + '</h3><p>' + esc(m.resumo) + '</p>' + foot + '</div></a>';
+  function photo(path, eager) {
+    return '<img class="academy-photo" src="/img/' + esc(path) + '" alt="" decoding="async"' + (eager ? ' fetchpriority="high"' : ' loading="lazy"') + '>';
   }
-  function prodSection(p, i) {
+
+  function modCard(m) {
+    var st = stateOf(m), c = modCount(m), t = m.aulas.length;
+    var label = st === 'ok' ? (c === t ? 'Concluído' : c ? 'Em andamento' : 'Liberado')
+      : st === 'soon' ? 'Libera em ' + fmtDate(SOON[m.id]) : STATE_TXT[st];
+    var lessonCount = t + (t === 1 ? ' aula' : ' aulas');
+    var progress = st === 'ok'
+      ? '<progress class="study-progress" value="' + c + '" max="' + t + '" aria-label="Progresso do bônus"></progress>'
+      : '';
+    var action = st !== 'ok' ? 'Ver detalhes' : c === t ? 'Rever' : c ? 'Continuar' : 'Começar';
+    return '<a class="card mod" data-module="' + m.id + '" href="#/modulo/' + m.id + '">' +
+      '<div class="cover cover--' + m.cor + '">' + photo(m.capa) +
+      '<span class="cover__status">' + ic(st !== 'ok' ? 'lock' : c === t ? 'check' : 'play') + esc(label) + '</span></div>' +
+      '<div class="mod__b"><h3>' + esc(m.titulo) + '</h3><p>' + esc(m.resumo) + '</p>' + progress +
+      '<div class="mod__p"><span>' + (st === 'ok' ? c + ' de ' : '') + lessonCount + '</span><strong>' + action + '</strong></div></div></a>';
+  }
+
+  function prodSection(p) {
     var ok = p.mods.filter(hasAccess).length;
-    return '<section class="sec prod"><div class="sec__h"><div><span class="k">Curso ' + (i + 1) + ' · ' + ok + ' de ' + p.mods.length + ' bônus liberados</span><h2 class="disp h2">' + esc(p.titulo) + '</h2><p>' + esc(p.resumo) + '</p></div></div><div class="mods">' + p.mods.map(modCard).join('') + '</div>' + (p.aviso ? '<p class="note prod__av">' + ic('alert') + esc(p.aviso) + '</p>' : '') + '</section>';
+    return '<section class="sec prod" data-product="' + p.id + '"><header class="product-header">' + photo(p.capa) +
+      '<div><h2 class="disp h2">' + esc(p.titulo) + '</h2><p>' + ok + ' de ' + p.mods.length + ' bônus liberados</p></div></header>' +
+      '<div class="mods">' + p.mods.map(modCard).join('') + '</div>' +
+      (p.aviso ? '<p class="note prod__av">' + ic('alert') + esc(p.aviso) + '</p>' : '') + '</section>';
   }
   function myTools() { return TMA_FERRAMENTAS.filter(function (f) { return byId[f.aula] && hasAccess(byId[f.aula].mod); }); }
   function toolCards() {
@@ -195,18 +207,63 @@
 
   /* ---------- páginas ---------- */
   function pageHome() {
-    var L = ACC(), n = totalDone(), t = L.length, p = pct(n, t), nx = nextLesson(), nm = nome();
-    var R2 = 74, Lc = 2 * Math.PI * R2;
-    var h = '<section class="hero"><span class="hero__c hero__c--tl">TEC Mais Academy</span><span class="hero__c hero__c--tr">Valparaíso de Goiás</span><span class="hero__c hero__c--bl">Portal do aluno</span><span class="hero__c hero__c--br">Salve na tela inicial</span><div class="hero__g"><div><span class="ast">Área do aluno</span><h1 class="disp">' + (nm ? 'Olá, ' + esc(nm) + '! ' : '') + (t === 0 ? 'Seu acesso está <span class="serif">quase pronto.</span>' : n === 0 ? 'Seus bônus estão <span class="serif">prontos.</span>' : n === t ? 'Tudo <span class="serif">concluído.</span>' : 'Bora <span class="serif">continuar?</span>') + '</h1><p>' + (t === 0 ? 'Nenhum bônus foi liberado para a sua conta ainda. Fale com a TEC Mais para liberar o acesso do seu curso.' : 'Revise o que aprendeu em sala, use as ferramentas na prática e volte sempre que precisar. Salve este portal na tela inicial do celular.') + '</p>' +
-      '<div class="hero__cta">' + (nx ? '<a class="btn btn--or" href="#/aula/' + nx.id + '">' + (n === 0 ? 'Começar agora' : 'Continuar') + '<span class="btn__a">' + ic('right') + '</span></a>' : t === 0 ? '<a class="btn btn--or" target="_blank" rel="noopener" href="https://wa.me/' + C.whatsapp + '?text=' + encodeURIComponent('Olá! Sou aluno(a) da TEC Mais (' + EMAIL + ') e quero liberar o acesso ao portal.') + '">Liberar meu acesso<span class="btn__a">' + ic('chat') + '</span></a>' : '<a class="btn btn--or" href="#/modulos">Rever os cursos<span class="btn__a">' + ic('right') + '</span></a>') + '<a class="btn btn--ghd" href="#/ferramentas">' + ic('tool') + 'Ferramentas</a></div>' +
-      (nx ? '<div class="hero__next"><i>' + ic('play') + '</i>Próxima aula: <b>' + esc(nx.titulo) + '</b><em> · ' + esc(nx.mod.titulo) + '</em></div>' : '') + '</div>' +
-      '<div class="ring" role="img" aria-label="' + p + '% concluído"><svg viewBox="0 0 168 168"><defs><linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="#F06022"/><stop offset="1" stop-color="#FFB547"/></linearGradient></defs><circle class="t" cx="84" cy="84" r="' + R2 + '"/><circle class="v" cx="84" cy="84" r="' + R2 + '" stroke-dasharray="' + Lc.toFixed(1) + '" stroke-dashoffset="' + (Lc * (1 - p / 100)).toFixed(1) + '"/></svg><div class="ring__c"><b>' + p + '%</b><span>' + n + ' de ' + t + ' aulas</span></div></div></div></section>';
-    h += PRODS.map(prodSection).join('');
-    if (myTools().length) h += '<section class="sec"><div class="sec__h"><div><span class="k">Ferramentas do dia a dia</span><h2 class="disp h2">Abra, use e <span class="serif">volte quando precisar.</span></h2></div></div>' + toolCards() + '</section>';
-    return h + foot();
+    var t = ACC().length, n = totalDone(), nx = nextLesson(), nm = nome();
+    var support = 'https://wa.me/' + C.whatsapp + '?text=' + encodeURIComponent('Olá! Sou aluno(a) da TEC Mais (' + EMAIL + ') e quero liberar o acesso ao portal.');
+    var heading = nm ? 'Olá, ' + esc(nm) + '!' : 'Área do aluno';
+    var study = nx
+      ? '<p class="study-feature__label">Próxima aula · ' + esc(nx.mod.titulo) + '</p><h1 class="disp">' + esc(nx.titulo) + '</h1><p>' + esc(nx.min) + '</p>'
+      : '<h1 class="disp">' + (t ? 'Você concluiu todas as aulas liberadas.' : 'Seus estudos começam aqui.') + '</h1><p>' +
+        (t ? 'Volte aos seus materiais sempre que precisar.' : 'Assim que sua turma tiver acesso, os bônus aparecerão nesta página.') + '</p>';
+    var mainAction = nx ? '<a class="btn btn--or" href="#/aula/' + nx.id + '">' + ic('play') + (n || LS.get('tma-last', '') === nx.id ? 'Continuar aula' : 'Começar aula') + '</a>'
+      : t ? '<a class="btn btn--or" href="#/modulos">Rever os cursos</a>'
+      : '<a class="btn btn--or" target="_blank" rel="noopener" href="' + support + '">Liberar meu acesso</a>';
+    var progress = t ? '<div class="study-feature__progress"><span>' + n + ' de ' + t + ' aulas concluídas</span><b>' + pct(n, t) +
+      '%</b><progress class="study-progress" value="' + n + '" max="' + t + '" aria-label="Progresso geral"></progress></div>' : '';
+    return '<section class="study-feature">' + photo(nx ? nx.mod.capa : 'tec/enfermagem/hero-turma.webp', true) +
+      '<div class="study-feature__body"><p class="study-feature__greeting">' + heading + '</p>' + study +
+      '<div class="hero__cta">' + mainAction + '<a class="btn btn--ghd" href="#/ferramentas">Ferramentas</a></div>' +
+      progress + '</div></section>' + PRODS.map(prodSection).join('') +
+      (myTools().length ? '<section class="sec"><div class="sec__h"><h2 class="disp h2">Ferramentas de estudo</h2></div>' + toolCards() + '</section>' : '') + foot();
   }
+
   function pageModulos() {
-    return '<header class="lh"><div><span class="kk">Área de membros</span><h1 class="disp">Meus <span class="serif grad">cursos.</span></h1><p class="lh__m">Os bônus com cadeado são liberados pela TEC Mais, aluno por aluno.</p></div></header>' + PRODS.map(prodSection).join('') + foot();
+    return '<header class="lh"><div><h1 class="disp">Meus cursos</h1><p class="lh__m">Encontre seus bônus, aulas e materiais de apoio.</p></div></header>' +
+      '<div class="catalog-controls"><label>Buscar no catálogo<input id="catalog-search" type="search" placeholder="Título, tema ou aula"></label>' +
+      '<label>Curso<select id="catalog-course"><option value="">Todos os cursos</option>' +
+      PRODS.map(function (p) { return '<option value="' + p.id + '">' + esc(p.titulo) + '</option>'; }).join('') + '</select></label>' +
+      '<label>Acesso<select id="catalog-access"><option value="">Todos os bônus</option><option value="ok">Liberados</option><option value="pending">Aguardando liberação</option></select></label></div>' +
+      '<p class="catalog-results" id="catalog-results" role="status"></p>' + PRODS.map(prodSection).join('') + foot();
+  }
+
+  function initCatalog(page) {
+    var search = $('#catalog-search', page);
+    var course = $('#catalog-course', page);
+    var access = $('#catalog-access', page);
+    function normalize(text) { return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+    function filter() {
+      var words = normalize(search.value.trim()).split(/\s+/);
+      var count = 0;
+      var sections = $$('[data-product]', page);
+      sections.forEach(function (section) {
+        var visible = 0;
+        $$('[data-module]', section).forEach(function (card) {
+          var m = MODBY[card.dataset.module];
+          var haystack = normalize([m.titulo, m.resumo, m.p.titulo].concat(m.aulas.map(function (a) { return a.titulo; })).join(' '));
+          var show = (!course.value || m.produto === course.value) &&
+            (!access.value || hasAccess(m) === (access.value === 'ok')) &&
+            words.every(function (word) { return haystack.includes(word); });
+          card.hidden = !show;
+          if (show) visible++;
+        });
+        section.hidden = !visible;
+        count += visible;
+      });
+      $('#catalog-results', page).textContent = count ? count + (count === 1 ? ' bônus encontrado' : ' bônus encontrados') : 'Nenhum bônus encontrado. Tente outro termo ou filtro.';
+    }
+    search.addEventListener('input', filter);
+    course.addEventListener('change', filter);
+    access.addEventListener('change', filter);
+    filter();
   }
   function pageFerramentas() {
     return '<header class="lh"><div><span class="kk">Ferramentas</span><h1 class="disp">Para usar <span class="serif grad">na prática.</span></h1><p class="lh__m">Checklists, quadros, cards e textos prontos dos seus bônus.</p></div></header>' + toolCards() + foot();
@@ -214,7 +271,7 @@
   function pageLock(m) {
     var st = stateOf(m);
     return '<nav class="crumb" aria-label="Você está em"><a href="#/">Início</a>/<a href="#/modulos">' + esc(m.p.titulo) + '</a>/<span>Bônus 0' + m.n + '</span></nav>' +
-      '<section class="lockp"><div class="cover cover--' + COVER[m.cor] + ' lockp__c">' + gic('lock', COVER_TONE[m.cor], true) + '<span class="cover__n" aria-hidden="true">0' + m.n + '</span></div><div class="lockp__b"><span class="kk">' + esc(m.p.titulo) + ' · Bônus 0' + m.n + '</span><h1 class="disp">' + esc(m.titulo) + '</h1><p class="lead">' + esc(m.resumo) + '</p>' +
+      '<section class="lockp"><div class="cover cover--' + m.cor + ' lockp__c">' + photo(m.capa, true) + '<span class="cover__status">' + ic('lock') + esc(STATE_TXT[st]) + '</span></div><div class="lockp__b"><span class="kk">' + esc(m.p.titulo) + ' · Bônus 0' + m.n + '</span><h1 class="disp">' + esc(m.titulo) + '</h1><p class="lead">' + esc(m.resumo) + '</p>' + (m.valor ? '<p class="note">Valor do bônus: ' + esc(m.valor) + '</p>' : '') +
       (st === 'soon' ? alertBox('yl', 'Libera em ' + fmtDate(SOON[m.id]) + '.', 'Este bônus abre sozinho nessa data. Volte aqui e ele estará disponível.', 'calendar')
         : st === 'prep' ? alertBox('bl', 'Seu acesso já está liberado.', 'O conteúdo está sendo preparado e aparece aqui assim que for publicado.', 'spark')
         : alertBox('', 'Este bônus ainda não foi liberado para a sua conta.', 'A liberação é feita pela TEC Mais, aluno por aluno. Fale com a equipe para liberar.', 'lock')) +
@@ -231,7 +288,7 @@
     h += '<div class="lnav">' + (prev ? '<a class="btn btn--gh" href="#/aula/' + prev.id + '" aria-label="Aula anterior">' + ic('left') + '<span class="lbl">Anterior</span></a>' : '<span></span>') +
       '<button class="btn done-btn ' + (isDone(a.id) ? '' : 'btn--gh') + '" type="button" aria-pressed="' + isDone(a.id) + '" id="donebtn">' + ic('check') + '<span>' + (isDone(a.id) ? 'Concluída' : 'Concluir aula') + '</span></button>' +
       (next ? '<a class="btn btn--or" href="#/aula/' + next.id + '" aria-label="Próxima aula"><span class="lbl">Próxima</span><span class="btn__a">' + ic('right') + '</span></a>' : '<a class="btn btn--or" href="#/"><span class="lbl">Início</span><span class="btn__a">' + ic('home') + '</span></a>') + '</div></div>';
-    h += '<aside class="card list" aria-label="Aulas do bônus"><div class="list__h"><span class="k">' + esc(m.p.titulo) + ' · Bônus 0' + m.n + '</span><b>' + esc(m.titulo) + '</b><div class="bar' + (c === m.aulas.length ? ' bar--g' : '') + '"><i style="width:' + pct(c, m.aulas.length) + '%"></i></div><small>' + c + ' de ' + m.aulas.length + ' aulas concluídas</small></div><ol>';
+    h += '<aside class="card list" aria-label="Aulas do bônus"><div class="lesson-cover">' + photo(m.capa) + '</div><div class="list__h"><span class="k">' + esc(m.p.titulo) + ' · Bônus 0' + m.n + '</span><b>' + esc(m.titulo) + '</b><div class="bar' + (c === m.aulas.length ? ' bar--g' : '') + '"><i style="width:' + pct(c, m.aulas.length) + '%"></i></div><small>' + c + ' de ' + m.aulas.length + ' aulas concluídas</small></div><ol>';
     m.aulas.forEach(function (x, i) { h += '<li><a class="li' + (isDone(x.id) ? ' is-done' : '') + '" href="#/aula/' + x.id + '"' + (x === a ? ' aria-current="page"' : '') + '><span class="li__s">' + (isDone(x.id) ? ic('check') : (i + 1)) + '</span><span>' + esc(x.titulo) + '<small>' + esc(x.min) + '</small></span></a></li>'; });
     h += '</ol></aside></div>' + foot();
     return h;
@@ -495,13 +552,13 @@
     pecIntro: {
       html: function () {
         return '<div class="stats">' + D.pecDados.map(function (x) { return '<article class="card stat"><b class="disp">' + esc(x.n) + '</b><p>' + esc(x.t) + '</p><small>Fonte: ' + esc(x.f) + '</small></article>'; }).join('') + '</div>' +
-          '<section class="gold"><div><span class="ast">Regra de ouro · vale para todos</span><h2 class="disp">Picou? <span class="serif">Ligue, lave e vá ao hospital.</span></h2><ul class="arrows">' + D.pecRegra.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div><div class="phones">' + phones(D.pecTelefones) + '</div></section>' +
+          '<section class="gold"><div><h2 class="disp">Procure atendimento <span class="serif">imediatamente.</span></h2><ul class="arrows">' + D.pecRegra.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div><div class="phones">' + phones(D.pecTelefones) + '</div></section>' +
           videoPh(D.pecVideo.t, D.pecVideo.d) + avisoAph();
       },
     },
     pecFichas: {
       html: function () {
-        return '<p class="lead">Uma ficha por animal: o que fazer, o que nunca fazer e quando é emergência. Em qualquer caso, siga a regra de ouro: 192, lavar e hospital.</p><div class="pets">' +
+        return '<p class="lead">Encontre os primeiros passos e saiba quando ligar para o 192. Se houver risco no local, ligue 193 para pedir resgate.</p><div class="pets">' +
           D.pecAnimais.map(function (x) { return '<article class="card pet pet--' + x.c + '"><div class="pet__h">' + art(x) + '<div><h3>' + esc(x.t) + '</h3>' + (x.sub ? '<small>' + esc(x.sub) + '</small>' : '') + '</div></div>' +
             '<div class="pet__c"><div><span class="tag tag--yes">Faça</span><ul class="oks">' + x.fazer.map(function (y) { return '<li>' + esc(y) + '</li>'; }).join('') + '</ul></div><div><span class="tag tag--no">Nunca faça</span><ul class="xs">' + x.nunca.map(function (y) { return '<li>' + esc(y) + '</li>'; }).join('') + '</ul></div></div>' +
             '<p class="pet__a">' + ic('alert') + esc(x.alerta) + '</p></article>'; }).join('') + '</div>' + avisoAph();
@@ -521,8 +578,8 @@
     },
     pecCard: {
       html: function () {
-        return '<div class="pcard-w"><div class="pcard" id="pcard"><span class="pcard__k">TEC Mais Academy · APH</span><h3>Picada de animal peçonhento</h3><ol><li>Ligue <b>192</b> (SAMU) ou <b>193</b></li><li>Lave com água e sabão</li><li>Vá ao hospital com soro</li><li>Foto do animal, se for seguro</li></ol><p class="pcard__no">NUNCA: torniquete, cortar, chupar, receitas caseiras.</p><div class="pcard__t"><span>Disque-Intoxicação</span><b>0800 722 6001</b></div></div>' +
-          '<div><p class="lead">Baixe o card e deixe salvo na galeria do celular. Na hora do susto, você não precisa lembrar de nada: é só abrir.</p><button class="btn btn--or" type="button" id="pcd">' + ic('download') + ' Baixar card para o celular</button><p class="note" style="margin-top:12px">Dica: depois de baixar, favorite a imagem na galeria para achar rápido.</p></div></div>' + avisoAph();
+        return '<div class="pcard-w"><div class="pcard" id="pcard"><span class="pcard__k">TEC Mais Academy · APH</span><h3>Picada de animal peçonhento</h3><ol><li>Afaste-se do animal</li><li>Procure atendimento imediatamente</li><li>Ligue <b>192</b> se houver sinais graves</li><li>Fotografe de longe, se for seguro</li></ol><p class="pcard__no">NUNCA: torniquete, cortar, chupar, receitas caseiras.</p><div class="pcard__t"><span>Disque-Intoxicação</span><b>0800 722 6001</b></div></div>' +
+          '<div><p class="lead">Baixe o card e deixe salvo na galeria do celular. Use os passos do card depois de se afastar do animal.</p><button class="btn btn--or" type="button" id="pcd">' + ic('download') + ' Baixar card para o celular</button><p class="note" style="margin-top:12px">Dica: depois de baixar, favorite a imagem na galeria para achar rápido.</p></div></div>' + avisoAph();
       },
       init: function () { $('#pcd').addEventListener('click', baixarCard); },
     },
@@ -530,7 +587,7 @@
     /* ----- APH · Bônus 2: RCP por fase da vida ----- */
     rcpRec: {
       html: function () {
-        return '<p class="lead">Antes de qualquer técnica: reconhecer que é uma parada e chamar ajuda. Em 10 segundos.</p><div class="flow">' + D.rcpReconhecer.map(function (x, i) { return '<article class="card flow__s"><b>' + (i + 1) + '</b><h3>' + esc(x.t) + '</h3><p>' + esc(x.d) + '</p></article>'; }).join('') + '</div>' +
+        return '<p class="lead">Se a pessoa não responde, chame ajuda. Verifique a respiração por até 10 segundos.</p><div class="flow">' + D.rcpReconhecer.map(function (x, i) { return '<article class="card flow__s"><b>' + (i + 1) + '</b><h3>' + esc(x.t) + '</h3><p>' + esc(x.d) + '</p></article>'; }).join('') + '</div>' +
           '<section class="metro"><div><span class="ast">Treine o ritmo</span><h2 class="disp">100 a 120 <span class="serif">por minuto.</span></h2><p>Toque em começar e acompanhe o pulso com as mãos numa almofada. É o ritmo certo para bebê, criança, adulto e idoso.</p><button class="btn btn--or" type="button" id="mtb">' + ic('play') + ' Começar o ritmo</button></div><div class="metro__d" id="mtd" aria-hidden="true"><span></span><b>110</b><small>compressões/min</small></div></section>' +
           '<div class="g4 fases">' + D.rcpFases.map(function (f) { return '<a class="card fase fase--' + f.c + '" href="#/aula/rcp-' + f.id + '"><div class="mat__art">' + ilus(f.il) + '</div><h3>' + esc(f.t) + '</h3><small>' + esc(f.faixa) + '</small></a>'; }).join('') + '</div>' + avisoAph();
       },
@@ -545,7 +602,7 @@
       html: function (a) {
         var f = D.rcpFases[a.fase];
         return '<section class="fase-h fase--' + f.c + '"><div class="mat__art">' + ilus(f.il) + '</div><div><span class="kk">' + esc(f.faixa) + '</span><p class="lead">' + esc(f.nota) + '</p></div></section>' +
-          '<div class="params">' + D.rcpLinhas.map(function (l, i) { return '<article class="card param' + (l[0] === 'engasgo' ? ' param--wide' : '') + '"><span class="num">' + String(i + 1).padStart(2, '0') + '</span><h3>' + esc(l[1]) + '</h3><p>' + esc(f[l[0]]) + '</p></article>'; }).join('') + '</div>' +
+          '<div class="params">' + D.rcpLinhas.map(function (l) { return '<article class="card param' + (l[0] === 'engasgo' ? ' param--wide' : '') + '"><span class="num">' + String(i + 1).padStart(2, '0') + '</span><h3>' + esc(l[1]) + '</h3><p>' + esc(f[l[0]]) + '</p></article>'; }).join('') + '</div>' +
           videoPh('Videoaula: RCP ' + (f.id === 'bebe' ? 'e engasgo no bebê' : f.id === 'crianca' ? 'e engasgo na criança' : f.id === 'adulto' ? 'no adulto e uso do DEA' : 'no idoso'), f.video) +
           '<p class="note">' + esc(D.rcpBase) + '. <a href="#/aula/rcp-quadro">Ver o quadro com as 4 fases →</a></p>' + avisoAph();
       },
@@ -554,15 +611,15 @@
       html: function () {
         return '<div class="printable"><div class="qtab" role="table" aria-label="RCP por fase da vida"><div class="qtab__r qtab__r--h" role="row"><span role="columnheader"></span>' + D.rcpFases.map(function (f) { return '<span role="columnheader" class="qh--' + f.c + '"><b>' + esc(f.t) + '</b><small>' + esc(f.faixa) + '</small></span>'; }).join('') + '</div>' +
           D.rcpLinhas.map(function (l) { return '<div class="qtab__r" role="row"><span role="rowheader">' + esc(l[1]) + '</span>' + D.rcpFases.map(function (f) { return '<span role="cell">' + esc(f[l[0]]) + '</span>'; }).join('') + '</div>'; }).join('') + '</div><p class="note">' + esc(D.rcpBase) + '. Em emergência, ligue 192.</p></div>' +
-          '<div class="radd"><button class="btn btn--or btn--sm" type="button" onclick="print()">' + ic('download') + ' Imprimir ou salvar em PDF</button><span class="note">Cabe em uma página. Deixe na bolsa ou na parede do quarto das crianças.</span></div>' + avisoAph();
+          '<div class="radd"><button class="btn btn--or btn--sm" type="button" onclick="print()">' + ic('download') + ' Imprimir ou salvar em PDF</button><span class="note">Guarde este quadro junto aos seus materiais de estudo.</span></div>' + avisoAph();
       },
     },
 
     /* ----- APH · Bônus 3: emergências domésticas ----- */
     domSit: {
       html: function () {
-        return '<p class="lead">As 7 emergências mais comuns dentro de casa. Para cada uma: o que fazer e o erro que quase todo mundo comete.</p><div class="sits">' +
-          D.domSituacoes.map(function (x) { return '<article class="card sit pet--' + x.c + '"><div class="pet__h">' + art(x) + '<div><h3>' + esc(x.t) + '</h3>' + (x.sub ? '<small>' + esc(x.sub) + '</small>' : '') + '</div></div><p class="sit__do"><span class="tag tag--yes">Faça</span>' + esc(x.fazer) + '</p><p class="sit__no"><span class="tag tag--no">Erro comum</span>' + esc(x.erro) + '</p></article>'; }).join('') + '</div>' +
+        return '<p class="lead">O que fazer em 7 emergências que podem acontecer em casa.</p><div class="sits">' +
+          D.domSituacoes.map(function (x) { return '<article class="card sit pet--' + x.c + '"><div class="pet__h">' + art(x) + '<div><h3>' + esc(x.t) + '</h3>' + (x.sub ? '<small>' + esc(x.sub) + '</small>' : '') + '</div></div><div class="sit__do"><span class="tag tag--yes">Faça</span><ol>' + x.fazer.split('\n').map(function (step) { return '<li>' + esc(step) + '</li>'; }).join('') + '</ol></div><div class="sit__no"><span class="tag tag--no">Evite</span><ul>' + x.erro.split('\n').map(function (step) { return '<li>' + esc(step) + '</li>'; }).join('') + '</ul></div></article>'; }).join('') + '</div>' +
           videoPh('Vídeos: situação → o que fazer', D.domVideos) + avisoAph();
       },
     },
@@ -618,7 +675,7 @@
     var gl = g.createRadialGradient(W / 2, H + 100, 50, W / 2, H + 100, 900); gl.addColorStop(0, 'rgba(255,106,43,.75)'); gl.addColorStop(1, 'rgba(255,106,43,0)'); g.fillStyle = gl; g.fillRect(0, 0, W, H);
     g.fillStyle = '#FFE45C'; g.font = '600 34px "Geist Mono", monospace'; g.fillText('TEC MAIS ACADEMY · APH', 90, 170);
     g.fillStyle = '#fff'; g.font = '800 92px "Bricolage Grotesque", sans-serif'; ['Picada de', 'animal', 'peçonhento'].forEach(function (l, i) { g.fillText(l, 90, 330 + i * 100); });
-    var steps = ['Ligue 192 (SAMU) ou 193', 'Lave com água e sabão', 'Vá ao hospital com soro', 'Foto do animal, se seguro'];
+    var steps = ['Afaste-se do animal', 'Procure atendimento já', 'Ligue 192 se houver sinais graves', 'Fotografe de longe, se for seguro'];
     steps.forEach(function (t, i) { var y = 720 + i * 150; g.fillStyle = '#FF6A2B'; g.beginPath(); g.arc(130, y - 18, 40, 0, 7); g.fill(); g.fillStyle = '#fff'; g.font = '800 44px "Bricolage Grotesque", sans-serif'; g.fillText(String(i + 1), 117, y - 2); g.font = '600 50px Geist, sans-serif'; g.fillText(t, 200, y); });
     g.fillStyle = 'rgba(255,90,79,.18)'; g.fillRect(90, 1330, W - 180, 170); g.fillStyle = '#FFB4AD'; g.font = '700 40px Geist, sans-serif'; g.fillText('NUNCA: torniquete, cortar, chupar', 130, 1400); g.fillText('ou receitas caseiras.', 130, 1460);
     g.fillStyle = '#fff'; g.font = '500 40px Geist, sans-serif'; g.fillText('Disque-Intoxicação', 90, 1640); g.font = '800 88px "Bricolage Grotesque", sans-serif'; g.fillText('0800 722 6001', 90, 1740);
@@ -698,12 +755,11 @@
     var old = $('#login'); if (old) old.remove();
     var w = document.createElement('main'); w.id = 'login'; w.className = 'login';
     var ready = !!(SB.url && SB.key);
-    w.innerHTML = '<form class="login__c" novalidate><img class="login__lg" src="/img/parceiros/tec-mais.webp" width="720" height="203" alt="TEC Mais Cursos Técnicos"><span class="login__k">Academy · Portal do Aluno</span><h1>Bem-vindo(a) <i>de volta.</i></h1><p>Entre com o e-mail e a senha que você recebeu da TEC Mais.</p>' +
+    w.innerHTML = '<div class="login__layout"><div class="login__visual">' + photo('tec/enfermagem/hero-turma.webp', true) + '</div><form class="login__c" novalidate><img class="login__lg" src="/img/parceiros/tec-mais.webp" width="720" height="203" alt="TEC Mais Cursos Técnicos"><span class="login__k">Academy · Portal do Aluno</span><h1>Bem-vindo(a) <i>de volta.</i></h1><p>Entre com o e-mail e a senha que você recebeu da TEC Mais.</p>' +
       '<label for="le">E-mail</label><input id="le" type="email" autocomplete="email" inputmode="email" required value="' + esc(LS.get('tma-email', '')) + '">' +
       '<label for="lp">Senha</label><div class="login__f"><input id="lp" type="password" autocomplete="current-password" required><button class="login__eye" type="button" id="ley" aria-label="Mostrar senha">' + ic('eye') + '</button></div>' +
       '<button class="login__b" type="submit" id="lgo"' + (ready ? '' : ' disabled') + '>Entrar no portal' + ic('right') + '</button><div class="login__e" id="lerr" role="alert">' + esc(msg || (ready ? '' : 'O portal ainda não foi configurado. Fale com a TEC Mais.')) + '</div>' +
-      '<div class="login__h">Esqueceu a senha ou ainda não tem acesso? <a href="https://wa.me/' + C.whatsapp + '?text=' + encodeURIComponent('Olá! Sou aluno(a) da TEC Mais e preciso de acesso ao Portal do Aluno.') + '" target="_blank" rel="noopener">Fale com a TEC Mais</a></div></form>' +
-      '<p class="login__s">' + ic('lock') + 'Acesso individual · conteúdo criptografado</p>';
+      '<div class="login__h">Esqueceu a senha ou ainda não tem acesso? <a href="https://wa.me/' + C.whatsapp + '?text=' + encodeURIComponent('Olá! Sou aluno(a) da TEC Mais e preciso de acesso ao Portal do Aluno.') + '" target="_blank" rel="noopener">Fale com a TEC Mais</a></div></form></div>';
     document.body.appendChild(w);
     var em = $('#le', w), pw = $('#lp', w), er = $('#lerr', w), go = $('#lgo', w);
     (em.value ? pw : em).focus();
@@ -749,6 +805,7 @@
       return;
     }
     page.innerHTML = r.name === 'aula' ? pageAula(r.lesson) : r.name === 'modulo' ? pageLock(r.mod) : r.name === 'modulos' ? pageModulos() : r.name === 'ferramentas' ? pageFerramentas() : pageHome();
+    if (r.name === 'modulos') initCatalog(page);
     if (r.lesson) {
       var R0 = R[r.lesson.tipo]; if (R0 && R0.init) R0.init(r.lesson);
       $('#donebtn').addEventListener('click', function () { var on = !isDone(r.lesson.id); setDone(r.lesson.id, on); var y = scrollY; route(); scrollTo(0, y); });

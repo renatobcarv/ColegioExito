@@ -15,12 +15,14 @@ var TMA_CURSO = {
 var TMA_PRODUTOS = [
   {
     id: 'injetaveis',
+    capa: 'cursos/injetaveis-pratica-2.webp',
     titulo: 'Administração de Medicamentos Injetáveis',
     resumo: 'Os bônus do curso: guia de cálculo, guia visual da prática e guia de oportunidades.',
     cor: 'orange',
   },
   {
     id: 'aph',
+    capa: 'tec/enfermagem/visita-samu.webp',
     titulo: 'APH · Atendimento Pré-Hospitalar',
     resumo: 'Os 4 bônus do curso: peçonhentos, RCP por fase da vida, emergências domésticas e APH no currículo.',
     cor: 'red',
@@ -31,6 +33,7 @@ var TMA_PRODUTOS = [
 var TMA_MODULOS = [
   {
     id: 'calculo',
+    capa: 'academy/calculo.webp',
     produto: 'injetaveis',
     titulo: 'Cálculo de Medicamentos',
     resumo: 'Conversões, regra de três, reconstituição, diluição, gotejamento, UI e insulina.',
@@ -44,6 +47,7 @@ var TMA_MODULOS = [
   },
   {
     id: 'visual',
+    capa: 'academy/visual.webp',
     produto: 'injetaveis',
     titulo: 'Guia Visual da Prática',
     resumo: 'Materiais, biossegurança, etapas, erros de atenção e descarte, em pranchas com pouco texto.',
@@ -61,6 +65,7 @@ var TMA_MODULOS = [
   },
   {
     id: 'carreira',
+    capa: 'academy/carreira.webp',
     produto: 'injetaveis',
     titulo: 'Oportunidades Profissionais',
     resumo: 'Sua trilha, currículo pronto, mensagens, plano de 7 dias e controle de contatos.',
@@ -81,6 +86,7 @@ var TMA_MODULOS = [
   },
   {
     id: 'aph-peconhentos',
+    capa: 'academy/peconhentos.webp',
     produto: 'aph',
     titulo: 'Acidentes com Animais Peçonhentos',
     resumo: 'O que fazer, e o que nunca fazer, numa picada de escorpião, cobra, aranha, abelha, água-viva ou taturana.',
@@ -97,6 +103,7 @@ var TMA_MODULOS = [
   },
   {
     id: 'aph-rcp',
+    capa: 'academy/rcp.webp',
     produto: 'aph',
     titulo: 'RCP por Fase da Vida',
     resumo: 'Bebê, criança, adulto e idoso: como comprimir, profundidade, ritmo e engasgo, num quadro só.',
@@ -115,6 +122,7 @@ var TMA_MODULOS = [
   },
   {
     id: 'aph-domesticas',
+    capa: 'academy/domesticas.webp',
     produto: 'aph',
     titulo: 'Emergências Domésticas',
     resumo: 'Queimadura, convulsão, desmaio, intoxicação, choque elétrico, sangramento: o que fazer e o erro que todo mundo comete.',
@@ -129,6 +137,7 @@ var TMA_MODULOS = [
   },
   {
     id: 'aph-curriculo',
+    capa: 'tec/enfermagem/jaleco-vestido.webp',
     produto: 'aph',
     titulo: 'APH no Currículo',
     resumo: 'Onde o APH é diferencial, como escrever no currículo e no LinkedIn e como contar na entrevista.',

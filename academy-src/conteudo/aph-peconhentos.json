@@ -1,178 +1,188 @@
 {
- "pecDados": [
-  {
-   "n": "+65%",
-   "t": "dos acidentes com animais peçonhentos no Brasil em 2025 foram com escorpião.",
-   "f": "Painel Epidemiológico · Ministério da Saúde"
-  },
-  {
-   "n": "200+",
-   "t": "mortes por escorpião no país em 2025. A letalidade subiu de 0,06% para 0,12% em um ano.",
-   "f": "Ministério da Saúde"
-  },
-  {
-   "n": "+6,41%",
-   "t": "de casos no DF no 1º semestre de 2026, em relação a 2025. Valparaíso e o Entorno estão na mesma região de risco.",
-   "f": "Metrópoles"
+  "pecDados": [
+    {
+      "n": "Mais de 65%",
+      "t": "dos acidentes notificados no Brasil em 2025 foram com escorpiões.",
+      "f": "Instituto Butantan, com dados do Ministério da Saúde"
+    },
+    {
+      "n": "202.714",
+      "t": "acidentes com escorpiões foram notificados no Brasil em 2023.",
+      "f": "Boletim Epidemiológico do Ministério da Saúde, 2025"
+    },
+    {
+      "n": "131",
+      "t": "óbitos por escorpionismo foram notificados no Sinan em 2023.",
+      "f": "Boletim Epidemiológico do Ministério da Saúde, 2025"
+    }
+  ],
+  "pecTelefones": [
+    {
+      "n": "192",
+      "t": "SAMU"
+    },
+    {
+      "n": "193",
+      "t": "Bombeiros"
+    },
+    {
+      "n": "0800 722 6001",
+      "t": "Disque-Intoxicação (Anvisa)"
+    }
+  ],
+  "pecRegra": [
+    "Afaste-se do animal e mantenha a cena segura.",
+    "Procure atendimento imediatamente.",
+    "Ligue 192 se houver sinais graves ou transporte inseguro.",
+    "Ligue 193 se precisar de resgate.",
+    "Fotografe de longe, se for seguro.",
+    "Ligue 0800 722 6001 para orientação toxicológica."
+  ],
+  "pecAnimais": [
+    {
+      "t": "Escorpião",
+      "il": "escorpiao",
+      "c": "orange",
+      "fazer": [
+        "Afaste-se do escorpião.",
+        "Lave a picada com água e sabão.",
+        "Procure atendimento imediatamente."
+      ],
+      "nunca": [
+        "Não aperte o membro com faixa ou garrote.",
+        "Não corte nem chupe a picada.",
+        "Não passe produtos caseiros."
+      ],
+      "alerta": "Ligue 192 se houver vômitos repetidos ou dificuldade para respirar.",
+      "foto": "Tityus serrulatus"
+    },
+    {
+      "t": "Cobra",
+      "il": "cobra",
+      "c": "green",
+      "fazer": [
+        "Afaste-se da cobra.",
+        "Mantenha a pessoa deitada e em repouso.",
+        "Retire anéis e pulseiras.",
+        "Lave a picada com água e sabão, sem atrasar o socorro.",
+        "Ligue 192 e peça orientação para o transporte."
+      ],
+      "nunca": [
+        "Não aperte o membro com faixa ou garrote.",
+        "Não corte nem chupe a picada.",
+        "Não dê bebida alcoólica.",
+        "Não deixe a pessoa andar."
+      ],
+      "alerta": "Mesmo sem dor intensa, procure atendimento imediatamente.",
+      "foto": "Bothrops jararaca"
+    },
+    {
+      "t": "Aranha",
+      "sub": "armadeira, marrom, viúva-negra",
+      "il": "aranha",
+      "c": "violet",
+      "fazer": [
+        "Afaste-se da aranha.",
+        "Lave a picada com água e sabão.",
+        "Procure atendimento imediatamente."
+      ],
+      "nunca": [
+        "Não esprema a picada.",
+        "Não corte a pele.",
+        "Não passe receitas caseiras."
+      ],
+      "alerta": "Ligue 192 se houver falta de ar ou mal-estar intenso.",
+      "foto": "Phoneutria nigriventer"
+    },
+    {
+      "t": "Abelha e marimbondo",
+      "il": "abelha",
+      "c": "yellow",
+      "fazer": [
+        "Afaste-se do enxame.",
+        "Raspe o ferrão visível com a borda de um cartão.",
+        "Aplique uma compressa fria envolta em pano.",
+        "Procure atendimento se houver muitas picadas."
+      ],
+      "nunca": [
+        "Não aperte o ferrão com pinça.",
+        "Não demore para remover um ferrão visível."
+      ],
+      "alerta": "Ligue 192 se houver muitas picadas, falta de ar ou inchaço no rosto.",
+      "foto": "Apis mellifera"
+    },
+    {
+      "t": "Água-viva e caravela",
+      "il": "aguaviva",
+      "c": "blue",
+      "fazer": [
+        "Saia da água com segurança.",
+        "Aplique compressa fria de água do mar.",
+        "Retire os tentáculos com pinça ou mão enluvada.",
+        "Lave com vinagre comum a 5%, sem esfregar."
+      ],
+      "nunca": [
+        "Não use água doce.",
+        "Não esfregue areia ou toalha.",
+        "Não passe urina."
+      ],
+      "alerta": "Ligue 192 se houver falta de ar, desmaio ou mal-estar intenso.",
+      "foto": "Physalia physalis"
+    },
+    {
+      "t": "Taturana e lagarta",
+      "il": "taturana",
+      "c": "pink",
+      "fazer": [
+        "Afaste-se da lagarta.",
+        "Lave a pele com água e sabão.",
+        "Aplique uma compressa fria.",
+        "Procure atendimento imediatamente."
+      ],
+      "nunca": [
+        "Não esprema nem coce a pele.",
+        "Não espere aparecer sangramento para procurar atendimento."
+      ],
+      "alerta": "Ligue 192 se houver sangramento ou mal-estar intenso.",
+      "foto": "Lonomia obliqua"
+    }
+  ],
+  "pecPrevencao": [
+    "Use luvas grossas e calçado fechado ao limpar o quintal.",
+    "Remova entulho e restos de construção.",
+    "Vede frestas e coloque telas nos ralos.",
+    "Sacuda sapatos e roupas antes de usar.",
+    "Controle as baratas, fonte de alimento dos escorpiões.",
+    "Afaste camas e berços da parede."
+  ],
+  "pecMitos": [
+    [
+      "Amarrar bem forte segura o veneno.",
+      "O garrote não segura o veneno e pode piorar a lesão."
+    ],
+    [
+      "É só cortar e chupar que o veneno sai.",
+      "Cortar e chupar não retiram o veneno e aumentam o risco de infecção."
+    ],
+    [
+      "Urina tira a ardência da água-viva.",
+      "Urina pode piorar a lesão e não faz parte dos primeiros socorros."
+    ],
+    [
+      "É melhor espremer o ferrão com a pinça.",
+      "Raspe o ferrão, pois apertar a bolsa pode liberar mais veneno."
+    ],
+    [
+      "Se foi um adulto picado por escorpião, dá para esperar.",
+      "Procure atendimento imediatamente, mesmo com sintomas leves."
+    ],
+    [
+      "Um gole de álcool acalma quem foi picado por cobra.",
+      "Álcool não ajuda e pode atrapalhar a avaliação da pessoa."
+    ]
+  ],
+  "pecVideo": {
+    "t": "Videoaula: o que fazer em cada acidente",
+    "d": "12 a 15 min"
   }
- ],
- "pecTelefones": [
-  {
-   "n": "192",
-   "t": "SAMU"
-  },
-  {
-   "n": "193",
-   "t": "Bombeiros"
-  },
-  {
-   "n": "0800 722 6001",
-   "t": "Disque-Intoxicação (Anvisa)"
-  }
- ],
- "pecRegra": [
-  "Ligue 192 (SAMU) ou 193 (Bombeiros).",
-  "Disque-Intoxicação: 0800 722 6001.",
-  "Leve a vítima ao hospital de referência com soro.",
-  "Se for possível e seguro, fotografe o animal. Nunca tente capturá-lo com a mão."
- ],
- "pecAnimais": [
-  {
-   "t": "Escorpião",
-   "il": "escorpiao",
-   "c": "orange",
-   "fazer": [
-    "Lavar o local com água e sabão",
-    "Compressa morna pode aliviar a dor",
-    "Ir ao hospital"
-   ],
-   "nunca": [
-    "Torniquete",
-    "Cortar ou chupar o local",
-    "Aplicar produtos caseiros"
-   ],
-   "alerta": "Criança e idoso: é emergência sempre.",
-   "foto": "Tityus serrulatus"
-  },
-  {
-   "t": "Cobra",
-   "il": "cobra",
-   "c": "green",
-   "fazer": [
-    "Manter a vítima deitada, calma e em repouso",
-    "Retirar anéis e pulseiras",
-    "Levar ao hospital imediatamente"
-   ],
-   "nunca": [
-    "Torniquete",
-    "Cortar ou chupar o local",
-    "Dar bebida alcoólica",
-    "Fazer a vítima andar ou correr"
-   ],
-   "alerta": "Repouso total até o hospital: movimento espalha o veneno.",
-   "foto": "Bothrops jararaca"
-  },
-  {
-   "t": "Aranha",
-   "sub": "armadeira, marrom, viúva-negra",
-   "il": "aranha",
-   "c": "violet",
-   "fazer": [
-    "Lavar com água e sabão",
-    "Compressa",
-    "Ir ao hospital"
-   ],
-   "nunca": [
-    "Espremer",
-    "Cortar",
-    "Receitas caseiras"
-   ],
-   "alerta": "A aranha-marrom pode não doer na hora: observe a lesão nas horas seguintes.",
-   "foto": "Phoneutria nigriventer"
-  },
-  {
-   "t": "Abelha e marimbondo",
-   "il": "abelha",
-   "c": "yellow",
-   "fazer": [
-    "Retirar o ferrão raspando com cartão ou unha",
-    "Compressa fria"
-   ],
-   "nunca": [
-    "Retirar o ferrão com pinça ou apertando: injeta mais veneno"
-   ],
-   "alerta": "Muitas picadas, falta de ar ou inchaço no rosto: emergência (anafilaxia).",
-   "foto": "Apis mellifera"
-  },
-  {
-   "t": "Água-viva e caravela",
-   "il": "aguaviva",
-   "c": "blue",
-   "fazer": [
-    "Lavar com água do mar ou vinagre",
-    "Compressa fria",
-    "Retirar tentáculos com pinça ou luva"
-   ],
-   "nunca": [
-    "Água doce",
-    "Esfregar areia ou toalha",
-    "Urina"
-   ],
-   "alerta": "Dor forte, falta de ar ou mal-estar: procure atendimento.",
-   "foto": "Physalia physalis"
-  },
-  {
-   "t": "Taturana e lagarta",
-   "il": "taturana",
-   "c": "pink",
-   "fazer": [
-    "Lavar com água corrente",
-    "Compressa fria",
-    "Ir ao hospital"
-   ],
-   "nunca": [
-    "Espremer ou coçar",
-    "Ignorar sangramento nas gengivas ou na urina"
-   ],
-   "alerta": "A Lonomia pode causar sangramentos: hospital sempre.",
-   "foto": "Lonomia obliqua"
-  }
- ],
- "pecPrevencao": [
-  "Limpe entulho e restos de construção do quintal.",
-  "Vede ralos, frestas e rodapés.",
-  "Sacuda sapatos e roupas antes de usar.",
-  "Controle as baratas: são o alimento do escorpião.",
-  "Afaste camas e berços da parede."
- ],
- "pecMitos": [
-  [
-   "Torniquete segura o veneno.",
-   "Não segura e piora a lesão. Nunca faça torniquete."
-  ],
-  [
-   "Cortar e chupar tira o veneno.",
-   "Não tira o veneno e ainda abre caminho para infecção."
-  ],
-  [
-   "Urina alivia a queimadura de água-viva.",
-   "Não funciona. Use água do mar ou vinagre."
-  ],
-  [
-   "Tirar o ferrão com pinça é o certo.",
-   "Apertar o ferrão injeta mais veneno. Raspe com um cartão."
-  ],
-  [
-   "Picada de escorpião em adulto não precisa de hospital.",
-   "Toda picada deve ser avaliada. Em criança e idoso, é emergência."
-  ],
-  [
-   "Bebida alcoólica acalma quem foi picado por cobra.",
-   "Não dê bebida. Mantenha a vítima deitada e calma."
-  ]
- ],
- "pecVideo": {
-  "t": "Videoaula: o que fazer em cada acidente",
-  "d": "12 a 15 min"
- }
 }

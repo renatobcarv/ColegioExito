@@ -1,18 +1,69 @@
 {
- "domSituacoes": [
-  { "t": "Queimadura", "il": "fogo", "c": "orange", "fazer": "Água corrente em temperatura ambiente por cerca de 20 minutos. Cubra com pano limpo.", "erro": "Pasta de dente, manteiga, gelo ou estourar bolhas." },
-  { "t": "Convulsão", "il": "raio", "c": "violet", "fazer": "Proteja a cabeça, afaste objetos e marque o tempo. Depois, deite a pessoa de lado. Mais de 5 minutos: ligue 192.", "erro": "Colocar a mão ou objetos na boca, \"puxar a língua\" ou segurar a pessoa." },
-  { "t": "Desmaio", "il": "desmaio", "c": "blue", "fazer": "Deite a pessoa e eleve as pernas. Verifique se respira.", "erro": "Jogar água no rosto ou dar álcool para cheirar." },
-  { "t": "Intoxicação", "sub": "produto de limpeza, remédio", "il": "frasco2", "c": "teal", "fazer": "Ligue 0800 722 6001 e leve a embalagem ao hospital.", "erro": "Provocar vômito ou dar leite." },
-  { "t": "Choque elétrico", "il": "tomada", "c": "yellow", "fazer": "Desligue a energia ANTES de tocar na vítima. Depois avalie a respiração e ligue 192.", "erro": "Tocar na vítima com a energia ligada." },
-  { "t": "Sangramento nasal", "il": "nariz", "c": "pink", "fazer": "Cabeça levemente para a frente e aperte as narinas por 10 minutos.", "erro": "Inclinar a cabeça para trás." },
-  { "t": "Corte e hemorragia", "il": "gota", "c": "red", "fazer": "Pressão direta com pano limpo e eleve o membro.", "erro": "Tirar o pano encharcado. Coloque outro por cima." }
- ],
- "domTelefones": [
-  { "n": "192", "t": "SAMU" },
-  { "n": "193", "t": "Bombeiros" },
-  { "n": "190", "t": "Polícia" },
-  { "n": "0800 722 6001", "t": "Disque-Intoxicação" }
- ],
- "domVideos": "6 vídeos curtos de 3 a 5 min no formato situação → o que fazer"
+  "domSituacoes": [
+    {
+      "t": "Queimadura",
+      "il": "fogo",
+      "c": "orange",
+      "fazer": "Afaste a pessoa da fonte de calor.\nResfrie a área com água corrente fresca por 20 minutos.\nCubra frouxamente com pano limpo.\nLigue 192 se a queimadura for extensa ou houver falta de ar.\nProcure atendimento se atingir rosto, mãos, pés ou genitais.",
+      "erro": "Não passe pasta de dente ou manteiga.\nNão aplique gelo.\nNão fure bolhas."
+    },
+    {
+      "t": "Convulsão",
+      "il": "raio",
+      "c": "violet",
+      "fazer": "Afaste objetos perigosos.\nProteja a cabeça.\nMarque o tempo.\nVire a pessoa de lado assim que for seguro.\nLigue 192 se for a primeira crise ou passar de 5 minutos.\nLigue também se repetir sem recuperação ou se faltar ar.\nLigue também se houver lesão, gestação ou crise na água.\nLigue se não recuperar em 5 a 10 minutos após a crise.\nLigue também se a crise for em bebê menor de 6 meses.",
+      "erro": "Não segure os movimentos.\nNão coloque nada na boca.\nNão tente puxar a língua."
+    },
+    {
+      "t": "Desmaio",
+      "il": "desmaio",
+      "c": "blue",
+      "fazer": "Afaste os perigos da cena.\nVerifique a resposta e a respiração.\nDeite a pessoa se estiver respirando normalmente.\nEleve as pernas somente se não houver suspeita de lesão.\nLigue 192 se não recuperar a consciência rapidamente.\nComece compressões se não responder nem respirar normalmente.",
+      "erro": "Não jogue água no rosto.\nNão ofereça nada enquanto estiver sonolenta."
+    },
+    {
+      "t": "Intoxicação",
+      "sub": "produto de limpeza, remédio",
+      "il": "frasco2",
+      "c": "teal",
+      "fazer": "Afaste a pessoa do produto se for seguro.\nLigue 192 se houver falta de ar, convulsão ou inconsciência.\nLigue 0800 722 6001 para orientação.\nTenha a embalagem em mãos.",
+      "erro": "Não provoque vômito.\nNão dê leite ou outros produtos por conta própria."
+    },
+    {
+      "t": "Choque elétrico",
+      "il": "tomada",
+      "c": "yellow",
+      "fazer": "Desligue a energia se for seguro.\nLigue 193 se a cena continuar perigosa.\nLigue 192 em caso de choque elétrico.\nVerifique a respiração só depois de desligar a energia.\nComece compressões se não responder nem respirar normalmente.",
+      "erro": "Não toque na pessoa enquanto houver corrente elétrica.\nNão se aproxime de fios caídos."
+    },
+    {
+      "t": "Sangramento nasal",
+      "il": "nariz",
+      "c": "pink",
+      "fazer": "Sente a pessoa com a cabeça levemente para frente.\nAperte a parte mole do nariz por 10 a 15 minutos.\nMantenha a pressão sem soltar para conferir.\nProcure atendimento se persistir após 15 minutos.\nLigue 192 se houver sangramento intenso ou desmaio.",
+      "erro": "Não incline a cabeça para trás.\nNão assoe o nariz durante o sangramento."
+    },
+    {
+      "t": "Corte e hemorragia",
+      "il": "gota",
+      "c": "red",
+      "fazer": "Verifique se o local está seguro.\nPressione o corte com gaze ou pano limpo.\nPeça a alguém para ligar 192 se o sangramento for intenso.\nMantenha pressão firme até o socorro chegar.",
+      "erro": "Não levante o pano para conferir o corte.\nNão interrompa a pressão para elevar o membro."
+    }
+  ],
+  "domTelefones": [
+    {
+      "n": "192",
+      "t": "SAMU"
+    },
+    {
+      "n": "193",
+      "t": "Bombeiros"
+    },
+    {
+      "n": "0800 722 6001",
+      "t": "Disque-Intoxicação"
+    }
+  ],
+  "domVideos": "Vídeos de 3 a 5 min com simulações de primeiros socorros"
 }

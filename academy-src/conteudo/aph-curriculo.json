@@ -1,14 +1,39 @@
 {
- "curAreas": ["Brigada de incêndio", "Segurança do trabalho", "Eventos e shows", "Escolas e creches", "Academias", "Condomínios", "Cuidador de idosos", "Guarda-vidas", "Concursos (bombeiro, socorrista)"],
- "curTexto": "Capacitação em Atendimento Pré-Hospitalar (APH) – TEC Mais – carga horária [X] h\n· Suporte básico de vida e RCP\n· Controle de hemorragias\n· Imobilização",
- "curLinkedin": "Concluí a capacitação em Atendimento Pré-Hospitalar (APH) na TEC Mais, em Valparaíso de Goiás. Aprendi suporte básico de vida, RCP, controle de hemorragias e imobilização, com aulas práticas. Saber agir nos primeiros minutos de uma emergência faz diferença em qualquer ambiente de trabalho. #APH #PrimeirosSocorros #TECMais",
- "curStar": [
-  { "k": "Situação", "d": "O que aconteceu? Ex.: na aula prática, um colega simulou uma parada cardíaca." },
-  { "k": "Ação", "d": "O que você fez? Ex.: verifiquei a resposta, pedi para ligar 192 e iniciei as compressões." },
-  { "k": "Resultado", "d": "Como terminou? Ex.: mantive o ritmo de 100 a 120 por minuto até a troca, como manda o protocolo." }
- ],
- "curTrilhas": [
-  { "t": "Técnico em Enfermagem", "d": "O próximo passo natural para quem gostou de cuidar de pessoas.", "u": "/tec-mais/enfermagem" },
-  { "t": "Técnico em Segurança do Trabalho", "d": "Para quem quer trabalhar com prevenção, brigada e treinamentos.", "u": "/tec-mais/seguranca-do-trabalho" }
- ]
+  "curAreas": [
+    "Brigadas e segurança do trabalho",
+    "Apoio a eventos",
+    "Escolas e creches",
+    "Academias e espaços esportivos",
+    "Condomínios",
+    "Cuidado a pessoas idosas",
+    "Áreas com requisitos próprios, como guarda-vidas e concursos"
+  ],
+  "curTexto": "Curso livre de Atendimento Pré-Hospitalar (APH) | TEC Mais | [X] h\nPrática em simulação de suporte básico de vida, RCP e controle de sangramentos.",
+  "curLinkedin": "Concluí o curso livre de Atendimento Pré-Hospitalar (APH) na TEC Mais, em Valparaíso de Goiás. Na prática com simuladores, treinei como pedir ajuda, iniciar compressões e controlar sangramentos. Quero seguir estudando e me preparar para atuar na área da saúde.",
+  "curStar": [
+    {
+      "k": "Situação",
+      "d": "Descreva o cenário. Na aula prática, nossa equipe simulou uma parada com manequim."
+    },
+    {
+      "k": "Ação",
+      "d": "Explique sua parte. Conferi a resposta e a respiração, pedi ajuda e comecei as compressões."
+    },
+    {
+      "k": "Resultado",
+      "d": "Conte o que aprendeu. No simulador, mantive o ritmo até a troca e ajustei a técnica após o retorno do instrutor."
+    }
+  ],
+  "curTrilhas": [
+    {
+      "t": "Técnico em Enfermagem",
+      "d": "Aprofunde o cuidado ao paciente com formação técnica e prática supervisionada.",
+      "u": "/tec-mais/enfermagem"
+    },
+    {
+      "t": "Técnico em Segurança do Trabalho",
+      "d": "Estude prevenção de riscos e resposta a emergências no ambiente de trabalho.",
+      "u": "/tec-mais/seguranca-do-trabalho"
+    }
+  ]
 }
